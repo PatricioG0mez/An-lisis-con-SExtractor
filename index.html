@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis con SExtractor</title>
+
+    <!-- Archivo CSS -->
+    <link rel="stylesheet" href="styless.css">
+</head>
+
+<body>
+
+    <main>
+
+
+        <section class="hero">
+            <h1>Análisis con SExtractor</h1>
+
+            <p>
+                SExtractor es una herramienta para el análisis de imágenes astronómicas,
+                crea un catálogo de objetos a partir de estas imágenes. Este software
+                puede procesar imágenes de gran tamaño y manejar una gran variedad
+                de magnitudes de objetos.
+            </p>
+        </section>
+
+
+        <section>
+
+            <h2>Instalación</h2>
+
+            <p>
+                Para instalar SExtractor desde el
+                <a href="https://github.com/astromatic/sextractor" target="_blank">
+                    paquete fuente de GitHub
+                </a>,
+                primero se tiene que descomprimir el archivo. En el nuevo directorio
+                ejecutamos el comando:
+            </p>
+
+            <pre><code>$ sh autogen.sh</code></pre>
+
+            <p>
+                Esto crea un archivo de configuración que se utiliza para compilar
+                SExtractor. Ahora ejecutamos el comando:
+            </p>
+
+            <pre><code>$ ./configure</code></pre>
+
+            <p>
+                Finalmente, ejecutamos el comando:
+            </p>
+
+            <pre><code>$ make</code></pre>
+
+            <p>
+                Para comprobar que el software se ha instalado correctamente
+                escribimos en la terminal:
+            </p>
+
+            <pre><code>$ sex</code></pre>
+
+            <p>
+                Esto devolverá información básica sobre SExtractor.
+                Para más detalles sobre la instalación se pueden consultar las siguientes fuentes:
+            </p>
+
+            <ul>
+                <li>
+                    <a href="https://sextractor.readthedocs.io/en/latest/Installing.html" target="_blank">
+                        Manual para uso de SExtractor
+                    </a>
+                </li>
+
+                <li>
+                    <a href="https://www.youtube.com/watch?v=ZM-tvha6Qog&t=2131s" target="_blank">
+                        Video de instalación
+                    </a>
+                </li>
+            </ul>
+
+        </section>
+
+        <section>
+
+            <p>
+                Para usar SExtractor se necesita una imagen en formato FITS.
+                Se puede descargar una imagen de ejemplo desde el
+                <a href="https://www.eso.org/sci/observing/tools/standards/spectra/eso_2012_09_26_0001.fits"
+                    target="_blank">
+                    siguiente enlace
+                </a>.
+            </p>
+
+            <p>
+                La imagen que utilizaremos tendrá el nombre de
+                <code>IMAGEN.fits</code>.
+            </p>
+
+            <img src="IMAGENES/IMAGEN.jpg" alt="Imagen astronómica de ejemplo">
+
+            <p>
+                Creamos un nuevo directorio donde estará nuestra imagen y copiamos
+                los cuatro archivos <code>default</code> desde la carpeta de origen
+                descargada desde GitHub.
+            </p>
+
+            <img src="IMAGENES/1.jpeg" alt="Copia de archivos default">
+
+        </section>
+
+        <!-- Archivos principales -->
+        <section>
+
+            <h2>Archivos principales de configuración</h2>
+
+            <ul>
+
+                <li>
+                    <code>default.sex</code> es el corazón de SExtractor.
+                    Contiene los parámetros globales del análisis; aquí se define
+                    el nivel de detección, el nombre del catálogo de salida
+                    y otros parámetros importantes.
+                </li>
+
+                <img src="IMAGENES/2.jpeg" alt="Archivo default.sex">
+
+                <li>
+                    <code>default.param</code> contiene la lista de parámetros
+                    que SExtractor medirá durante el análisis. SExtractor posee
+                    muchas propiedades observacionales disponibles.
+                </li>
+
+                <img src="IMAGENES/3.jpeg" alt="Archivo default.param">
+
+                <li>
+                    <code>default.conv</code> contiene el filtro de convolución
+                    utilizado para mejorar la detección de objetos.
+                </li>
+
+                <li>
+                    <code>default.nnw</code> corresponde al archivo de red neuronal
+                    utilizado para la clasificación estrella-galaxia.
+                </li>
+
+            </ul>
+
+        </section>
+
+        <!-- Uso de SExtractor-->
+        <section>
+            <h2>Uso de SExtractor</h2>
+
+            <p>
+                Para empezar a utlizar SExtractor, primero debemos colocar los parámetros que queremos obtener, para ello editamos el archivo <code>default.param</code> en algun editor de texto y colocamos los parámetros, o podemos crear el archivo desde la terminal y ahí mismo añadir los parámetros, haremos este último método, primero en nuestra terminal nos ubicamos en el directorio donde se encuentra nuestra imagen y los archivos <code>default</code> (sin el archivo <code>default.param</code>), luego ejecutamos el siguiente comando:
+            
+            </p>
+                
+            <pre><code>$ nano default.param</code></pre>
+
+            <img src="IMAGENES/4.jpeg" alt="editor de texto nano">
+
+            <p>
+                En este caso añadiremos los parámetros <code>X_IMAGE</code>, <code>Y_IMAGE</code> y <code>MAG_AUTO</code>, que corresponden a la posición del objeto en píxeles y la cantidad de luz total que emite el objeto respectivamente, luego guardamos el archivo con <code>Ctrl + O + Enter</code> y salimos del editor con <code>Ctrl + X</code>.
+            </p>
+
+            <p>
+                Ahora estamos listos para ejecutar SExtractor, para ello escribimos el siguiente comando en la terminal: 
+            </p>
+
+            <pre><code>$ sex IMAGEN.fits</code></pre>
+
+            <p>
+                Esto ejecutará SExtractor con los parámetros definidos en el archivo
+                <code>default.param</code> y generará un catálogo de salida con los resultados con el nombre que viene definido en el archivo <code>default.sex</code>, en este caso no se editó el nombre por lo que se utilizará el nombre por defecto <code>test.cat</code>.
+            </p>
+
+            <img src="IMAGENES/5.jpeg" alt="Ejecución de SExtractor">
+
+            <p>
+                Podemos ver que detecto 6431 objetos y tomó 4712, ahora podemos abrir el catálogo de salida para ver los resultados, para ello escribimos el siguiente comando en la terminal:
+            </p>
+
+            <pre><code>$ cat test.cat</code></pre>
+
+            <img src="IMAGENES/6.jpeg" alt="Catálogo de salida">
+
+            <p>
+                En el encabezado de nuestro cátalogo tenemos los parámetros que definimos con el número de columna que corresponde a cada uno.
+            </p>
+        </section>
+
+        <section>
+            <h3 class="hr-lines">Visualización</h3>
+
+            <p>
+                Para visualizar los resultados de SExtractor utilizaremos el software de visualización de datos astronómicos llamado DS9, que se puede descargar desde el <a href="https://sites.google.com/cfa.harvard.edu/saoimageds9">siguiente enlace</a>, para poder cargar nuestro catálogo necesitamos un archivo <code>.vot</code>, este archivo lo obtendremos con ayuda de Topcat, el cual es un visor y editor gráfico interactivo de datos tabulares, que se puede descargar desde el <a href="http://www.star.bris.ac.uk/~mbt/topcat/">siguiente enlace</a>. Para convertir nuestro catálogo de salida a formato <code>.vot</code> primero abrimos Topcat y luego cargamos nuestro catálogo de salida <code>test.cat</code>, para ello vamos a File > Load Table > Filestore Browser y seleccionamos nuestro catálogo, luego vamos a File > Save Table > VOTable y guardamos el archivo con el nombre que queramos, en este caso lo guardaremos como <code>test.vot</code>.
+            </p>
+
+            <p>
+                TopCat nos permite visualizar nuestros datos y obtener sus datos estadísticos, lo cual nos sirve para filtrar nuestros datos y, por ejemplo, visualizar objetos con una magnitud mayor a un valor específico.
+            </p>
+
+            <img src="IMAGENES/7.jpeg" alt="Datos estadísticos en TopCat">
+
+            <p>
+                tenemos col1, col2 y col3 que corresponden a los parámetros <code>X_IMAGE</code>, <code>Y_IMAGE</code> y <code>MAG_AUTO</code> respectivamente, teniendo que en <code>MAG_AUTO</code> el objeto más brillante tiene una magnitud de -9.6 y el más débil tiene una magnitud de 4.26.
+            </p>
+
+            <p>
+                Ya que tenemos nuestro archivo <code>.vot</code>, podemos cargarlo en DS9, para ello primero abrimos nuestra imagen en DS9, luego, para cargar nuestro catálogo, vamos a la pestaña Analysis > Catalog tool, esto nos lleva a esta ventana: 
+            </p>
+
+            <img src="IMAGENES/8.jpeg" alt="Pestaña para cargar catálogo en DS9">
+
+            <p>
+                En esta ventana seleccionamos la opción File > Open y selecionamos nuestro archivo <code>test.vot</code>, esto nos cargará nuestro catálogo en DS9 y podremos visualizar los objetos detectados por SExtractor sobre nuestra imagen.
+            </p>
+
+            <img src="IMAGENES/9.jpeg" alt="Visualización de objetos detectados en DS9">
+
+            <p>
+                Los circulos verdes corresponden a los objetos detectados por SExtractor (4712 objetos), en la pestaña donde cargamos nuestro catálogo, podemos filtrar los objetos por su magnitud, en la sección "tabla" hay una opción de "filtro" donde podemos escribir la condición que queremos para alguna de las tablas, por ejemplo, si queremos visualizar solo los objetos más brillantes, podemos escribir la condición <code>$col3<-5</code>
+            </p>
+
+            <img src="IMAGENES/10.jpeg" alt="Objetos más brillantes visualizados en DS9">
+
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

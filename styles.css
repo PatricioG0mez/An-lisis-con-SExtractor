@@ -1,0 +1,156 @@
+/* styles.css */
+
+:root{
+    --primary: #7B4DA3;
+    --primary-dark: #5f3784;
+    --background: #f5f2fa;
+    --card: #ffffff;
+    --text: #2d2135;
+    --text-light: #5d5368;
+    --border: #d9c8ea;
+    --shadow: rgba(123, 77, 163, 0.15);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--background);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 40px 20px;
+}
+
+/* Contenedor principal */
+main{
+    max-width: 1000px;
+    margin: auto;
+    background-color: var(--card);
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px var(--shadow);
+}
+
+/* Títulos */
+h1{
+    font-size: 2.8rem;
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 15px;
+}
+
+h2{
+    color: var(--primary-dark);
+    margin-top: 40px;
+    margin-bottom: 15px;
+    font-size: 2rem;
+    border-left: 6px solid var(--primary);
+    padding-left: 12px;
+}
+
+/* Texto */
+p{
+    margin-bottom: 20px;
+    color: var(--text-light);
+    font-size: 1.05rem;
+}
+
+/* Links */
+a{
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+a:hover{
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* Bloques de código */
+pre{
+    background-color: #2a2133;
+    color: #f3eaff;
+    padding: 15px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--primary);
+}
+
+code{
+    font-family: Consolas, monospace;
+    font-size: 0.95rem;
+}
+
+/* Imágenes */
+img{
+    display: block;
+    width: 100%;
+    max-width: 700px;
+    margin: 25px auto;
+    border-radius: 15px;
+    border: 3px solid var(--border);
+    box-shadow: 0 6px 18px var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+img:hover{
+    transform: scale(1.02);
+}
+
+/* Lista */
+ul{
+    margin-top: 20px;
+    padding-left: 25px;
+}
+
+li{
+    margin-bottom: 18px;
+    color: var(--text-light);
+}
+
+/* Tarjetas para secciones */
+section{
+    margin-bottom: 40px;
+    padding: 25px;
+    background-color: #fcfbfe;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+
+/* Separación de imágenes dentro de listas */
+li img{
+    margin-top: 15px;
+}
+
+/* Responsive */
+@media (max-width: 768px){
+
+    body{
+        padding: 20px 10px;
+    }
+
+    main{
+        padding: 25px;
+    }
+
+    h1{
+        font-size: 2rem;
+    }
+
+    h2{
+        font-size: 1.5rem;
+    }
+
+    p, li{
+        font-size: 1rem;
+    }
+}

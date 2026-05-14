@@ -26,7 +26,7 @@
             </p>
         </section>
 
-
+<!-- Instalación -->
         <section>
 
             <h2>Instalación</h2>
@@ -236,8 +236,56 @@
             <h2>Clasificación Estrella/Galaxia</h2>
 
             <p>
-                Clasificar objetos entre estrellas y galaxias es una tarea importante en astronomía, SExtractor nos proporciona un parámetro llamado <code>CLASS_STAR</code> para separar ambos tipos de fuentes. Este clasificador se basa en una <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">red neuronal multicapa de propagación directa</a> entrenada a traves de aprendizaje supervisado, un <code>CLASS_STAR</code> cercano a 0 significa que muy probablemente el objeto es una galaxia, mientras que un valor cercano a 1 indica que el objeto es probablemente una estrella.
+                Clasificar objetos entre estrellas y galaxias es una tarea importante en astronomía, SExtractor nos proporciona un parámetro llamado <code>CLASS_STAR</code> para separar ambos tipos de fuentes. Este clasificador se basa en una <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">red neuronal multicapa de propagación directa</a> entrenada a traves de aprendizaje supervisado, un <code>CLASS_STAR</code> cercano a 0 significa que muy probablemente el objeto es una galaxia, mientras que un valor cercano a 1 indica que el objeto es probablemente una estrella. Para más detalles sobre el funcionamiento de este clasificador se puede consultar en el manual de usuario. 
             </p>
+
+            <h3 class="hr-lines">Uso del clasificador</h3>
+
+            <p>
+                Para hacer uso del clasificador de estrellas y galaxias, debemos añadir el parámetro <code>CLASS_STAR</code> a nuestro archivo <code>default.param</code> y volver a ejecutar SExtractor, esto nos actualizará el catálogo con el nuevo parámetro, siendo la cuarta columna en nuestro catálogo.
+            </p>
+
+            <img src="IMAGENES/11.jpeg" alt="Catálogo con el parámetro CLASS_STAR">
+
+            <h3 class="hr-lines">Visualización de la clasificación</h3>
+
+            <p>
+                Para visualizar la clasificación en DS9 necesitamos un archivo <code>.reg</code>, cuando ejecutamos SExtractor este nos genera el catálogo <code>test.cat</code>, el problema es que este archivo solo tiene texto lleno de números. SAOImage ds9 es un visor de imágenes, pero no puede saber como queremos que interprete la información en la pantalla. El archivo <code>.reg</code> actúa como un traductor visual, toma los datos de nuestro catálogo y los convierte en instrucciones de dibujo que DS9 puede entender.
+            </p>
+
+            <p>
+                En lugar de darle a DS9 una lista de números como esta:
+            </p>
+
+            <pre><code>2374.4844 2920.0435 -5.7671 0.586</code></pre>
+
+            <p>
+                El archivo <code>.reg</code> le da a DS9 una instrucción, como esta:
+            </p>
+
+            <pre><code>Dibuja una elipse verde en las coordenadas (2374.4844, 2920.0435) porque este objeto es una estrella.</code></pre>
+
+            <p>
+                Para hacer esto se usa la herramienta <code>awk</code> en la terminal, para imprimir un "mapa de instrucciones de dibujo" que DS9 puede proyectar sobre nuestra imagen <code>.fits</code>, el comando es el siguiente:
+            </p>
+
+            <pre><code>awk '!/^#/ { if ($3 > 0.8) {print "image; circle(" $1 "," $2 ", 10) # color=green"} 
+                else {print "image; circle(" $1 "," $2 ", 10) # color=red"} }' 
+                test.cat > clasificacion.reg</code></pre>
+
+            <ul>
+                <li><code>!/^#/</code> ignora las líneas del encabezado, las que comienzan con #</li>
+                <li><code>if ($3 > 0.8)</code> si la columna 3 (<code>CLASS_STAR</code>) es mayor que 0.8, lo clasifica como estrella</li>
+                <li>Usa las coordenadas X($1) y Y($2) para dibujar un círculo verde para estrellas y rojo para galaxias con un radio de 10 píxeles, y todo se guarda en un nuevo archivo llamado clasificacion.reg</li>
+            </ul>
+
+            <img src="IMAGENES/12.jpeg" alt="Archivo de regiones con clasificación">
+
+            <p>
+                Finalmente, para observar nuestra clasificación en DS9 cargamos nuestra imagen y luego cargamos el archivo de regiones en la pestaña Region > Open y seleccionamos nuestro archivo <code>clasificacion.reg</code>, obteniendo una visualización con círculos verdes y rojos.
+            </p>
+
+            <img src="IMAGENES/13.jpeg" alt="Visualización de clasificación en DS9">
         </section>
     </main>
 

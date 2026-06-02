@@ -26,6 +26,22 @@
             </p>
         </section>
 
+        <section>
+            <p>
+                En general, para hacer uso de SExtractor, se siguien los siguientes pasos:
+            </p>
+
+            
+            <ol>
+                <li>Identificar y medir el nivel de fondo (Background).</li> 
+                <li>Aplicar un umbral a la imagen respecto al fondo.</li>
+                <li>Localizar y separar fuentes que aparecen por encima del umbral.</li>
+                <li>Producir un catálogo de fuentes y sus propiedades medidas.</li>
+            </ol>
+
+            <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
+        </section>
+
 <!-- Instalación -->
         <section>
 
@@ -152,6 +168,24 @@
         <!-- Uso de SExtractor-->
         <section>
             <h2>Uso de SExtractor</h2>
+
+            <h3 class="hr-lines">Determinación del fondo (Background)</h3>
+
+            <p> 
+                Determinar el fondo de nuestra imagen es una parte fundamental en el proceso del análisis, ya que SExtractor puede tomar como fondo una parte del flujo de luz de algunos objetos. Para empezar, en nuestro archivo <code>default.sex</code> en el parámetro <code>CHECKIMAGE_TYPE</code> vamos a poner <code>BACKGROUND</code> en el parámetro <code>CHECKIMAGE_NAME</code>: <code>fondo.fits</code>, SExtractor nos devolvera una imagen del fondo que podemos visualizar en DS9.
+            </p>
+
+            <img src="IMAGENES/fondo.jpeg" alt="Imagen del fondo obtenida con SExtractor">
+
+            <p>
+                Podemos ver claramente "manchas" que, observando nuestra imagen original, corresponden a ambas galaxias gigantes en el centro, esto significa que SExtractor esta confundiendo la luz de nuestros objetos con variaciones del cielo. Para corregir esto, en nuestro archivo principal <code>default.sex</code> debemos cambiar el parámetro <code>BACK_SIZE</code> el cual corresponde al tamaño de la malla que SExtractor utiliza para estimar el fondo, por lo que si aumentamos este valor, SExtractor tomará un área más grande para estimar el fondo y así evitará tomar la luz de nuestros objetos como parte del fondo. En este caso, el valor por defecto es 64, por lo que lo cambiaremos a 128 y volveremos a ejecutar SExtractor para obtener una nueva imagen del fondo. Algo que debemos tener el cuenta es que, como menciona el manual, un tamaño de malla demasiado pequeña, la estimación del fondo puede incluir parcialmente la luz de otros objetos. 
+            </p>
+
+            <img src="IMAGENES/fondo2.jpeg" alt="Imagen del fondo con BACK_SIZE=128">
+
+            <p>
+                Con este nuevo valor para el tamaño de la malla, podemos ver que algunas manchas han desaparecido, sin embargo, todavía podemos ver que aun se ven las manchas para las galaxias centrales.
+            </p>
 
             <p>
                 Para empezar a utlizar SExtractor, primero debemos colocar los parámetros que queremos obtener, para ello editamos el archivo <code>default.param</code> en algun editor de texto y colocamos los parámetros, o podemos crear el archivo desde la terminal y ahí mismo añadir los parámetros, haremos este último método, primero en nuestra terminal nos ubicamos en el directorio donde se encuentra nuestra imagen y los archivos <code>default</code> (sin el archivo <code>default.param</code>), luego ejecutamos el siguiente comando:

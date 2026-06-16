@@ -8,6 +8,23 @@
 
     <!-- Archivo CSS -->
     <link rel="stylesheet" href="styless.css">
+
+    <!-- Configuración de MathJax -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+    </script>
+
+    <!-- Biblioteca MathJax -->
+    <script
+        id="MathJax-script"
+        async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
 </head>
 
 <body>
@@ -22,7 +39,7 @@
                 SExtractor es una herramienta para el análisis de imágenes astronómicas,
                 crea un catálogo de objetos a partir de estas imágenes. Este software
                 puede procesar imágenes de gran tamaño y manejar una gran variedad
-                de magnitudes de objetos.
+                de magnitudes de objetos. 
             </p>
         </section>
 
@@ -162,6 +179,84 @@
                 </li>
 
             </ul>
+
+        </section>
+
+        <section>
+            <h2>Parámetros de entrada.</h2>
+
+                <p>
+                    SExtractor obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
+                </p>
+
+            <h3 class="hr-lines">Información de la imagen.</h3>
+
+            <ul>
+                <li>
+                    <code>GAIN</code>: Representa la ganancia del detector, es decir, la relación entre los electrones generados en el CCD y las cuentas digitales ADU almacenadas en la imagen. Se expresa en 
+
+                    $$\text{GAIN}=\frac{\text{electrones}}{\text{ADU}}$$
+                </li>
+
+                <li>
+                    <code>MAG_GAMMA</code>: Este parámetro se empleaba cuando SExtractor se aplicaba a placas fotográficas en donde esta es la pendiente de la función de respuesta de la emulsión utilizada en las placas en cuestión.
+                </li>
+
+                <li>
+                    <code>DETECT_TYPE</code>: Especifica el tipo de imagen que se va a analizar, puede ser <code>CCD</code> o <code>PHOTO</code>, dependiendo del tipo de imagen que se tenga, se deben ajustar otros parámetros como el <code>GAIN</code> y el <code>MAG_GAMMA</code>.
+                </li>
+
+                <li>
+                    <code>MAG_ZEROPOINT</code>: Es el punto cero para la escala de magnitudes, que se utiliza para convertir las cuentas en magnitudes absolutas. 
+                </li>
+                
+                <li>
+                    <code>PIXEL_SCALE</code>: Es la escala del pixel en arcsegundos por pixel, que se utiliza para convertir las coordenadas de los objetos en unidades de ángulo. Este es un parámetro importante para la clasificación estrella-galaxia, y que con suerte se puede obtener del encabezado de la imagen.
+                </li>
+
+                <li>
+                    <code>SATUR_LEVEL</code>: Es el nivel de saturación del detector, que se utiliza para identificar objetos saturados en la imagen. Este valor también se puede obtener del encabezado de la imagen.
+                </li>
+
+                <li>
+                    <code>SEEING_FWHM</code>: Representa el <b>Full Width at Half Maximum</b> expresado en segundos de arco. Este parámetro es importante para la clasificación estrella-galaxia, ya que se utiliza para determinar el tamaño de los objetos en la imagen y así poder clasificarlos correctamente.
+                    <br>
+
+                    Físicamente <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido a la turbulencia atmosférica. Si una estrella fuera un punto perfecto, la atmósfera la convierte en una mancha aproximandamente gaussiana. FWHM mide el ancho de esa mancha a la mitad de su intensidad máxima.
+                </li>
+            </ul>
+
+            <h3 class="hr-lines">Determinación del fondo (Background).</h3>
+
+            <p>
+                En una imagen astronómica, el valor que se mide en un píxel es la suma de la luz de los objetos que nos interesan (estrellas, galaxias, etc.) y una señal de "fondo" que proviene del cielo. SExtractor crea un mapa de fondo que representa este valor en cualquier posición de la imagen, para poder restarlo y trabajar solo con el flujo de las fuentes.<br>
+            </p>
+
+            <p>
+                El algoritmo se desglosa en los siguientes pasos: 
+            </p>
+
+            <ol>
+                <li>
+                    SExtractor divide la imagen en una cuadrícula de mallas, el tamaño de estas mallas se define con el parámetro <code>BACK_SIZE</code>. Para cada celda de esta cuadrícula, se analizan los píxeles que contiene de forma independiente.
+                </li>
+
+                <li>
+                    Para cada cuadrícula, SExtractor construye un histograma con los valores de los píxeles y aplica un proceso iterativo de recorte $\kappa\sigma$ (kappa-sigma clipping) para eliminar la luz de las fuentes.
+
+                    <ul>
+                        <li>
+                            <b>Recorte iterativo:</b> Se calcula la mediana y la desviación estándar ($\sigma$) de los píxeles en la celda. Luego, se descartan todos los píxeles que están a más de $\pm3\sigma$ de la mediana y se recalcula la mediana y $\sigma$ con los píxeles restantes. Este proceso se repite hasta que los valores convergen. Esto asegura que los píxeles brillantes de las estrellas no contaminen la estimación del fondo.
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    Una vez que se tiene la distribución de píxeles "limpia", se estima la moda (el valor más frecuente). SExtractor utiliza una relación empírica para estimar la moda a partir de la mediana y la media de la distribución recortada.
+
+                    $$\text{Moda}= 2.5 \times \text{Mediana} - 1.5 \times \text{Media}$$
+                </li>
+            </ol>
 
         </section>
 
@@ -321,6 +416,20 @@
 
             <img src="IMAGENES/13.jpeg" alt="Visualización de clasificación en DS9">
         </section>
+
+        <!-- Referencias -->
+        
+        <section>
+            <h2>Referencias</h2>
+
+            <ol class="referencias">
+                
+                <li id="ref1">
+                    <i>Introduction — SExtractor 2.24.2 documentation.</i> (n.d.). https://sextractor.readthedocs.io/en/latest/Introduction.html
+                </li>
+            </ol>
+        </section>
+
     </main>
 
 </body>

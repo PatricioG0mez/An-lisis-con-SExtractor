@@ -225,9 +225,27 @@ img:hover{
 
 /* Lista */
 ul{
-    margin-top: 20px;
-    padding-left: 25px;
+    margin-top: 15px;
+    margin-left: 10px;
 }
+
+ul li{
+    list-style: none;
+    position: relative;
+    padding-left: 18px;
+}
+
+ul li::before{
+    content: "▸";
+
+    position: absolute;
+    left: 0;
+
+    color: #b78cff;
+    font-weight: bold;
+}
+
+
 
 li{
     margin-bottom: 20px;
@@ -246,7 +264,7 @@ ol{
     gap: 18px;
 }
 
-ol li{
+ol > li{
     list-style: none;
 
     position: relative;
@@ -269,7 +287,7 @@ ol li{
 }
 
 /* Hover */
-ol li:hover{
+ol > li:hover{
     transform: translateX(6px);
 
     background: rgba(255,255,255,0.06);
@@ -278,7 +296,7 @@ ol li:hover{
         0 0 15px rgba(123,77,163,0.25);
 }
 
-ol li::after{
+ol > li::after{
 
     counter-increment: item;
     content: counter(item);
@@ -392,4 +410,30 @@ ol li::after{
     );
 
     border-radius: 10px;
+}
+
+.MathJax{
+    font-size: 1.15em !important;
+}
+
+mjx-container[jax="CHTML"][display="true"]{
+    background: rgba(255,255,255,0.03);
+    border-left: 4px solid #7B4DA3;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.referencias{
+    margin-top: 20px;
+}
+
+sup a{
+    color: #d6b4ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+sup a:hover{
+    color: white;
 }

@@ -256,8 +256,34 @@
 
                     $$\text{Moda}= 2.5 \times \text{Mediana} - 1.5 \times \text{Media}$$
                 </li>
+
+                <li>
+                    Después, ya que se tiene un valor de fondo para cada celda de la cuadrícula, se aplica un filtro mediana de tamaño <code>BACK_FILTERSIZE</code> sobre la rejilla. Esto ayuda a eliminar sobreestimaciones del fondo causadas por estrellas muy brillantes.
+                </li>
+
+                <li>
+                    Finalmente, SExtractor interpola los valores de la rejilla filtrada utilizando una <i>bicubic-spline</i> para generar un mapa de fondo continuo que tenga el mismo tamaño que la imagen original. Este mapa de fondo se puede restar de la imagen original para obtener una imagen con el fondo corregido.
+                </li>
             </ol>
 
+            Para obtener valores más precisos del fondo, este se puede calcular en un área centrada alrededor de un objeto. Para ello se establece el parámetro <code>BACKPHOTO_TYPE</code> a <code>LOCAL</code> y se elije un <code>BACKPHOTO_THICK</code>.
+
+            <ul>
+                <li>
+                    <code>BACKPHOTO_TYPE</code>: Indica qué fondo utilizar cuando SExtractor calcula el flujo de un objeto. Puede tener valores de <code>GLOBAL</code> o <code>LOCAL</code>.
+
+                    <ul>
+                        <li>
+                            <code>GLOBAL</code>: SExtractor utiliza el mapa de fondo global para restar el fondo de la imagen. Este es el método por defecto y es adecuado para la mayoría de las imágenes, especialmente aquellas con un fondo uniforme.
+                        </li>
+
+                    
+                        <li>
+                            <code>LOCAL</code>: SExtractor calcula un fondo local para cada objeto utilizando una corona alrededor del objeto. El tamaño de esta corona se define con el parámetro <code>BACKPHOTO_THICK</code>. Este método es útil para imágenes con un fondo no uniforme o con gradientes de fondo, ya que permite una estimación más precisa del fondo en las proximidades de cada objeto.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </section>
 
         <!-- Uso de SExtractor-->

@@ -36,7 +36,7 @@
             <h1>Análisis con SExtractor</h1>
 
             <p>
-                SExtractor es una herramienta para el análisis de imágenes astronómicas,
+                <span class="typewriter">SExtractor</span> es una herramienta para el análisis de imágenes astronómicas,
                 crea un catálogo de objetos a partir de estas imágenes. Este software
                 puede procesar imágenes de gran tamaño y manejar una gran variedad
                 de magnitudes de objetos. 
@@ -45,7 +45,7 @@
 
         <section>
             <p>
-                En general, para hacer uso de SExtractor, se siguien los siguientes pasos:
+                En general, para hacer uso de <span class="typewriter">SExtractor</span>, se siguien los siguientes pasos:
             </p>
 
             
@@ -65,7 +65,7 @@
             <h2>Instalación</h2>
 
             <p>
-                Para instalar SExtractor desde el
+                Para instalar <span class="typewriter">SExtractor</span> desde el
                 <a href="https://github.com/astromatic/sextractor" target="_blank">
                     paquete fuente de GitHub
                 </a>,
@@ -96,7 +96,7 @@
             <pre><code>$ sex</code></pre>
 
             <p>
-                Esto devolverá información básica sobre SExtractor.
+                Esto devolverá información básica sobre <span class="typewriter">SExtractor</span>.
                 Para más detalles sobre la instalación se pueden consultar las siguientes fuentes:
             </p>
 
@@ -182,11 +182,12 @@
 
         </section>
 
+        <!-- Parámetros de entrada -->
         <section>
             <h2>Parámetros de entrada.</h2>
 
                 <p>
-                    SExtractor obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
+                    <span class="typewriter">SExtractor</span> obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
                 </p>
 
             <h3 class="hr-lines">Información de la imagen.</h3>
@@ -199,7 +200,7 @@
                 </li>
 
                 <li>
-                    <code>MAG_GAMMA</code>: Este parámetro se empleaba cuando SExtractor se aplicaba a placas fotográficas en donde esta es la pendiente de la función de respuesta de la emulsión utilizada en las placas en cuestión.
+                    <code>MAG_GAMMA</code>: Este parámetro se empleaba cuando <span class="typewriter">SExtractor</span> se aplicaba a placas fotográficas en donde esta es la pendiente de la función de respuesta de la emulsión utilizada en las placas en cuestión.
                 </li>
 
                 <li>
@@ -211,7 +212,7 @@
                 </li>
                 
                 <li>
-                    <code>PIXEL_SCALE</code>: Es la escala del pixel en arcsegundos por pixel, que se utiliza para convertir las coordenadas de los objetos en unidades de ángulo. Este es un parámetro importante para la clasificación estrella-galaxia, y que con suerte se puede obtener del encabezado de la imagen.
+                    <code>PIXEL_SCALE</code>: Es la escala del pixel en arcsegundos por pixel, que se utiliza para convertir las coordenadas de los objetos en unidades de ángulo, es decir, que tanto del cielo hay en un pixel. Este es un parámetro importante para la clasificación estrella-galaxia, y que con suerte se puede obtener del encabezado de la imagen.
                 </li>
 
                 <li>
@@ -219,17 +220,17 @@
                 </li>
 
                 <li>
-                    <code>SEEING_FWHM</code>: Representa el <b>Full Width at Half Maximum</b> expresado en segundos de arco. Este parámetro es importante para la clasificación estrella-galaxia, ya que se utiliza para determinar el tamaño de los objetos en la imagen y así poder clasificarlos correctamente.
+                    <code>SEEING_FWHM</code>: Representa el <b>Full Width at Half Maximum</b> expresado en segundos de arco. Este parámetro constituye una de las calibraciones iniciales del análisis, ya que proporciona a <span class="typewriter">SExtractor</span> una estimación del tamaño aparente de las fuentes puntuales en la imagen. Este valor es utilizado principalmente en la clasificación estrella-galaxia mediante el parámetro <code>CLASS_STAR</code>.
                     <br>
-
-                    Físicamente <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido a la turbulencia atmosférica. Si una estrella fuera un punto perfecto, la atmósfera la convierte en una mancha aproximandamente gaussiana. FWHM mide el ancho de esa mancha a la mitad de su intensidad máxima.
+                    <br>
+                    Físicamente el <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido principalmente a la turbulencia atmosférica. Si una estrella fuera una funente puntual perfecta, la atmósfera y la óptica del telescopio la transformarían en una distribución extendida de luz. Esta distrinución se le conoce como la función de dispersión puntal (<i>point spread function</i>, PSF), la cual describe cómo un punto luminoso ideal es registrado por el sistema de observación, en muchos casos la PSF puede aproximarse a una distribución gaussiana. El parámetro <code>FWHM</code> mide el ancho de esta distribución a la mitad de su intensidad máxima.
                 </li>
             </ul>
 
             <h3 class="hr-lines">Determinación del fondo (Background).</h3>
 
             <p>
-                En una imagen astronómica, el valor que se mide en un píxel es la suma de la luz de los objetos que nos interesan (estrellas, galaxias, etc.) y una señal de "fondo" que proviene del cielo. SExtractor crea un mapa de fondo que representa este valor en cualquier posición de la imagen, para poder restarlo y trabajar solo con el flujo de las fuentes.<br>
+                En una imagen astronómica, el valor que se mide en un píxel es la suma de la luz de los objetos que nos interesan (estrellas, galaxias, etc.) y una señal de "fondo" que proviene del cielo. <span class="typewriter">SExtractor</span> crea un mapa de fondo que representa este valor en cualquier posición de la imagen, para poder restarlo y trabajar solo con el flujo de las fuentes.<br>
             </p>
 
             <p>
@@ -238,11 +239,11 @@
 
             <ol>
                 <li>
-                    SExtractor divide la imagen en una cuadrícula de mallas, el tamaño de estas mallas se define con el parámetro <code>BACK_SIZE</code>. Para cada celda de esta cuadrícula, se analizan los píxeles que contiene de forma independiente.
+                    <span class="typewriter">SExtractor</span> divide la imagen en una cuadrícula de mallas, el tamaño de estas mallas se define con el parámetro <code>BACK_SIZE</code>. Para cada celda de esta cuadrícula, se analizan los píxeles que contiene de forma independiente.
                 </li>
 
                 <li>
-                    Para cada cuadrícula, SExtractor construye un histograma con los valores de los píxeles y aplica un proceso iterativo de recorte $\kappa\sigma$ (kappa-sigma clipping) para eliminar la luz de las fuentes.
+                    Para cada cuadrícula, <span class="typewriter">SExtractor</span> construye un histograma con los valores de los píxeles y aplica un proceso iterativo de recorte $\kappa\sigma$ (kappa-sigma clipping) para eliminar la luz de las fuentes.
 
                     <ul>
                         <li>
@@ -252,7 +253,7 @@
                 </li>
 
                 <li>
-                    Una vez que se tiene la distribución de píxeles "limpia", se estima la moda (el valor más frecuente). SExtractor utiliza una relación empírica para estimar la moda a partir de la mediana y la media de la distribución recortada.
+                    Una vez que se tiene la distribución de píxeles "limpia", se estima la moda (el valor más frecuente). <span class="typewriter">SExtractor</span> utiliza una relación empírica para estimar la moda a partir de la mediana y la media de la distribución recortada.
 
                     $$\text{Moda}= 2.5 \times \text{Mediana} - 1.5 \times \text{Media}$$
                 </li>
@@ -262,7 +263,7 @@
                 </li>
 
                 <li>
-                    Finalmente, SExtractor interpola los valores de la rejilla filtrada utilizando una <i>bicubic-spline</i> para generar un mapa de fondo continuo que tenga el mismo tamaño que la imagen original. Este mapa de fondo se puede restar de la imagen original para obtener una imagen con el fondo corregido.
+                    Finalmente, <span class="typewriter">SExtractor</span> interpola los valores de la rejilla filtrada utilizando una <i>bicubic-spline</i> para generar un mapa de fondo continuo que tenga el mismo tamaño que la imagen original. Este mapa de fondo se puede restar de la imagen original para obtener una imagen con el fondo corregido.
                 </li>
             </ol>
 
@@ -270,20 +271,122 @@
 
             <ul>
                 <li>
-                    <code>BACKPHOTO_TYPE</code>: Indica qué fondo utilizar cuando SExtractor calcula el flujo de un objeto. Puede tener valores de <code>GLOBAL</code> o <code>LOCAL</code>.
+                    <code>BACKPHOTO_TYPE</code>: Indica qué fondo utilizar cuando <span class="typewriter">SExtractor</span> calcula el flujo de un objeto. Puede tener valores de <code>GLOBAL</code> o <code>LOCAL</code>.
 
                     <ul>
                         <li>
-                            <code>GLOBAL</code>: SExtractor utiliza el mapa de fondo global para restar el fondo de la imagen. Este es el método por defecto y es adecuado para la mayoría de las imágenes, especialmente aquellas con un fondo uniforme.
+                            <code>GLOBAL</code>: <span class="typewriter">SExtractor</span> utiliza el mapa de fondo global para restar el fondo de la imagen. Este es el método por defecto y es adecuado para la mayoría de las imágenes, especialmente aquellas con un fondo uniforme.
                         </li>
 
                     
                         <li>
-                            <code>LOCAL</code>: SExtractor calcula un fondo local para cada objeto utilizando una corona alrededor del objeto. El tamaño de esta corona se define con el parámetro <code>BACKPHOTO_THICK</code>. Este método es útil para imágenes con un fondo no uniforme o con gradientes de fondo, ya que permite una estimación más precisa del fondo en las proximidades de cada objeto.
+                            <code>LOCAL</code>: <span class="typewriter">SExtractor</span> calcula un fondo local para cada objeto utilizando una corona alrededor del objeto. El tamaño de esta corona se define con el parámetro <code>BACKPHOTO_THICK</code>. Este método es útil para imágenes con un fondo no uniforme o con gradientes de fondo, ya que permite una estimación más precisa del fondo en las proximidades de cada objeto.
                         </li>
                     </ul>
                 </li>
             </ul>
+
+            <h3 class="hr-lines">Detección y separación de objetos.</h3>
+
+            <p>
+                <span class="typewriter">SExtractor</span> detecta objetos en la imagen comparando el valor de cada píxel con un umbral definido por el usuario. Este umbral se establece en términos de la desviación estándar del fondo, y se define con los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>. Los píxeles que superan este umbral se consideran parte de un objeto.
+            </p>
+
+            <ul>
+                <li>
+                    <code>DETECT_THRESH</code>: Define el umbral de detección en unidades de desviación estándar del ruido de fondo ($\sigma$). Por ejemplo, un valor de 1.5 significa que <span class="typewriter">SExtractor</span> considerará como parte de un objeto a todos los píxeles que estén a 1.5 veces la desviación estándar por encima del fondo. 
+                </li>
+            </ul>
+            <p>
+                Posteriormente a que <span class="typewriter">SExtractor</span> estima y sustrae el fondo de la imagen, calcula el ruido asociado al fondo, luego, compara la intencidad de cada píxel con el umbral seleccionado:
+            </p>
+
+                $$I_{pixel} > \text{BACKGROUND}+(\text{DETECT_TRESH})\sigma$$ 
+
+            <p>
+                Todos aquellos píxeles que superan el umbral son marcados como candidatos a pertenecer a un objeto. En <a href="#ref2">[2]</a> el autor menciona 3 requisitos para un objeto candidato:
+            </p>
+
+            <ol>
+                <li>Todos los píxeles esta por encima del <code>DETECT_THRESH</code>.</li>
+                <li>Todos estos píxeles son adyacentes entre sí (con esquinas o lados en común).</li>
+                <li>Hay más de un número mínimo de píxeles (especificado por el parámetro <code>DETECT_MINAREA</code>).</li>
+            </ol>
+
+            <ul>
+                <li>
+                    <code>ANALYSIS_THRESH</code>: Define un umbral de brillo que un píxel debe superar para ser considerado en las mediciones del objeto, como el cálculo de su forma (FWHM), brillo superficial, o flujo total. <span class="typewriter">SExtractor</span> identifica un objeto empleando el umbral de detección (<code>DETECT_THRESH</code>). Luego, para medir sus propiedades, utiliza todos los píxeles conectados que superen este segundo umbral (más bajo o igual) 
+                </li>
+
+                <li>
+                    <code>DETECT_MINAREA</code>: Este parámetro establece el número mínimo de píxeles conectados y contiguos que deben superar el umbral de detección para que <span class="typewriter">SExtractor</span> los considere objetos. Este parámetro actúa como un filtro de tamaño para eliminar detecciones espurias causadas por píxeles de ruido aislado
+                </li>
+            </ul>
+
+            <p>
+                El flujo de trabajo para esta parte podemos resumirla de la siguiente manera:
+            </p>
+
+            <ol>
+                <li>
+                    <b>Filtrado y umbralización:</b> <span class="typewriter">SExtractor</span> analiza los píxeles de la imagen y marca todos aquellos que superan el nivel establecido por <code>DETECT_THRESH</code>.
+                </li>
+
+                <li>
+                    <b>Agrupación:</b> Los píxeles marcados que están conectados entre sí (tocándose por los lados o las esquinas) se agrupan en "islas" o regiones candidatas a ser objetos.
+                </li>
+
+                <li>
+                    <b>Aplicación de <code>DETECT_MINAREA</code>:</b> <span class="typewriter">SExtractor</span> examina cada una de las "islas" y si el número total de píxeles que la componen es menor que el valor de <code>DETECT_MINAREA</code>, la isla es descartada como una detección espuria. 
+                </li>
+
+                <li>
+                    <b>Medición con <code>ANALYSIS_THRESH</code>:</b> Finalmente, para las islas que sobreviven al filtro de tamaño (aquellas que si son objetos), <span class="typewriter">SExtractor</span> realiza las mediciones. Para definir el área exacta sobre la cual medir el flujo, utiliza el segundo umbral <code>ANALYSIS_THRESH</code>.
+                </li>
+            </ol>
+
+            <h3 class="hr-lines"> Filtrado </h3>
+
+            <p>
+                Antes de hacer la umbralización de píxeles, se puede aplicar un filtro el cual, esencialmente, suaviza la imagen. Aplicar este filtro puede ayudar a detectar objetos débiles y extendidos. Hay cuatro tipos de filtros que se puede aplicar: Gaussiano, sombrero Mexicano (Mexican hat), sombrero de copa (tophat) y funcion de bloque de varios tamaños y normalizados. Dentro del directorio de <span class="typewriter">SExtractor</span> el archivo <code>README</code> explica estos tipos de filtrados de la siguiente manera:<a href="#ref2">[2]</a>   
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>default.conv</th>
+                        <th>pequeña función piramidal</th>
+                    </tr>
+                    <tr>
+                        <th>gauss*.conv</th>
+                        <th>conjunto de funciones gausianas, para FWHMs de <i>seeing</i> de entre 1.5 y 5 píxeles (ideal para detección de objetos débiles).</th>
+                    </tr>
+                    <tr>
+                        <th>tophat*.conv</th>
+                        <th>conjunto de funciones "top-hat". Se usan para detectar objetos extendidos, de bajo brillo superficial, con un umbral muy bajo.</th>
+                    </tr>
+                    <tr>
+                        <th>mexhat*.conv</th>
+                        <th>"wavelents", produciendo un filtrado de banda pasante de la imagen, ajustado para FWHMs con un <i>seeing</i> entre 1.5 y 5 píxeles. Es útil para campos estelares muy poblados, sin embargo, necesita un umbral muy alto</th>
+                    </tr>
+                    <tr>
+                        <th>block_3x3.conv</th>
+                        <th>una pequeña función de "bloque" (para imágenes rebinadas como las del estudio DENIS).</th>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                La forma en que estan nombrados estos archivos de filtrado normalmente parece tener la forma de <span class="typewriter">name_seeingFWHM_size.conv</span>
+            </p>
+
+            <h3 class="hr-lines">Deblending: separación en diferentes objetos</h3>
         </section>
 
         <!-- Uso de SExtractor-->
@@ -451,7 +554,15 @@
             <ol class="referencias">
                 
                 <li id="ref1">
-                    <i>Introduction — SExtractor 2.24.2 documentation.</i> (n.d.). https://sextractor.readthedocs.io/en/latest/Introduction.html
+                    <i>SExtractor User Manual — SExtractor 2.24.2 documentation.</i> (n.d.). https://sextractor.readthedocs.io/en/latest/index.html
+                </li>
+
+                <li id="ref2">
+                    <i>Holwerda, B. W. (2005). Source Extractor for dummies: Everything you wanted to know about Source Extractor and I was forced to find out.</i> Space Telescope Science Institute. https://arxiv.org/abs/astro-ph/0512139
+                </li>
+
+                <li id="ref3">
+                    Bertin, E., & Arnouts, S. (1996). SExtractor: Software for source extraction. <i>Astronomy And Astrophysics Supplement Series, 117</i>(2), 393-404. https://doi.org/10.1051/aas:1996164
                 </li>
             </ol>
         </section>

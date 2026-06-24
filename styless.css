@@ -437,3 +437,59 @@ sup a{
 sup a:hover{
     color: white;
 }
+
+.typewriter {
+    font-family: 'Courier New', Courier, monospace;
+    color: #e8d7ff;
+
+    letter-spacing: 1px;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+
+    margin: 30px 0;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background: rgba(255,255,255,0.04);
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* Encabezados */
+thead{
+    background: linear-gradient(
+        90deg,
+        #7B4DA3,
+        #9b6cc6
+    );
+}
+
+th{
+    padding: 18px;
+    text-align: left;
+    color: white;
+    font-size: 1rem;
+}
+
+/* Celdas */
+td{
+    padding: 16px;
+    color: var(--text-soft);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Filas alternadas */
+tbody tr:nth-child(even){
+    background: rgba(255,255,255,0.03);
+}
+
+/* Efecto hover */
+tbody tr:hover{
+    background: rgba(123,77,163,0.15);
+    transition: 0.3s;
+}

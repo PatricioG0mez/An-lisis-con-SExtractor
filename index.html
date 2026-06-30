@@ -223,7 +223,7 @@
                     <code>SEEING_FWHM</code>: Representa el <b>Full Width at Half Maximum</b> expresado en segundos de arco. Este parámetro constituye una de las calibraciones iniciales del análisis, ya que proporciona a <span class="typewriter">SExtractor</span> una estimación del tamaño aparente de las fuentes puntuales en la imagen. Este valor es utilizado principalmente en la clasificación estrella-galaxia mediante el parámetro <code>CLASS_STAR</code>.
                     <br>
                     <br>
-                    Físicamente el <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido principalmente a la turbulencia atmosférica. Si una estrella fuera una funente puntual perfecta, la atmósfera y la óptica del telescopio la transformarían en una distribución extendida de luz. Esta distrinución se le conoce como la función de dispersión puntal (<i>point spread function</i>, PSF), la cual describe cómo un punto luminoso ideal es registrado por el sistema de observación, en muchos casos la PSF puede aproximarse a una distribución gaussiana. El parámetro <code>FWHM</code> mide el ancho de esta distribución a la mitad de su intensidad máxima.
+                    Físicamente el <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido principalmente a la turbulencia atmosférica. Si una estrella fuera una funente puntual perfecta, la atmósfera y la óptica del telescopio la transformarían en una distribución extendida de luz. Esta distribución se le conoce como la función de dispersión puntal (<i>point spread function</i>, PSF), la cual describe cómo un punto luminoso ideal es registrado por el sistema de observación, en muchos casos la PSF puede aproximarse a una distribución gaussiana. El parámetro <code>FWHM</code> mide el ancho de esta distribución a la mitad de su intensidad máxima.
                 </li>
             </ul>
 
@@ -383,10 +383,175 @@
             </table>
             
             <p>
-                La forma en que estan nombrados estos archivos de filtrado normalmente parece tener la forma de <span class="typewriter">name_seeingFWHM_size.conv</span>
+                La forma en que estan nombrados los filtros normalmente parece tener la forma de <span class="typewriter">name_seeingFWHM_size.conv</span>
             </p>
 
             <h3 class="hr-lines">Deblending: separación en diferentes objetos</h3>
+
+            <p>
+                Con el método anterior para detectar objetos, se necesita hacer una separación de objetos vecinos que han sido extraídos como una sola fuente. <a href="#ref3">[3]</a>  
+            </p>
+
+            <p style="text-align: center;">
+                "<i>Se ha puesto gran cuidado en el diseño de la rutina de deblending para objetos fusionados. En muchas imágenes astronómicas, <span class="typewriter">SExtractor</span> debe tratar simultáneamente con objetos brillantes y extensos, como galaxias (que deben considerarse entidades individuales), y con pares o grupos de galaxias ópticamente débiles e interactuantes (que deben considerarse objetos separados). Tradicionalmente, este es un punto en el que muchos programas de extracción fallan, produciendo catálogos que contienen galaxias extendidas divididas en varias detecciones más pequeñas.</i>"<a href="#ref3">[3]</a>
+            </p>
+
+            <p>
+                El algoritmo de <i>deblending</i> de <span class="typewriter">SExtractor</span> se basa en una técnica de multiumbralización en la que se identifican diferentes picos de brillo dentro de una misma región detectada. Este proceso se controla mediante los parámetro <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code>. <a href="#ref3">[3]</a>
+            </p>
+
+            <p>Podemos describir el proceso del algoritmo de la siguiente manera:</p>
+
+            <ol>
+                <li>
+                    <b>Detección inicial:</b> Se identifica el conjunto de píxeles conectados que superen el umbral de detección dado por <code>DETECT_THRESH</code>.
+                </li>
+                <li>
+                    <b>Análisis de la estructura:</b> <span class="typewriter">SExtractor</span> analiza la estructura interna, en lugar de asumir que toda la "isla" es un solo objeto.
+                </li>
+                <li>
+                    <b>Aplicación de sub-umbrales:</b> Se aplican una serie de umbrales de brillo decrecientes, comenzando desde el valor más alto dentro de la isla y descendiendo hasta el nivel definido por <code>DETECT_THRESH</code>. El número de sub-umbrales se define con el parámetro <code>DEBLEND_NTHRESH</code>, un valor típico para este parámetro suele ser de 32
+                </li>
+                <li>
+                    <b>Construcción del árbol de mezcla:</b> En cada sub-umbral se identifican grupos de píxeles que quedan aislados. Cuando el umbral desciende, estos grupos se conectan lo que forma una estructura jerárquica que se asemeja a un árbol o un dendograma (ver la imágen siguiente). Este proceso muestra que picos de brillo están anidados dentro de otros más brillantes.
+                </li>
+                <li>
+                    <b>Evaluación del contraste:</b> Finalmente, se analiza el "árbol de mezcla" para decidir cuándo un pico de brillo es suficientemente significativo como para ser considerado un objeto separado. Esta decisión se basa en el parámetro <code>DEBLEND_MINCONT</code>
+                </li>
+            </ol>
+
+            <p>Entonces, los dos parámetros escenciales son <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code></p>
+
+            <ul>
+                <li>
+                    <code>DEBLEND_NTHRESH</code>: Define los niveles de brillo que se usan para construir el árbol, por ejemplo, <code>DEBLEND_NTHRESH=32</code> significa que se va a analizar el objeto con 32 niveles de intensidad distintos.
+                </li>
+                <li>
+                    <code>DEBLEND_MINCONT</code>: Básicamente controla que tan importante debe ser una rama para ser considerada un objeto independiente. Matemáticamente: 
+
+                    $$\frac{F_{\text{rama}}}{F_{\text{total}}}>\alpha_c$$
+
+                    En donde $F_{\text{rama}}$ es el flujo de la rama, $F_{\text{total}}$ es el flujo del objeto completo y $\alpha_c$ es el parámetro <code>DEBLEND_MINCONT</code>. Por ejemplo, supongamos que tenemos uun flujo total de $F_{\text{total}}=10000$ y una rama tiene $F_{\text{rama}}=3000$, entonces:
+
+                    $$\frac{3000}{10000}=0.3$$
+
+                    Si <code>DEBLEND_MINCONT=0.005</code>, como $0.3>0.005$ la rama se considera un objeto independiente.
+                </li>
+            </ul>
+
+            <img src="IMAGENES/deblending.jpeg" alt="Gráfico de árbol de mezcla para deblending.">
+
+            <p>
+                Cuando <span class="typewriter">SExtractor</span> detecta una fuente mediante el umbral principal determinado por el parámetro <code>DETECT_THRESH</code>, todo lo que está por encima de este umbral se considera <i>inicialmente</i> un único objeto, hasta ahora <span class="typewriter">SExtractor</span> no sabe todavía si son varios objetos. En la figura anterior, esto corresponde a toda la región que vemos sombreada.
+            </p>
+
+            <p>
+                Las líneas horizontales punteadas representan los niveles de brillo que <span class="typewriter">SExtractor</span> analiza, estos niveles están controlados por <code>DEBLEND_NTHRESH</code>. <span class="typewriter">SExtractor</span> comienza analizando los niveles más altos de intensidad, en la figura podemos ver pequeños máximos, de los cuales cada uno puede ser potencialmente una fuente independiente. 
+            </p>
+
+            <p>
+                En la figura tenemos una región etiquetada como <b>A</b> que posee tres picos, primero aparecen tres máximos separados. Más abajo, estos máximos se unen y finalmente toda la estructura forma una única región. Para la región <b>B</b> que contiene dos máximos de nuevo <span class="typewriter">SExtractor</span> evalúa si debe separarlos o no. Cuando dos ramas se unen <span class="typewriter">SExtractor</span> calcula el flujo de cada una, que es el mismo ejemplo que se menciono antes.
+            </p>
+
+            <p>
+                En la siguiente imagen, tomada de la referencia <a href="#ref4">[4]</a>, podemos ver la salida obtenida para dos valores distintos de <code>DEBLEND_MINCONT</code>
+            </p>
+
+            <img src="IMAGENES/deblend_mincont.jpeg" alt="Comparación de valores del parámetro DEBLEND_MINCONT">
+
+            <h3 class="hr-lines">Cleaning</h3>
+
+            <p>
+                Si hay una estrella o galaxia muy brillante, sus "alas" de luz (el halo o perfil de la PSF) pueden extenderse y elevar el nivel de fondo en una región grande de la imagen. Esto puede ocasionar que pequeños bultos de ruido superen el umbral de detección, creando detecciones falsas. EL proceso de Cleaning se diseño para detectar y eliminar estos "fantasmas" creados por otras fuentes más brillantes. El proceso con el que funciona se puede desglozar de la siguiente manera: <a href="#ref2">[2]</a><a href="#ref4">[4]</a><a href="#ref5">[5]</a>
+            </p>
+
+            <ol>
+                <li>Tras la detección inicial, el algoritmo identifica los objetos que son suficientemente brillantes como para contaminar el entorno.</li>
+
+                <li>
+                    Para cada uno de estos objetos brillantes capaces de contaminar el entorno, <span class="typewriter">SExtractor</span> modela el perfil de luz, que según la documentación <a href="#ref2">[2]</a><a href="#ref4">[4]</a><a href="#ref5">[5]</a> para esta estimación se utiliza un <b>perfil de Moffat</b>
+
+                    $$\frac{I(r)}{I(\theta)} =\frac{1}{(1 + k \cdot r²)^\beta} $$
+
+                    En donde $I(\theta)$ es el brillo central, $r$ es el radio, y $\beta$ es un parámetro que controla el ensanchamiento de las alas del perfil.
+                </li>
+                <li>
+                    El algoritmo calcula la contribución de la luz de las alas del perfil de Moffat en la ubicación de otros objetos cercanos y la sustrae de la imagen de detección. Posteriormente, para los objetos candidatos determina si seguiría siendo detectado sin la luz de su vecino brillante.<a href="#ref4">[4]</a><a href="#ref5">[5]</a>
+                </li>
+            </ol>
+
+            <p>
+                Parámetros para cleaning:
+            </p>
+
+            <ul>
+                <li>
+                    <code>CLEAN</code>: (Y/N), determina si se activa o desactiva todo el proceso.
+                </li>
+
+                <li>
+                    <code>CLEAN_PARAM</code>: Ajusta la agresividad del proceso. Controla directamente el valor de $\beta$ en el perfil de Moffat.
+
+                    <li>
+                        Valores más bajos hacen que las alas del perfin de Moffat sean más brillantes, se eliminan más objetos (pudiendo eliminar algunos reales).
+                    </li>
+
+                    <li>
+                        Valores más altos producen un cleaning más conservador.
+                    </li>
+                </li>
+            </ul>
+        </section>
+
+        <!-- PSF -->
+        <section>
+            <h2>Point Spread Function (PSF, función de dispersión de punto)</h2>
+
+            <p>
+                Esta función describe cómo un sistema óptico-detector responde a una fuente puntual de luz. En términos sencillos, una estrella (que idealmente debería verse como un punto matemático) aparece en una imagen astronómica como una mancha extendida con un perfil de brillo característico, debido a los efectos de la atmósfera, las imperfecciones del telescopio, la difracción y las características del detector. Esa mancha es la PSF del sistema.
+            </p>
+
+            <p>
+                Es un elemento muy importante debido a que determina el tamaño aparente de las estrellas, influye en la separación de estrellas cercanas y permite distinguir fuentes puntuales de objetos extendidos. En observaciones desde la tierra, la forma que tiene la PSF está dominada por el seeing atmosférico, por ello, el parámetro <code>SEEING_FWHM</code> de <span class="typewriter">SExtractor</span> es un elemento importante.
+            </p>
+
+            <h3 class="hr-lines">Modelos analíticos de la PSF</h3>
+
+            <p>
+                Usualmente se usan varios modelos paramétricos para describir la PSF, estos suelen ser una <i>Gaussiana</i>, o una <i>Lorentziana modificada</i>, o una función de <i>Moffat</i>, u ocasionalmente la suma de una Gaussiana y una Lorentziana. De forma más simple, estas funciones son: <a href="#ref6">[6]</a>
+            </p>
+
+            <ol>
+                <li>
+                    <b>Gaussiana</b><br>
+
+                    Este es el modelo más simple, con el perfil de brillo en función del radio $r$ igual a:
+
+                    $$G(r)=e^{-r^2/2\alpha^2}$$ 
+                </li>
+
+                <li>
+                    <b>Moffat</b><br>
+
+                    Fue propuesto por Moffat (1969), este modelo es más realista para perfiles limitados por el seeing:
+
+                    $$M(r)=\frac{1}{(1+r^2/\alpha^2)^\beta} $$
+                </li>
+
+                <li>
+                    <b>Lorentziana modificada</b><br>
+
+                    Este modelo es poco usado aun que específico para algunos casos. 
+
+                    $$L(r)=\frac{1}{1+(r^2/\alpha2)^\beta}$$
+                </li>
+            </ol>
+
+            <h3 class="hr-lines">PSF en <span class="typewriter">SExtractor</span></h3>
+
+            <p>
+                <span class="typewriter">SExtractor</span> por sí solo no modela la PSF, este mide objetos usando isófotas (esto es, regiones por encima de un umbral) y aperturas fijas. Para incorporar la PSF en SExtractor se usa el paquete complementario <span class="typewriter">PSFEx</span>
+            </p>
         </section>
 
         <!-- Uso de SExtractor-->
@@ -563,6 +728,22 @@
 
                 <li id="ref3">
                     Bertin, E., & Arnouts, S. (1996). SExtractor: Software for source extraction. <i>Astronomy And Astrophysics Supplement Series, 117</i>(2), 393-404. https://doi.org/10.1051/aas:1996164
+                </li>
+
+                <li id="ref4">
+                    Escudero, C. G. (s. f.). <.>Astronomía extragaláctica: Source Extractor.</i> FCAGLP.
+                </li>
+
+                <li id="ref5">
+                    Marcatelli, C. (2018). <i>Astrometric and photometric characterization of the PRISMA fish-eye cameras for meteor observations</i> [Tesis de maestría, Università di Bologna]. AMS Laurea. https://amslaurea.unibo.it/id/eprint/15801/1/Camilla_Marcatelli.pdf
+                </li>
+
+                <li id="ref6">
+                    Da Costa, G. S. (1992). Basic photometry techniques. En S. B. Howell (Ed.), <i>Astronomical CCD observing and reduction techniques</i> (Vol. 23, pp. 90-104). Astronomical Society of the Pacific. https://www.aspbooks.org/publications/23/90.pdf
+                </li>
+
+                <li id="ref7">
+                    <i>HST Tutorial videos. </i>(n.d.). STScI. https://www.stsci.edu/hst/documentation/hst-tutorial-videos
                 </li>
             </ol>
         </section>

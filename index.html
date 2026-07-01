@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis con SExtractor</title>
+    <title>Análisis con SExtractor + PSFEx</title>
+    <link rel="icon" type="image/png" href="telescopio.png">
 
     <!-- Archivo CSS -->
     <link rel="stylesheet" href="styless.css">
@@ -28,18 +29,19 @@
 </head>
 
 <body>
+    <canvas id="stars"></canvas>
 
     <main>
 
 
         <section class="hero">
-            <h1>Análisis con SExtractor</h1>
+            <h1>Análisis con <br> SExtractor + PSFEx</h1>
 
             <p>
                 <span class="typewriter">SExtractor</span> es una herramienta para el análisis de imágenes astronómicas,
                 crea un catálogo de objetos a partir de estas imágenes. Este software
                 puede procesar imágenes de gran tamaño y manejar una gran variedad
-                de magnitudes de objetos. 
+                de magnitudes de objetos. Por su parte, <span class="typewriter">PSFEx</span> es un software que permite modelar la función de dispersión puntual (PSF) a partir de una imagen astronómica. La PSF describe cómo un sistema óptico-detector responde a una fuente puntual de luz, como una estrella. La combinación de ambos programas permite realizar un análisis más completo y preciso de las imágenes astronómicas.
             </p>
         </section>
 
@@ -301,7 +303,7 @@
                 Posteriormente a que <span class="typewriter">SExtractor</span> estima y sustrae el fondo de la imagen, calcula el ruido asociado al fondo, luego, compara la intencidad de cada píxel con el umbral seleccionado:
             </p>
 
-                $$I_{pixel} > \text{BACKGROUND}+(\text{DETECT_TRESH})\sigma$$ 
+                $$I_{pixel} > \text{BACKGROUND}+(\text{DETECT_THRESH})\sigma$$ 
 
             <p>
                 Todos aquellos píxeles que superan el umbral son marcados como candidatos a pertenecer a un objeto. En <a href="#ref2">[2]</a> el autor menciona 3 requisitos para un objeto candidato:
@@ -543,14 +545,12 @@
 
                     Este modelo es poco usado aun que específico para algunos casos. 
 
-                    $$L(r)=\frac{1}{1+(r^2/\alpha2)^\beta}$$
+                    $$L(r)=\frac{1}{1+(r^2/\alpha^2)^\beta}$$
                 </li>
             </ol>
 
-            <h3 class="hr-lines">PSF en <span class="typewriter">SExtractor</span></h3>
-
             <p>
-                <span class="typewriter">SExtractor</span> por sí solo no modela la PSF, este mide objetos usando isófotas (esto es, regiones por encima de un umbral) y aperturas fijas. Para incorporar la PSF en SExtractor se usa el paquete complementario <span class="typewriter">PSFEx</span>
+                Más adelante en este análisis entraremos más en detalle en el uso de la PSF con el sofware de <span class="typewriter">PSFEx</span>, explicando desde como instalarlo, hasta como generar un modelo de PSF y como usarlo para obtener parámetros más precisos de los objetos detectados.
             </p>
         </section>
 
@@ -750,6 +750,7 @@
 
     </main>
 
+    <script src="stars.js"></script>
 </body>
 
 </html>

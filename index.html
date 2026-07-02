@@ -62,9 +62,10 @@
         </section>
 
 <!-- Instalación -->
-        <section>
 
-            <h2>Instalación</h2>
+        <h2>Instalación</h2>
+
+        <section>
 
             <p>
                 Para instalar <span class="typewriter">SExtractor</span> desde el
@@ -147,9 +148,10 @@
         </section>
 
         <!-- Archivos principales -->
-        <section>
+        
+        <h2>Archivos principales de configuración</h2>
 
-            <h2>Archivos principales de configuración</h2>
+        <section>
 
             <ul>
 
@@ -185,8 +187,10 @@
         </section>
 
         <!-- Parámetros de entrada -->
+
+        <h2>Parámetros de entrada.</h2>
+
         <section>
-            <h2>Parámetros de entrada.</h2>
 
                 <p>
                     <span class="typewriter">SExtractor</span> obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
@@ -506,8 +510,9 @@
         </section>
 
         <!-- PSF -->
+        <h2>Point Spread Function (PSF, función de dispersión de punto)</h2>
+
         <section>
-            <h2>Point Spread Function (PSF, función de dispersión de punto)</h2>
 
             <p>
                 Esta función describe cómo un sistema óptico-detector responde a una fuente puntual de luz. En términos sencillos, una estrella (que idealmente debería verse como un punto matemático) aparece en una imagen astronómica como una mancha extendida con un perfil de brillo característico, debido a los efectos de la atmósfera, las imperfecciones del telescopio, la difracción y las características del detector. Esa mancha es la PSF del sistema.
@@ -555,63 +560,76 @@
         </section>
 
         <!-- Uso de SExtractor-->
+
+        <h2>Uso de SExtractor</h2>
         <section>
-            <h2>Uso de SExtractor</h2>
-
-            <h3 class="hr-lines">Determinación del fondo (Background)</h3>
-
-            <p> 
-                Determinar el fondo de nuestra imagen es una parte fundamental en el proceso del análisis, ya que SExtractor puede tomar como fondo una parte del flujo de luz de algunos objetos. Para empezar, en nuestro archivo <code>default.sex</code> en el parámetro <code>CHECKIMAGE_TYPE</code> vamos a poner <code>BACKGROUND</code> en el parámetro <code>CHECKIMAGE_NAME</code>: <code>fondo.fits</code>, SExtractor nos devolvera una imagen del fondo que podemos visualizar en DS9.
-            </p>
-
-            <img src="IMAGENES/fondo.jpeg" alt="Imagen del fondo obtenida con SExtractor">
-
             <p>
-                Podemos ver claramente "manchas" que, observando nuestra imagen original, corresponden a ambas galaxias gigantes en el centro, esto significa que SExtractor esta confundiendo la luz de nuestros objetos con variaciones del cielo. Para corregir esto, en nuestro archivo principal <code>default.sex</code> debemos cambiar el parámetro <code>BACK_SIZE</code> el cual corresponde al tamaño de la malla que SExtractor utiliza para estimar el fondo, por lo que si aumentamos este valor, SExtractor tomará un área más grande para estimar el fondo y así evitará tomar la luz de nuestros objetos como parte del fondo. En este caso, el valor por defecto es 64, por lo que lo cambiaremos a 128 y volveremos a ejecutar SExtractor para obtener una nueva imagen del fondo. Algo que debemos tener el cuenta es que, como menciona el manual, un tamaño de malla demasiado pequeña, la estimación del fondo puede incluir parcialmente la luz de otros objetos. 
-            </p>
-
-            <img src="IMAGENES/fondo2.jpeg" alt="Imagen del fondo con BACK_SIZE=128">
-
-            <p>
-                Con este nuevo valor para el tamaño de la malla, podemos ver que algunas manchas han desaparecido, sin embargo, todavía podemos ver que aun se ven las manchas para las galaxias centrales.
+                Ahora que se han explicado los parámetros del archivo principal de configuración <code>default.sex</code>, podemos empezar a usar <span class="typewriter">SExtractor</span> siguiendo los pasos mencionados al principio. Para empezar, creamos un directorio en donde guardaremos nuestra imagen y los archivos de configuración principales mencionados anteriormente. En este caso, el directorio tendra una carpeta para los aarchivos <span class="typewriter">default</span>, para la imagen y otra para las corridas que hagamos en <span class="typewriter">SExtractor</span>, además de tener un excel con todos los cambios que se haga a cada parámetro, todo lo anterior es opcional pero ayuda a mantener un orden en el análisis.
             </p>
 
             <p>
-                Para empezar a utlizar SExtractor, primero debemos colocar los parámetros que queremos obtener, para ello editamos el archivo <code>default.param</code> en algun editor de texto y colocamos los parámetros, o podemos crear el archivo desde la terminal y ahí mismo añadir los parámetros, haremos este último método, primero en nuestra terminal nos ubicamos en el directorio donde se encuentra nuestra imagen y los archivos <code>default</code> (sin el archivo <code>default.param</code>), luego ejecutamos el siguiente comando:
-            
-            </p>
-                
-            <pre><code>$ nano default.param</code></pre>
-
-            <img src="IMAGENES/4.jpeg" alt="editor de texto nano">
-
-            <p>
-                En este caso añadiremos los parámetros <code>X_IMAGE</code>, <code>Y_IMAGE</code> y <code>MAG_AUTO</code>, que corresponden a la posición del objeto en píxeles y la cantidad de luz total que emite el objeto respectivamente, luego guardamos el archivo con <code>Ctrl + O + Enter</code> y salimos del editor con <code>Ctrl + X</code>.
+                Antes de determinar el background de nuestra imagen, debemos que los parámetros sobre la información de la imagen sean correctos, esto es como si fueramos a hacer un experimento, antes de empezar con las mediciones debemos asegurarnos que las herramientas que vamos a emplear esten calibradas y funcionando correctamente. Para ello, debemos leer el encabezado de nuestra imagen en este caso se usó el software de <a href="https://sites.google.com/cfa.harvard.edu/saoimageds9" target="_blank"><span class="typewriter">SAOImageDS9</span></a> (también se puede leer el encabezado con ayuda de python). 
             </p>
 
+            <img src="IMAGENES/header.jpeg" alt="Encabezado de la imagen mostrado con SAO">
+
             <p>
-                Ahora estamos listos para ejecutar SExtractor, para ello escribimos el siguiente comando en la terminal: 
+                Del encabezado podemos obtener algo de información que nos es útil, lo primero es notar que nuestra imagen proviene del <b>DESI Legacy Survey</b> que son un conjunto de proyectos astronómicos que fueron diseñados para capturar imágenes profundas de una gran región del cielo extragaláctico. <a href="#ref8">[8]</a>
             </p>
 
-            <pre><code>$ sex IMAGEN.fits</code></pre>
+            <b>Información básica de la imagen</b>
+            <ul>
+                <li>
+                    <code>NAXIS1/NAXIS2=3600 x 3600</code>: La imagen es de 3600 x 3600 píxeles
+                </li>
+                <li>
+                    Imagen tipo <i>coadd</i> (imagen combinada/apilada de múltiples exposiciones).
+                </li>
+            </ul>
 
             <p>
-                Esto ejecutará SExtractor con los parámetros definidos en el archivo
-                <code>default.param</code> y generará un catálogo de salida con los resultados con el nombre que viene definido en el archivo <code>default.sex</code>, en este caso no se editó el nombre por lo que se utilizará el nombre por defecto <code>test.cat</code>.
+                Además, la versión del pipeline que se registró es <code>LEGPIPEV=DR9.6.7</code>
             </p>
 
-            <img src="IMAGENES/5.jpeg" alt="Ejecución de SExtractor">
+            <b>Instrumento y observación</b>
+
+            <ul>
+                <li>
+                    <code>TELESCOP=CTIO 4.0-m telescope</code> (Blanco telescope en Cerro Tololo, Chile)
+                </li>
+                <li>
+                    <code>INSTRUME=DECam</code> (Dark Energy Camera)
+                </li>
+            </ul>
 
             <p>
-                Podemos ver que detecto 6431 objetos y tomó 4712, ahora podemos abrir el catálogo de salida para ver los resultados, para ello escribimos el siguiente comando en la terminal:
+                Finalmente, los parámetros que podemos obtener del header para configurar en nuestro archivo <code>default.sex</code> son los siguientes:
             </p>
 
-            <pre><code>$ cat test.cat</code></pre>
+            <ul>
+                <li>
+                    <code>MAG_ZEROPOINT 22.5</code>
+                </li>
 
-            <img src="IMAGENES/6.jpeg" alt="Catálogo de salida">
+                <li>
+                    <code>
+                        CD1_1 = -7.27777777777778E-05  (deg/pix)
+
+                        CD2_2 =  7.27777777777778E-05  (deg/pix)
+                    </code>
+
+                    Esto nos da la escala de placa (pixel scale), convertido a arcsec/pixel:
+
+                    $$7.27777778\times10^{-5}\times3600=0.262\ \text{arcsec/pix}$$
+                </li>
+            </ul>
 
             <p>
-                En el encabezado de nuestro cátalogo tenemos los parámetros que definimos con el número de columna que corresponde a cada uno.
+                Además, investigando un poco encontramos que un valor típico <code>SEEING_FWHM</code> publicado por el DESI Legacy Survey ronda entre 1.0-1.3 arcsec, por lo que se tomaremos un valor de 1.2 arcsec como punto de partida y refinarlo posteriormente con parámetros que <span class="typewriter">SExtractor</span> nos proporciona. Por otra parte, para elegir nuestro filtro de convolución, tomamos nuestros valor de <code>SEEING_FWHM</code> y lo convertimos a píxeles:
+
+                $$\text{FWHM}_{\text{pxls}}=\frac{1.2}{0.262}=4.5$$
+
+                Por lo que usaremos el filtro <code>gauss_4.0_7x7.conv</code>.
             </p>
         </section>
         
@@ -744,6 +762,10 @@
 
                 <li id="ref7">
                     <i>HST Tutorial videos. </i>(n.d.). STScI. https://www.stsci.edu/hst/documentation/hst-tutorial-videos
+                </li>
+
+                <li id="ref8">
+                    Dey, A., Schlegel, D. J., Lang, D., Blum, R., Burleigh, K., Fan, X., Findlay, J. R., Finkbeiner, D., Herrera, D., Juneau, S., Landriau, M., Levi, M., McGreer, I., Meisner, A., Myers, A. D., Moustakas, J., Nugent, P., Patej, A., Schlafly, E. F., . . . Zhou, Z. (2019). Overview of the DESI legacy imaging surveys. <i>The Astronomical Journal</i>, 157, Artículo 168. https://doi.org/10.3847/1538-3881/ab089d
                 </li>
             </ol>
         </section>

@@ -58,13 +58,14 @@ body::before{
     pointer-events: none;
 }
 
-/* Contenedor */
+/* Contenedor 
 main{
     max-width: 1100px;
     margin: auto;
     position: relative;
     z-index: 2;
 }
+*/
 
 /* Hero principal */
 section{
@@ -578,3 +579,302 @@ tbody tr:hover{
     z-index: -1; /* Detrás del contenido */
     pointer-events: none;
 }
+
+/*==================================
+SIDEBAR
+==================================*/
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:290px;
+
+    height:100vh;
+
+    overflow-y:auto;
+
+    background:#101623;
+
+    border-right:1px solid rgba(123,77,163,.35);
+
+    padding:25px;
+
+    z-index:1000;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+    color:white;
+
+    font-size:1.6rem;
+
+}
+
+/*=========================
+CONTENIDO
+==========================*/
+
+main{
+
+    margin-left:320px;
+
+    max-width:1100px;
+
+}
+
+/*=========================
+MENU
+==========================*/
+
+.menu{
+
+    list-style:none;
+
+}
+
+.menu>li{
+
+    margin-bottom:15px;
+
+}
+
+.menu a,
+.menu button{
+
+    display:block;
+
+    width:100%;
+
+    padding:12px 15px;
+
+    border-radius:8px;
+
+    background:none;
+    border:none;
+
+    font:inherit;
+
+    color:#d3c5ea;
+
+    text-align:left;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.menu a:hover,
+.menu button:hover{
+
+    background:rgba(123,77,163,.20);
+
+    color:white;
+
+}
+
+/*=========================
+SUBMENU
+==========================*/
+
+.submenu{
+
+    list-style:none;
+
+    margin-top:8px;
+
+    margin-left:18px;
+
+    display:none;
+
+}
+
+/*
+.menu li:hover>.submenu{
+
+    display:block;
+
+}
+
+*/
+
+.submenu a,
+.submenu button{
+
+    display:block;
+
+    width:100%;
+
+    padding:8px 12px;
+
+    background:none;
+
+    border:none;
+
+    font:inherit;
+
+    color:#d3c5ea;
+
+    text-align:left;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    border-radius:6px;
+
+    transition:.25s;
+
+}
+
+.submenu a:hover,
+.submenu button:hover{
+
+    background:rgba(123,77,163,.18);
+
+}
+
+/*==================================
+SUBSUBMENU
+==================================*/
+
+.subsubmenu{
+
+    list-style:none;
+
+    margin-top:8px;
+
+    margin-left:18px;
+
+    padding-left:15px;
+
+    border-left:2px solid rgba(123,77,163,.25);
+
+    display:none;
+
+}
+
+/* Se despliega al pasar sobre el elemento del submenu 
+
+.submenu li:hover>.subsubmenu{
+
+    display:block;
+
+}
+
+
+/* Enlaces del tercer nivel */
+
+.subsubmenu a{
+
+    display:block;
+
+    padding:6px 12px;
+
+    margin:4px 0;
+
+    border-radius:6px;
+
+    color:#bdb7d8;
+
+    text-decoration:none;
+
+    font-size:.9rem;
+
+    transition:.2s;
+
+}
+
+.subsubmenu a:hover{
+
+    background:rgba(123,77,163,.15);
+
+    color:white;
+
+    padding-left:18px;
+
+}
+
+.submenu,
+.subsubmenu{
+
+    display:none;
+
+    list-style:none;
+
+    margin-left:15px;
+
+}
+
+.submenu.open,
+.subsubmenu.open{
+
+    display:block;
+
+}
+
+/* BOTONES */
+
+.menu-btn,
+.submenu-btn{
+
+    width:100%;
+
+    background:none;
+
+    border:none;
+
+    font:inherit;
+
+    color:#bdb7d8;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    transition:.25s;
+
+}
+
+.menu-btn:hover,
+.submenu-btn:hover{
+
+    background:rgba(123,77,163,.20);
+
+}
+
+.menu-btn::after,
+.submenu-btn::after{
+
+    content:"▸";
+
+    float:right;
+
+    color:#A679D2;
+
+    transition:.3s;
+
+}
+
+.menu-btn.active::after,
+.submenu-btn.active::after{
+
+    transform:rotate(90deg);
+
+}
+

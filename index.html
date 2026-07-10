@@ -31,10 +31,59 @@
 <body>
     <canvas id="stars"></canvas>
 
+    <nav class="sidebar">
+
+        <h2 class="logo">
+            🔭 SExtractor + PSFEx
+        </h2>
+
+
+        <ul class="menu">
+
+            <li>
+                <a href="#inicio">Inicio</a>
+            </li>
+            <li>
+                <button class="typewriter menu-btn">SExtractor</button>
+
+                <ul class="submenu">
+
+                    <li><a href="#instalacion sex">Instalación de <span class="typewriter">SExtractor</span></a></li>
+
+                    <li><a href="#como trabaja">¿Cómo trabaja <span class="typewriter">SExtractor</span>?</a></li>
+
+                    <li><a href="#archivos principales">Archivos principales de configuración</a></li>
+
+                    <li>
+                        <button class="submenu-btn">Parámetros de entrada</button>
+
+                        <ul class="subsubmenu">
+
+                            <li><a href="#infoimagen">Información de la imagen</a></li>
+
+                            <li><a href="#background">Determinación del fondo (background)</a></li>
+
+                            <li><a href="#umbral">Umbralización</a></li>
+
+                            <li><a href="#filtro">Filtrado</a></li>
+
+                            <li><a href="#deblending">Deblending</a></li>
+
+                            <li><a href="#clean">Cleaning</a></li>
+
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+
+    </nav>
+
     <main>
 
 
-        <section class="hero">
+        <section id="inicio" class="hero">
             <h1>Análisis con <br> SExtractor + PSFEx</h1>
 
             <p>
@@ -45,32 +94,9 @@
             </p>
         </section>
 
-        <section>
-            <p>
-                En general, para hacer uso de <span class="typewriter">SExtractor</span>, se siguien los siguientes pasos:
-            </p>
-
-            
-            <ol>
-                <li>Identificar y medir el nivel de fondo (Background).</li> 
-                <li>Aplicar un umbral a la imagen respecto al fondo.</li>
-                <li>Localizar y separar fuentes que aparecen por encima del umbral.</li>
-                <li>Producir un catálogo de fuentes y sus propiedades medidas.</li>
-            </ol>
-
-            <figure class="figura">
-                <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
-
-                <figcaption>
-                    <strong>Figura 1:</strong> Flujo de trabajo de <span class="typewriter"> SExtractor</span>, las flechas discontinuas representan entradas opcionales (imagen tomada de <a href="#ref1">[1]</a>).
-                </figcaption>
-            </figure>
-            
-        </section>
-
 <!-- Instalación -->
 
-        <h2>Instalación</h2>
+        <h2 id="instalacion sex">Instalación de <span class="typewriter">SExtractor</span></h2>
 
         <section>
 
@@ -126,7 +152,28 @@
 
         </section>
 
-        <section>
+        <h2>¿Cómo trabaja <span class="typewriter">SExtractor</span></h2>
+
+        <section id="como trabaja">
+            <p>
+                En general, para hacer uso de <span class="typewriter">SExtractor</span>, se siguien los siguientes pasos:
+            </p>
+
+            
+            <ol>
+                <li>Identificar y medir el nivel de fondo (Background).</li> 
+                <li>Aplicar un umbral a la imagen respecto al fondo.</li>
+                <li>Localizar y separar fuentes que aparecen por encima del umbral.</li>
+                <li>Producir un catálogo de fuentes y sus propiedades medidas.</li>
+            </ol>
+
+            <figure class="figura">
+                <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
+
+                <figcaption>
+                    <strong>Figura 1:</strong> Flujo de trabajo de <span class="typewriter"> SExtractor</span>, las flechas discontinuas representan entradas opcionales (imagen tomada de <a href="#ref1">[1]</a>).
+                </figcaption>
+            </figure>
 
             <p>
                 Para usar SExtractor se necesita una imagen en formato FITS.
@@ -162,12 +209,11 @@
                 </figcaption>
             </figure>
             
-
         </section>
 
         <!-- Archivos principales -->
         
-        <h2>Archivos principales de configuración</h2>
+        <h2 id="archivos principales">Archivos principales de configuración</h2>
 
         <section>
 
@@ -224,13 +270,13 @@
 
         <h2>Parámetros de entrada.</h2>
 
-        <section>
+        <section id="parametros de entrada">
 
                 <p>
                     <span class="typewriter">SExtractor</span> obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
                 </p>
 
-            <h3 class="hr-lines">Información de la imagen.</h3>
+            <h3 id="infoimagen" class="hr-lines">Información de la imagen.</h3>
 
             <ul>
                 <li>
@@ -267,7 +313,7 @@
                 </li>
             </ul>
 
-            <h3 class="hr-lines">Determinación del fondo (Background).</h3>
+            <h3 id="background" class="hr-lines">Determinación del fondo (Background).</h3>
 
             <p>
                 En una imagen astronómica, el valor que se mide en un píxel es la suma de la luz de los objetos que nos interesan (estrellas, galaxias, etc.) y una señal de "fondo" que proviene del cielo. <span class="typewriter">SExtractor</span> crea un mapa de fondo que representa este valor en cualquier posición de la imagen, para poder restarlo y trabajar solo con el flujo de las fuentes.<br>
@@ -326,7 +372,7 @@
                 </li>
             </ul>
 
-            <h3 class="hr-lines">Detección y separación de objetos.</h3>
+            <h3 id="umbral" class="hr-lines">Umbralización.</h3>
 
             <p>
                 <span class="typewriter">SExtractor</span> detecta objetos en la imagen comparando el valor de cada píxel con un umbral definido por el usuario. Este umbral se establece en términos de la desviación estándar del fondo, y se define con los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>. Los píxeles que superan este umbral se consideran parte de un objeto.
@@ -385,7 +431,7 @@
                 </li>
             </ol>
 
-            <h3 class="hr-lines"> Filtrado </h3>
+            <h3 id="filtro" class="hr-lines"> Filtrado </h3>
 
             <p>
                 Antes de hacer la umbralización de píxeles, se puede aplicar un filtro el cual, esencialmente, suaviza la imagen. Aplicar este filtro puede ayudar a detectar objetos débiles y extendidos. Hay cuatro tipos de filtros que se puede aplicar: Gaussiano, sombrero Mexicano (Mexican hat), sombrero de copa (tophat) y funcion de bloque de varios tamaños y normalizados. Dentro del directorio de <span class="typewriter">SExtractor</span> el archivo <code>README</code> explica estos tipos de filtrados de la siguiente manera:<a href="#ref2">[2]</a>   
@@ -426,7 +472,7 @@
                 La forma en que estan nombrados los filtros normalmente parece tener la forma de <span class="typewriter">name_seeingFWHM_size.conv</span>
             </p>
 
-            <h3 class="hr-lines">Deblending: separación en diferentes objetos</h3>
+            <h3 id="deblending" class="hr-lines">Deblending: separación en diferentes objetos</h3>
 
             <p>
                 Con el método anterior para detectar objetos, se necesita hacer una separación de objetos vecinos que han sido extraídos como una sola fuente. <a href="#ref3">[3]</a>  
@@ -515,7 +561,7 @@
             </figure>
             
 
-            <h3 class="hr-lines">Cleaning</h3>
+            <h3 id="clean" class="hr-lines">Cleaning</h3>
 
             <p>
                 Si hay una estrella o galaxia muy brillante, sus "alas" de luz (el halo o perfil de la PSF) pueden extenderse y elevar el nivel de fondo en una región grande de la imagen. Esto puede ocasionar que pequeños bultos de ruido superen el umbral de detección, creando detecciones falsas. EL proceso de Cleaning se diseño para detectar y eliminar estos "fantasmas" creados por otras fuentes más brillantes. El proceso con el que funciona se puede desglozar de la siguiente manera: <a href="#ref2">[2]</a><a href="#ref4">[4]</a><a href="#ref5">[5]</a>
@@ -893,7 +939,7 @@
                 </figcaption>
             </figure>
 
-            <h3 class="hr-lines">Instalación</h3>
+            <h3 id="instalacion psfex" class="hr-lines">Instalación de <span class="typewriter">PSFEx</span></h3>
 
             <p>
                 El proceso de instalación de <span class="typewriter">PSFEx</span> puede hacerse desde el código fuente de la siguiente manera:
@@ -1488,6 +1534,7 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
     </main>
 
     <script src="stars.js"></script>
+    <script src="menu.js"></script>
 </body>
 
 </html>

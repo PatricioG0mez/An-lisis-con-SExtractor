@@ -223,6 +223,78 @@ img:hover{
         0 0 60px rgba(123,77,163,0.4);
 }
 
+
+.figura{
+    width: 75%;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.figura img{
+    width: 100%;
+    border-radius: 12px;
+    border: 2px solid rgba(123,77,163,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.figura img:hover{
+    transform: scale(1.02);
+    box-shadow:
+        0 0 25px rgba(167,121,209,0.5),
+        0 0 60px rgba(123,77,163,0.4);
+}
+
+.figura figcaption{
+    margin-top: 12px;
+    color: #bfb7d6;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.comparacion-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(1,1fr);
+
+    gap:20px;
+
+    margin:40px 0;
+}
+
+.comparacion-grid figure{
+    margin:0;
+    text-align:center;
+}
+
+.comparacion-grid img{
+
+    width:100%;
+
+    border-radius:10px;
+
+    border:2px solid rgba(123,77,163,.35);
+
+    transition:.3s;
+
+    cursor:pointer;
+}
+
+.comparacion-grid img:hover{
+
+    transform:scale(1.05);
+
+    box-shadow:0 0 20px rgba(123,77,163,.5);
+}
+
+.comparacion-grid figcaption{
+
+    margin-top:10px;
+
+    color:#d8c7eb;
+}
+
 /* Lista */
 ul{
     margin-top: 15px;

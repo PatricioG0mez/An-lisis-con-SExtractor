@@ -58,7 +58,14 @@
                 <li>Producir un catálogo de fuentes y sus propiedades medidas.</li>
             </ol>
 
-            <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
+            <figure class="figura">
+                <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
+
+                <figcaption>
+                    <strong>Figura 1:</strong> Flujo de trabajo de <span class="typewriter"> SExtractor</span>, las flechas discontinuas representan entradas opcionales (imagen tomada de <a href="#ref1">[1]</a>).
+                </figcaption>
+            </figure>
+            
         </section>
 
 <!-- Instalación -->
@@ -135,15 +142,26 @@
                 <code>IMAGEN.fits</code>.
             </p>
 
-            <img src="IMAGENES/IMAGEN.jpg" alt="Imagen astronómica de ejemplo">
+            <figure class="figura">
+                <img src="IMAGENES/IMAGEN.jpg" alt="Imagen astronómica de ejemplo">
+
+                <figcaption>
+                    <strong>Figura 2:</strong> Imagen astronómica de ejemplo que se utilizará para el análisis.
+                </figcaption>
+            </figure>
 
             <p>
-                Creamos un nuevo directorio donde estará nuestra imagen y copiamos
-                los cuatro archivos <code>default</code> desde la carpeta de origen
-                descargada desde GitHub.
+                Para hacer uso de <span class="typewriter">SExtractor</span> se necesitan 3 archivos de configuración que vienen por defecto en el paquete fuente de <span class="typewriter">SExtractor</span>
             </p>
 
-            <img src="IMAGENES/1.jpeg" alt="Copia de archivos default">
+            <figure class="figura">
+                <img src="IMAGENES/archivos principales.jpeg" alt="Copia de archivos default">
+
+                <figcaption>
+                    <strong>Figura 3:</strong> Archivos principales de configuración necesarios para hacer uso de <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+            
 
         </section>
 
@@ -162,7 +180,14 @@
                     y otros parámetros importantes.
                 </li>
 
-                <img src="IMAGENES/2.jpeg" alt="Archivo default.sex">
+                <figure class="figura">
+                    <img src="IMAGENES/2.jpeg" alt="Archivo default.sex">
+
+                    <figcaption>
+                        <strong>Figura 4:</strong> Contenido del archivo <code>default.sex</code>, aquí se definen los parámetros globales del análisis.
+                    </figcaption>
+                </figure>
+                
 
                 <li>
                     <code>default.param</code> contiene la lista de parámetros
@@ -170,7 +195,16 @@
                     muchas propiedades observacionales disponibles.
                 </li>
 
-                <img src="IMAGENES/3.jpeg" alt="Archivo default.param">
+                <figure class="figura">
+
+                    <img src="IMAGENES/3.jpeg" alt="Archivo default.param">
+
+                    <figcaption>
+                        <strong>Figura 5:</strong> Contenido del archivo <code>default.param</code>, aquí se definen los parámetros que <span class="typewriter">SExtractor</span> medirá.
+                    </figcaption>
+
+                </figure>
+                
 
                 <li>
                     <code>default.conv</code> contiene el filtro de convolución
@@ -445,7 +479,15 @@
                 </li>
             </ul>
 
-            <img src="IMAGENES/deblending.jpeg" alt="Gráfico de árbol de mezcla para deblending.">
+            <figure class="figura">
+
+                <img src="IMAGENES/deblending.jpeg" alt="Gráfico de árbol de mezcla para deblending.">
+
+                <figcaption>
+                    <strong>Figura 6:</strong> Gráfico de árbol de mezcla para deblending. La línea horizontal representa el umbral de detección, las líneas punteadas representan los niveles de brillo que <span class="typewriter">SExtractor</span> analiza, y las ramas representan los picos de brillo que se encuentran dentro del objeto detectado. (Imagen tomada de <a href="#ref1">[1]</a>)
+                </figcaption>
+            </figure>
+            
 
             <p>
                 Cuando <span class="typewriter">SExtractor</span> detecta una fuente mediante el umbral principal determinado por el parámetro <code>DETECT_THRESH</code>, todo lo que está por encima de este umbral se considera <i>inicialmente</i> un único objeto, hasta ahora <span class="typewriter">SExtractor</span> no sabe todavía si son varios objetos. En la figura anterior, esto corresponde a toda la región que vemos sombreada.
@@ -463,7 +505,15 @@
                 En la siguiente imagen, tomada de la referencia <a href="#ref4">[4]</a>, podemos ver la salida obtenida para dos valores distintos de <code>DEBLEND_MINCONT</code>
             </p>
 
-            <img src="IMAGENES/deblend_mincont.jpeg" alt="Comparación de valores del parámetro DEBLEND_MINCONT">
+            <figure class="figura">
+
+                <img src="IMAGENES/deblend_mincont-removebg-preview.png" alt="Comparación de valores del parámetro DEBLEND_MINCONT">
+
+                <figcaption>
+                    <strong>Figura 7:</strong> Comparación de valores del parámetro <code>DEBLEND_MINCONT</code> en la separación de objetos. A la izquierda, con un valor de 0.005, se separan más objetos, mientras que a la derecha, con un valor de 0.1, se separan menos objetos. (Imagen tomada de <a href="#ref4">[4]</a>)
+                </figcaption>
+            </figure>
+            
 
             <h3 class="hr-lines">Cleaning</h3>
 
@@ -571,7 +621,16 @@
                 Antes de determinar el background de nuestra imagen, debemos que los parámetros sobre la información de la imagen sean correctos, esto es como si fueramos a hacer un experimento, antes de empezar con las mediciones debemos asegurarnos que las herramientas que vamos a emplear esten calibradas y funcionando correctamente. Para ello, debemos leer el encabezado de nuestra imagen en este caso se usó el software de <a href="https://sites.google.com/cfa.harvard.edu/saoimageds9" target="_blank"><span class="typewriter">SAOImageDS9</span></a> (también se puede leer el encabezado con ayuda de python). 
             </p>
 
-            <img src="IMAGENES/header.jpeg" alt="Encabezado de la imagen mostrado con SAO">
+            <figure class="figura">
+
+                <img src="IMAGENES/header.jpeg" alt="Encabezado de la imagen mostrado con SAO">
+
+                <figcaption>
+                    <strong>Figura 8:</strong> Encabezado de la imagen que usamos para el análisis, mostrado con <span class="typewriter">SAOImageDS9</span>.
+                </figcaption>
+
+            </figure>
+            
 
             <p>
                 Del encabezado podemos obtener algo de información que nos es útil, lo primero es notar que nuestra imagen proviene del <b>DESI Legacy Survey</b> que son un conjunto de proyectos astronómicos que fueron diseñados para capturar imágenes profundas de una gran región del cielo extragaláctico. <a href="#ref8">[8]</a>
@@ -632,45 +691,691 @@
                 Por lo que usaremos el filtro <code>gauss_4.0_7x7.conv</code>.
             </p>
         </section>
-        
-        <!-- Visualización -->
+
         <section>
-            <h3 class="hr-lines">Visualización</h3>
+            <h3 class="hr-lines">Background</h3>
 
             <p>
-                Para visualizar los resultados de SExtractor utilizaremos el software de visualización de datos astronómicos llamado DS9, que se puede descargar desde el <a href="https://sites.google.com/cfa.harvard.edu/saoimageds9">siguiente enlace</a>, para poder cargar nuestro catálogo necesitamos un archivo <code>.vot</code>, este archivo lo obtendremos con ayuda de Topcat, el cual es un visor y editor gráfico interactivo de datos tabulares, que se puede descargar desde el <a href="http://www.star.bris.ac.uk/~mbt/topcat/">siguiente enlace</a>. Para convertir nuestro catálogo de salida a formato <code>.vot</code> primero abrimos Topcat y luego cargamos nuestro catálogo de salida <code>test.cat</code>, para ello vamos a File > Load Table > Filestore Browser y seleccionamos nuestro catálogo, luego vamos a File > Save Table > VOTable y guardamos el archivo con el nombre que queramos, en este caso lo guardaremos como <code>test.vot</code>.
+                Después de hacer una configuración inicial a los parámetros, se puede empezar a determinar el background de la imagen, aquí entran en juego los parámetros <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code>, en muchos artículos se menciona que para estos parámetros, valores más comunes son de 64 y 3 respectivamente <a href="#ref5">[5]</a> <a href="#ref6">[6]</a>. Para visualizar el background usaremos los parámetros <code>CHECKIMAGE_TYPE</code> y <code>CHECKIMAGE_NAME</code> que están en el archivo <code>default.sex</code>, para el primero tomaremos el valor de <code>BACKGROUND</code> y el segundo parámetro será para el nombre del archivo de salida, que en este caso será <code>background.fits</code>:
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/parametros_background.jpeg" alt="Parámetros para el background y checkimage">
+
+                <figcaption>
+                    <strong>Figura 9:</strong> Parámetros para la determinación del background y la salida de la imagen de background en el archivo <code>default.sex</code>. 
+                </figcaption>
+            </figure>
+
+            <p>
+                Con los parámetros configurados, en nuestra terminal vamos a posicionarnos en el directorio donde tenemos nuestra imagen y los archivos de configuración, y ejecutamos el siguiente comando: 
+            </p>
+
+            <pre><code>$ sex IMAGEN.fits</code></pre>
+
+            <p>
+                Lo que nos generará dos archivos de salida, uno es el catálogo con el nombre que le dimos en el parámetro <code>CATALOG_NAME</code> y el otro archivo es la imagen del background con el nombre que le dimos en el parámetro <code>CHECKIMAGE_NAME</code>, este último podemos visualizarlo en DS9.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/fondo.jpeg" alt="Background de la imagen obtenido con SExtractor">
+
+                <figcaption>
+                    <strong>Figura 10:</strong> Background de la imagen obtenido con <span class="typewriter">SExtractor</span> (derecha) comparado con la imagen original (izquierda)
+                </figcaption>
+
+            </figure>
+
+            <p>
+                En la figura 10 podemos ver que el background obtenido está tomando algo de brillo de los objetos ubicados en la parte central de la imagen; en la imagen original se observa que corresponden a dos galaxias muy brillantes. Esto ocurre porque, con un <code>BACK_SIZE</code> relativamente pequeño, las celdas de la malla que caen sobre las galaxias no contienen suficientes píxeles de cielo puro, por lo que el algoritmo de sigma-clipping no logra excluir completamente su flujo, sobreestimando el background local en esa zona. Aumentar <code>BACK_SIZE</code> (o <code>BACK_FILTERSIZE</code>) puede mitigar este efecto, pero si se hace demasiado grande, el background se vuelve excesivamente suave y puede terminar absorbiendo objetos extendidos de bajo brillo superficial.<br>
             </p>
 
             <p>
-                TopCat nos permite visualizar nuestros datos y obtener sus datos estadísticos, lo cual nos sirve para filtrar nuestros datos y, por ejemplo, visualizar objetos con una magnitud mayor a un valor específico.
+                Vamos a verificar el resultado final de la sustracción poniendo como valor, en <code>CHECKIMAGE_TYPE</code>, <code>-BACKGROUND</code>; esto es la imagen original menos el mapa de background. Lo anterior nos devuelve la siguiente imagen .fits
             </p>
 
-            <img src="IMAGENES/7.jpeg" alt="Datos estadísticos en TopCat">
+            <figure class="figura">
+
+                <img src="IMAGENES/-background.jpeg" alt="Imagen con el fondo sustraído">
+
+                <figcaption>
+                    <strong>Figura 11:</strong> Imagen final con el fondo sustraído, se logra ver una mancha oscura justo encima/entre las galaxias ubicadas al centro de la imagen.
+                </figcaption>
+
+            </figure>
 
             <p>
-                tenemos col1, col2 y col3 que corresponden a los parámetros <code>X_IMAGE</code>, <code>Y_IMAGE</code> y <code>MAG_AUTO</code> respectivamente, teniendo que en <code>MAG_AUTO</code> el objeto más brillante tiene una magnitud de -9.6 y el más débil tiene una magnitud de 4.26.
+                En la figura 11 podemos ver una región más oscura justo sobre las dos galaxias centrales, lo cual evidencia una sobre-sustracción de flujo en esa zona; es decir, el background estimado ahí fue mayor al real. Una opción podría ser aumentar el tamaño de la malla, sin embargo, para este caso, se decidió mantener el tamaño de la malla y continuar con la detección de objetos.
             </p>
-
-            <p>
-                Ya que tenemos nuestro archivo <code>.vot</code>, podemos cargarlo en DS9, para ello primero abrimos nuestra imagen en DS9, luego, para cargar nuestro catálogo, vamos a la pestaña Analysis > Catalog tool, esto nos lleva a esta ventana: 
-            </p>
-
-            <img src="IMAGENES/8.jpeg" alt="Pestaña para cargar catálogo en DS9">
-
-            <p>
-                En esta ventana seleccionamos la opción File > Open y selecionamos nuestro archivo <code>test.vot</code>, esto nos cargará nuestro catálogo en DS9 y podremos visualizar los objetos detectados por SExtractor sobre nuestra imagen.
-            </p>
-
-            <img src="IMAGENES/9.jpeg" alt="Visualización de objetos detectados en DS9">
-
-            <p>
-                Los circulos verdes corresponden a los objetos detectados por SExtractor (4712 objetos), en la pestaña donde cargamos nuestro catálogo, podemos filtrar los objetos por su magnitud, en la sección "tabla" hay una opción de "filtro" donde podemos escribir la condición que queremos para alguna de las tablas, por ejemplo, si queremos visualizar solo los objetos más brillantes, podemos escribir la condición <code>$col3<-5</code>
-            </p>
-
-            <img src="IMAGENES/10.jpeg" alt="Objetos más brillantes visualizados en DS9">
-
-
         </section>
+
+        <section>
+
+            <h3 class="hr-lines">Detección de objetos (Umbralización)</h3>
+
+            <p>
+                Lo siguiente es definir el umbral que <span class="typewriter">SExtractor</span> usará para detectar objetos, para este caso tomaremos el valor de <code>DETECT_THRESH</code> de 1.5 así como el valor de <code>ANALYSIS_THRESH</code> de 1.5, además de un valor de <code>DETECT_MINAREA</code> de 3 píxeles, y generaremos otro checkimage con el valor de <code>APERTURES</code>. Al correr <span class="typewriter">SExtractor</span> podemos visualizar lo siguiente en la terminal:
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/terminal.jpeg" alt="Salida obtenida en la terminal después de correr SExtractor">
+                
+                <figcaption>
+                    <strong>Figura 12:</strong> Salida obtenida en la terminal después de correr <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            <p>
+                Podemos observar que el valor global del background es muy cercano a cero, además tenemos el valor de la desviación estándar del background, que es de 0.00294733 y con un umbral de detección de 0.004421. Por otra parte, podemos notar que <span class="typewriter">SExtractor</span> obtuvo 2812 objetos que superaron el umbral inicial de detección, de los cuales 2577 fueron considerados como objetos válidos después del proceso de deblending y cleaning (aún no se configuran estos parámetros, por lo que se toman los valores por defecto).<br>
+            </p>
+
+            <p>
+                Ahora, usando la opción de <code>CHECKIMAGE_TYPE</code> con el valor de <code>APERTURES</code>, podemos visualizar los objetos detectados por <span class="typewriter">SExtractor</span> a los que se les dibuja un circulo o una elipse, esto es la apertura fotométrica.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/apertures.jpeg" alt="Aperturas fotométricas sobre los objetos detectados">
+
+                <figcaption>
+                    <strong>Figura 13:</strong> Aperturas fotométricas sobre los objetos detectados por <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            Además, con ayuda de DS9, podemos sobreponer en la imagen el catálogo obtenido lo que mostrará un circulo verde sobre cada objeto detectado. 
+
+            <figure class="figura">
+
+                <img src="IMAGENES/catalogoaperturas.jpeg" alt="Aperturas fotométricas con el catálogo.">
+
+                <figcaption>
+                    <strong>Figura 14:</strong> Visualización de la detección de objetos en circulos verdes usando el catálogo obtenido por <span class="typewriter">SExtractor</span>.
+                </figcaption>
+            </figure>
+        </section>
+
+        <section>
+            <h3 class="hr-lines">Deblending</h3>
+
+            <p>
+                Para el proceso de deblending, se tomará un valor de <code>DEBLEND_NTHRESH</code> de 32 y probaremos para 4 valores distintos de <code>DEBLEND_MINCONT</code> (0.0001,0.001, 0.005 y 0.01) para observar algun cambio en la detección de objetos.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>DEBLEND_MINCONT</th>
+                        <th>Detected</th>
+                        <th>Sextracted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>0.0001</th>
+                        <th>2865</th>
+                        <th>2626</th>
+                    </tr>
+                    <tr>
+                        <th>0.001</th>
+                        <th>2837</th>
+                        <th>2598</th>
+                    </tr>
+                    <tr>
+                        <th>0.005</th>
+                        <th>2812</th>
+                        <th>2577</th>
+                    </tr>
+                    <tr>
+                        <th>0.01</th>
+                        <th>2802</th>
+                        <th>2569</th>
+                    </tr>
+
+                </tbody>
+            </table>
+        </section>
+        
+        <section class="comparacion-grid">
+
+            <figure>
+                <img src="IMAGENES/0001.jpeg" alt="Deblendmincont de 0.0001">
+
+                <figcaption>
+                    <code>DEBLEND_MINCONT=0.0001</code>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img src="IMAGENES/001.jpeg" alt="Deblendmincont=0.001">
+                <figcaption><code>DEBLEND_MINCONT=0.001</code></figcaption>
+            </figure>
+
+            <figure>
+                <img src="IMAGENES/005.jpeg" alt="Deblendmincont=0.005">
+                <figcaption><code>DEBLEND_MINCONT=0.005</code></figcaption>
+            </figure>
+            
+            <figure>
+                <img src="IMAGENES/01.jpeg" alt="Deblendmincont=0.01">
+                <figcaption><code>DEBLEND_MINCONT=0.01</code></figcaption>
+            </figure>
+
+            <figcaption>
+                <strong>Figura 15:</strong> Comparación de la detección de objetos con diferentes valores de <code>DEBLEND_MINCONT</code>. A medida que el valor aumenta, se detectan menos objetos, lo que indica una menor separación de fuentes cercanas. La imagen empleada es con el parámetro <code>APERTURES</code>.<br><br>
+            </figcaption>
+
+            <p>
+                La elección del valor para <code>DEBLEND_MINCONT</code> depende del objetivo del análisis, valores pequeños favorecen la separación de fuentes cercanas con gran diferencia de brillo, útiles para blends de galaxias como el observado en este campo, pero con riesgo de sobre-fragmentar objetos extendidos con estructura interna compleja. Valores más grandes son más conservadores, evitando divisiones espurias en galaxias con subestructura, pero corren el riesgo de no separar componentes reales de bajo contraste de brillo respecto a su vecino.<br>
+            </p>
+
+            <p>
+                Para este caso, se optó por un valor de <code>DEBLEND_MINCONT=0.005</code> que es un valor intermedio, con el proposito de separar las galaxias brillantes del centro de la imagen. 
+            </p>
+        </section>
+
+        <h2><span class="typewriter">PSFEx (Point Spread Function Extractor)</span></h2>
+
+        <section>
+
+            <p>
+                <span class="typewriter">PSFEx</span> es una herramienta de software especializado en el procesamiento de imagenes astronómicas que crea modelos de funciones de dispersión de punto (PSF) a partir de imagenes previamente procesadas por <span class="typewriter">SExtractor</span>. <a href="#ref9">[9]</a><a href="#ref10">[10]</a>
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/flujoPSFEx.png" alt="Flujo de trabajo de PSFEx">
+
+                <figcaption>
+                    <strong>Figura 16:</strong> Flujo de trabajo de <span class="typewriter">PSFEx</span>
+                </figcaption>
+            </figure>
+
+            <h3 class="hr-lines">Instalación</h3>
+
+            <p>
+                El proceso de instalación de <span class="typewriter">PSFEx</span> puede hacerse desde el código fuente de la siguiente manera:
+            </p>
+
+            <ol>
+                <li>
+                    Clonación del repositorio
+                </li>
+            </ol>
+
+            <pre><code>$ git clone https://github.com/astromatic/psfex.git <br>$ cd psfex</code></pre>
+
+            <ol start="2">
+                <li>
+                    Configurar con autotools:
+                </li>
+            </ol>
+
+            <pre><code>$ ./autogen.sh<br>$./configure</code></pre>
+
+            <ol strart="3">
+                <li>
+                    Compilar e instalar:
+                </li>
+            </ol>
+
+            <pre><code>$ make <br> $ make install</code></pre>
+
+            <h3 class="hr-lines">Requisitos de entrada</h3>
+
+            <p>
+                Esta herramienta no funciona directamente con imagenes como <span class="typewriter">SExtractor</span>, sino sobre catálogo que <span class="typewriter">SExtractor</span> genera, estos deben contener pequeñas subimágenes (<code>VIGNET</code>) para cada detección, además, estos catálogos deben estar en formato binario <span class="typewriter">FITS_LDAC</span>.<a href="#ref9">[9]</a><a href="#ref10">[10]</a> 
+            </p>
+
+            <h3 class="typewriter">Parámetros de configuración clave</h3>
+
+            <p>
+                Los parámetros que se deben configurar que son más importantes son los sigueintes:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Por defecto</th>
+                        <th>Objetivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th><code>PSF_SIZE</code></th>
+                        <th>25,25</th>
+                        <th>Dimensiones de los modelos PSF en píxeles</th>
+                    </tr>
+                    <tr>
+                        <th><code>PSF_SAMPLING</code></th>
+                        <th>0.0</th>
+                        <th>Paso de muestreo de los modelos PSF (0=automático)</th>
+                    </tr>
+                    <tr>
+                        <th><code>BASIS_TYPE</code></th>
+                        <th><code>BASIS_AUTO</code></th>
+                        <th>Vectores base para PSF (PIXEL,GAUSS_LAGUERRE,etc.)</th>
+                    </tr>
+                    <tr>
+                        <th><code>PSFVAR_KEYS</code></th>
+                        <th><code>X_IMAGE, Y_IMAGE</code></th>
+                        <th>La PSF depende de estos parámetros</th>
+                    </tr>
+                    <tr>
+                        <th><code>PSFVAR_GROUPS</code></th>
+                        <th>1,1</th>
+                        <th>Grupo polinómico para cada parámetro</th>
+                    </tr>
+                    <tr>
+                        <th><code>PSFVAR_DEGREES</code></th>
+                        <th>2</th>
+                        <th>Grado polinómico (0=PSF constante)</th>
+                    </tr>
+                    <tr>
+                        <th><code>SAMPLE_AUTOSELECT</code></th>
+                        <th>Y</th>
+                        <th>Selección automática de fuentes puntuales</th>
+                    </tr>
+                    <tr>
+                        <th><code>SAMPLE_FWHMRANGE</code></th>
+                        <th>2.0,10.0</th>
+                        <th>Rango de FWHM de la fuente (píxeles)</th>
+                    </tr>
+                    <tr>
+                        <th><code>SAMPLE_MINSN</code></th>
+                        <th>20.0</th>
+                        <th>Relación señal/ruido mínima de la fuente</th>
+                    </tr>
+                    <tr>
+                        <th><code>CHECKIMAGE_TYPE</code></th>
+                        <th>Múltiple</th>
+                        <th>Tipos de imágenes de chequeo a generar</th>
+                    </tr>
+                    <tr>
+                        <th><code>CHECKPLOT_TYPE</code></th>
+                        <th>Múltiple</th>
+                        <th>Tipos de parcelas de control para generar</th>
+                    </tr>
+                    <tr>
+                        <th><code>WRITE_XML</code></th>
+                        <th>Y</th>
+                        <th>Generar resumen XML</th>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Para empezar a trabajar con <span class="typewriter">PSFEx</span> vamos a crear una carpeta nueva para <span class="typewriter">SExtractor</span> con la misma configuración con la que hemos trabajado. Ahora, el archivo donde estarán los parámetros le daremos el nombre de <i>prepsfex.param</i>, al cual agregaremos los siguientes parámetros:
+            </p>
+
+            <pre><code>X_IMAGE
+Y_IMAGE
+FLUX_RADIUS
+FLUX_APER(1)
+FLUXERR_APER(1)
+ELONGATION
+FLAGS
+SNR_WIN
+VIGNET(35,35)</code></pre>
+
+                <p>
+                    El parámetro <code>VIGNET(35,35)</code> es crucial, ya que le indica a <span class="typewriter">SExtractor</span> que extraiga una viñeta de 35x35 píxeles para cada objeto. Además, debemos asegurarnos que el archivo de configuración principal (con el nombre de <i>prepsfex.sex</i>) nos de el catálogo en formato binario:
+                </p>
+
+                <figure class="figura">
+
+                    <img src="IMAGENES/prepsfexsex.jpeg" alt="Configuración del catálogo en sextractor para PSFEx">
+
+                    <figcaption>
+                        <strong>Figura 17:</strong> Configuración del catálogo de salida para usar con PSFEx
+                    </figcaption>
+                </figure>
+
+                
+                <p>
+                    Vamos a explicar que hace cada parámetro que vamos a darle a <span class="typewriter">SExtractor</span>
+                </p>
+
+                <ul>
+                    <li>
+                        <code>X_IMAGE</code><br>
+
+                        Guarda la coordenada X de la posición del objeto en la imagen original, en píxeles.
+                    </li>
+                    <li>
+                        <code>Y_IMAGE</code><br>
+
+                        Guarda la coordenada Y del objeto.
+                    </li>
+                    <li>
+                        <code>FLUX_RADIUS</code><br>
+
+                        Mide el radio (en píxeles) que contiene el 50% del flujo total del objeto. Es el "radio de medio flujo".
+                    </li>
+                    <li>
+                        <code>FLUX_APER(1)</code><br>
+
+                        Mide el flujo dentro de una apertura circular fija (el primero definido por <code>PHOTOM_APERTURES</code>).
+                    </li>
+                    <li>
+                        <code>FLUXERR_APER(1)</code><br>
+
+                        Guarda la incertidumbre (error) del flujo medido en esa misma apertura.
+                    </li>
+
+                    <li>
+                        <code>ELONGATION</code><br>
+
+                        Mide la elongación del objeto, esta definida como:
+
+                        $$1-\frac{B}{A}$$
+
+                        donde $A$ y $B$ son los ejes mayor y menor de la elipse que mejor se ajusta al objeto.
+                    </li>
+
+                    <li>
+                        <code>FLAGS</code><br>
+
+                        Es un número entero que codifica diversas advertencias sobre la calidad de la detección.
+                    </li>
+
+                    <li>
+                        <code>SNR_WIN</code><br>
+
+                        Es la relación señal/ruido (Signal-to-Noise Ratio) calculada usando la ventana Gaussiana (<code>WIN</code>), que es más robusta que la SNR basada en apertura simple.
+                    </li>
+
+                    <li>
+                        <code>VIGNET(35,35)</code>
+
+                        Esta es el parámetro más importante para <span class="typewriter">PSFEx</span>. Este le ordena a <span class="typewriter">SExtractor</span> que extraiga una "viñeta" de 35x35 píxeles centrada exactamente en cada objeto detectado.
+                    </li>
+                </ul>
+
+                <p>
+                    Finalmente corremos <span class="typewriter">SExtractor</span> con el archivo de configuración que se editó.
+                </p>
+
+                <pre><code>$ sex IMAGEN.fits -c prepsfex.sex</code></pre>
+                
+                <p>
+                    Como lo hemos estado haciendo hasta ahora, esto nos generará un archivo que en nuestro caso será <i>prepsfex.fits</i>. Con el catálogo ya creado, vamos a empezar a usar <span>PSFEx</span>, creamos un directorio nuevo y creamos el archivo de configuración:
+                </p>
+
+                <pre><code>$ psfex -dd > default.psfex</code></pre>
+
+                <p>
+                    Esto nos genera el archivo de configuración que debemos editar para empezar a usar <span class="typewriter">PSFEx</span>:
+                </p>
+
+                <figure class="figura">
+                    <img src="IMAGENES/defaultpsfex.jpeg" alt="Archivo de configuración para PSFEx">
+
+                    <figcaption>
+                        <strong>Figura 18:</strong> Archivo de configuración para empezar a usar <span class="typewriter">PSFEx</span>
+                    </figcaption>
+
+                </figure>
+
+                <p>
+                    Ya con el archivo creado, debemos empezar a editarlo antes de correr <span class="typewriter">PSFEx</span>
+                </p>
+
+                <h3 class="hr-lines">Parámetros clave a revisar</h3>
+
+                <p>
+                    <b>Selección de estrellas</b><br>
+
+                    <pre><code>SAMPLE_AUTOSELECT   Y
+SAMPLE_FWHMRANGE    2.0,10.0     
+SAMPLE_VARIABILITY  0.2          
+SAMPLE_MINSN        20           
+SAMPLE_MAXELLIP     0.3           </code></pre>
+                </p>
+
+                <p>
+                    <b>Modelo del PSF</b><br>
+
+                    <pre><code>PSF_SAMPLING        0            
+PSF_SIZE             25,25       
+PSF_RECENTER         Y
+BASIS_TYPE           PIXEL_AUTO  
+BASIS_NUMBER         20</code></pre>
+                </p>
+
+                <p>
+                    <b>Variabilidad espacial del PSF</b><br>
+
+                    <pre><code>PSFVAR_KEYS          X_IMAGE,Y_IMAGE
+PSFVAR_GROUPS        1,1
+PSFVAR_DEGREES       2           </code></pre>
+                </p>
+
+                <p>
+                    <b>Salidas de verificación</b><br>
+
+                    <pre><code>CHECKPLOT_TYPE       FWHM,ELLIPTICITY,COUNTS,COUNT_FRACTION,CHI2,RESIDUALS
+CHECKPLOT_NAME       fwhm,ellipticity,counts,countfrac,chi2,resi
+
+CHECKIMAGE_TYPE      CHI,PROTOTYPES,SAMPLES,RESIDUALS,SNAPSHOTS
+CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
+                </p>
+
+                <p>
+                    Antes de continuar, vamos a explicar un poco que son los parámetros que se mencionaron antes.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parámetro</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><code>SAMPLE_AUTOSELECT (Y/N)</code></th>
+                            <th>Le dice a <span class="typewriter">PSFEx</span> si debe seleccionar automáticamente qué fuentes del catálogo son estrellas válidas para construir el modela de PSF.</th> 
+                        </tr>
+
+                        <tr>
+                            <th><code>SAMPLE_FWHMRANGE (mínimo,máximo)</code></th>
+                            <th>
+                                Determina el rango de FWHM (en píxeles) que se considera válido para una estrella.
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>SAMPLE_VARIABILITY</code>
+                            </th>
+                            <th>
+                                Controla cuánta dispersión en FWHM se tolera alrededor del valor "moda" detectado automáticamente al hacer el histograma de FWHM. 
+                            </th>
+                        </tr>
+                        
+                        <tr>
+                            <th>
+                                <code>SAMPLE_MINSN</code>
+                            </th>
+                            <th>
+                                Relación señal/ruido mínima que debe tener una fuente para ser considerada como estrella de entrenamiento
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>SAMPLE_MAXELLIP</code>
+                            </th>
+                            <th>
+                                Elipticidad máxima permitida, definida como $(a-b)/(a+b)$ y va de 0 a 1. Las estrellas deberían ser casi circulares.
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>PSF_SAMPLING</code>
+                            </th>
+                            <th>
+                                Define el "pixel scale" del modelo de PSF relativo a la imagen original. 0 significa que <span class="typewriter">PSFEx</span> calcula automáticamente el muestreo óptimo siguiendo el criterio de Nyquist.
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>PSF_SIZE (ancho,alto en píxeles)</code>
+                            </th>
+                            <th>
+                                Tamaño del recorte donde se construye el modelo del PSF. Debe ser lo suficientemente grande para capturar todo el flujo de la estrella.
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>PSF_RECENTER (Y/N)</code>
+                            </th>
+                            <th>
+                                Cuando está en SI, <span class="typewriter">PSFEx</span> re-centra cada estrella de muestra antes de construir el modelo, corrigiendo pequeños errores de centroide de <span class="typewriter">SExtractor</span>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>BASIS_TYPE</code>
+                            </th>
+                            <th>
+                                Define la base matemática usada para representar la forma del PSF. <br>
+                                <ul>
+                                    <li><code>PIXEL_AUTO</code>: representa el PSF como una malla de píxeles independientes</li>
+                                    <li>
+                                        <code>GAUSS-LAGUERRE</code> usa funciones analíticas (polinomios de Gauss-Laguerre)
+                                    </li>
+                                </ul>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>BASIS_NUMBER</code>
+                            </th>
+                            <th>
+                                Cantidad de elementos de la base usados para representar el PSF
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th>
+                                <code>PSFVAR_KEYS</code>
+                            </th>
+                            <th>
+                                Las variables (columnas del catálogo) respecto a las cuales el PSF puede variar espacialmente. Lo más común es la posición en la imagen
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <code>PSFVAR_GROUPS</code>
+                            </th>
+                            <th>
+                                Agrupa las claves <code>PSFVAR_KEYS</code> en "grupos" que comparten el mismo grado de variación polinomial
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <code>PSFVAR_DEGREES</code>
+                            </th>
+                            <th>
+                                Grado del polinomio usado para modelar cómo cambia el PSF a través del campo para cada grupo definido. Por ejemplo: 
+
+                                <ul>
+                                    <li>
+                                        0: PSF constante en todo el campo.
+                                    </li>
+                                    <li>
+                                        1: variación lineal.
+                                    </li>
+                                    <li>
+                                        2: variación cuadrática.
+                                    </li>
+                                </ul>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <code>CHECKPLOT_TYPE, CHECKPLOT_NAME</code>
+                            </th>
+                            <th>
+                                Definen qué gráficas de diagnóstico genera <span class="typewriter">PSFEx</span>
+
+                                <ul>
+                                    <li>
+                                        <code>FWHM</code>: distribución de FWHM de las estrellas usadas.
+                                    </li>
+                                    <li>
+                                        <code>ELLIPTICITY</code>: distribución de elipticidad.
+                                    </li>
+                                    <li>
+                                        <code>COUNTS</code>: distribución de flujo total de las estrellas de muestra.
+                                    </li>
+                                    <li>
+                                        <code>COUNT_FRACTION</code>: fracción del flujo capturado dentro del modelo.
+                                    </li>
+                                    <li>
+                                        <code>CHI2</code>: bondad de ajuste del modelo para cada estrella.
+                                    </li>
+                                </ul>
+                            </th>
+                        </tr>
+
+                        <tr>
+                            <th><code>CHECKIMAGE_TYPE, CHECKIMAGE_NAME</code></th>
+                            <th>
+                                Definen qué imagenes FITS de diagnóstico se generan:
+
+                                <ul>
+                                    <li>
+                                        <code>CHI</code>: mapa de chi-cuadrado del ajuste por estrella
+                                    </li>
+                                    <li>
+                                        <code>PROTOTYPES</code>: el modelo de PSF final generado (el "prototipo")
+                                    </li>
+                                    <li>
+                                        <code>RESIDUALS</code>: diferencia entre la estrella real y el modelo ajustado
+                                    </li>
+                                    <li>
+                                        <code>SNAPSHOTS</code>: mosaico mostrando cómo se ve el PSF modelado en distintas posiciones del campo (útil para ver la variabilidad espacial)
+                                    </li>
+                                </ul>
+                            </th>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+                <p>
+                    <code>PSF_SIZE</code> debe conicidir con el tamaño de la viñeta que extrajimos, es decir, debe ser de 35,35. <br>
+
+                    <code>BASIS_TYPE</code> lo dejaremos con <code>PIXEL_AUTO</code> que es el método más común para modelar la PSF. <br>
+
+                    <code>PSFVAR_KEYS</code> tendra <code>X_IMAGE,Y_IMAGE</code>. <br>
+
+                    <code>PSFVAR_DEGREES</code> tendra el valor de 2 como orden polinomial. <br>
+
+                    <code>SAMPLE_MINSN</code> tendra el valor de 20 como SNR mínima que debe tener una estrella para ser usada en el modelo. <br>
+
+                    <code>SAMPLE_MAXELLIP</code> será la elipticidad máxima permitida, con un valor de 0.3 (valor típico). <br>
+                </p>
+
+                <p>
+                    Ahora que hemos configurado nuestro archivo, vamos a correr <span class="typewriter">PSFEx</span> y antes de usarlo con <span class="typewriter">SExtractor</span> vamos a analizar los resultados obtenidos. Para ello hacemos el siguiente comando:
+                </p>
+
+                <pre><code>$ psfex prepsfex.fits -c default.psfex</code></pre>
+                
+        </section>
+
 
         <!-- Clasificación Estrella/ Galaxia -->
         <section>
@@ -767,6 +1472,16 @@
                 <li id="ref8">
                     Dey, A., Schlegel, D. J., Lang, D., Blum, R., Burleigh, K., Fan, X., Findlay, J. R., Finkbeiner, D., Herrera, D., Juneau, S., Landriau, M., Levi, M., McGreer, I., Meisner, A., Myers, A. D., Moustakas, J., Nugent, P., Patej, A., Schlafly, E. F., . . . Zhou, Z. (2019). Overview of the DESI legacy imaging surveys. <i>The Astronomical Journal</i>, 157, Artículo 168. https://doi.org/10.3847/1538-3881/ab089d
                 </li>
+
+                <li id="ref9">
+                    <i>PSFEx User Manual — PSFEx 3.18.2 documentation.</i> (n.d.). https://psfex.readthedocs.io/en/latest/
+                </li>
+
+                <li id="ref10">
+                    DeepWiki. (2025, May 10).<i>PSFEX Overview.</i> DeepWiki. https://deepwiki.com/astromatic/psfex/1-psfex-overview
+                </li>
+
+
             </ol>
         </section>
 

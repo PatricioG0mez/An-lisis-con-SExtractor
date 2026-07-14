@@ -73,6 +73,45 @@
 
                         </ul>
                     </li>
+
+                    <li>
+                        <button class="submenu-btn">Uso de <span class="typewriter">SExtractor</span></button>
+
+                        <ul class="subsubmenu">
+                            <li><a href="#parametros iniciales">Parámetros iniciales</a></li>
+
+                            <li><a href="#background">Background</a></li>
+
+                            <li><a href="#Umbralizacion">Umbralización</a></li>
+
+                            <li><a href="#separacion">Deblending</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+            </li>
+
+            <li><a href="#PSF">Point Spread Function</a></li>
+
+            <li>
+                <button class="typewriter menu-btn">PSFEx</button>
+
+                <ul class="submenu">
+
+                    <li><a href="#instalacion psfex">Instalación de <span class="typewriter">PSFEx</span></a></li>
+
+                    <li><a href="#requisitos clave">Requisitos de entrada y parámetros de configuración clave</a></li>
+
+                    <li>
+                        <button class="submenu-btn">Uso de <span class="typewriter">PSFEx</span></button>
+
+                        <ul class="subsubmenu">
+
+                            <li><a href="#parametros iniciales">Parámetros iniciales</a></li>
+
+                            <li><a href="#parametros clave">Parámetros clave a revisar</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
 
@@ -606,7 +645,7 @@
         </section>
 
         <!-- PSF -->
-        <h2>Point Spread Function (PSF, función de dispersión de punto)</h2>
+        <h2 id="PSF">Point Spread Function (PSF, función de dispersión de punto)</h2>
 
         <section>
 
@@ -657,8 +696,11 @@
 
         <!-- Uso de SExtractor-->
 
-        <h2>Uso de SExtractor</h2>
+        <h2 id="Uso de sextractor">Uso de SExtractor</h2>
         <section>
+
+            <h3 id="parametros iniciales">Parámetros iniciales</h3>
+
             <p>
                 Ahora que se han explicado los parámetros del archivo principal de configuración <code>default.sex</code>, podemos empezar a usar <span class="typewriter">SExtractor</span> siguiendo los pasos mencionados al principio. Para empezar, creamos un directorio en donde guardaremos nuestra imagen y los archivos de configuración principales mencionados anteriormente. En este caso, el directorio tendra una carpeta para los aarchivos <span class="typewriter">default</span>, para la imagen y otra para las corridas que hagamos en <span class="typewriter">SExtractor</span>, además de tener un excel con todos los cambios que se haga a cada parámetro, todo lo anterior es opcional pero ayuda a mantener un orden en el análisis.
             </p>
@@ -739,7 +781,7 @@
         </section>
 
         <section>
-            <h3 class="hr-lines">Background</h3>
+            <h3 id="background" class="hr-lines">Background</h3>
 
             <p>
                 Después de hacer una configuración inicial a los parámetros, se puede empezar a determinar el background de la imagen, aquí entran en juego los parámetros <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code>, en muchos artículos se menciona que para estos parámetros, valores más comunes son de 64 y 3 respectivamente <a href="#ref5">[5]</a> <a href="#ref6">[6]</a>. Para visualizar el background usaremos los parámetros <code>CHECKIMAGE_TYPE</code> y <code>CHECKIMAGE_NAME</code> que están en el archivo <code>default.sex</code>, para el primero tomaremos el valor de <code>BACKGROUND</code> y el segundo parámetro será para el nombre del archivo de salida, que en este caso será <code>background.fits</code>:
@@ -799,7 +841,7 @@
 
         <section>
 
-            <h3 class="hr-lines">Detección de objetos (Umbralización)</h3>
+            <h3 id="Umbralizacion" class="hr-lines">Detección de objetos (Umbralización)</h3>
 
             <p>
                 Lo siguiente es definir el umbral que <span class="typewriter">SExtractor</span> usará para detectar objetos, para este caso tomaremos el valor de <code>DETECT_THRESH</code> de 1.5 así como el valor de <code>ANALYSIS_THRESH</code> de 1.5, además de un valor de <code>DETECT_MINAREA</code> de 3 píxeles, y generaremos otro checkimage con el valor de <code>APERTURES</code>. Al correr <span class="typewriter">SExtractor</span> podemos visualizar lo siguiente en la terminal:
@@ -844,7 +886,7 @@
         </section>
 
         <section>
-            <h3 class="hr-lines">Deblending</h3>
+            <h3 id="separacion" class="hr-lines">Deblending</h3>
 
             <p>
                 Para el proceso de deblending, se tomará un valor de <code>DEBLEND_NTHRESH</code> de 32 y probaremos para 4 valores distintos de <code>DEBLEND_MINCONT</code> (0.0001,0.001, 0.005 y 0.01) para observar algun cambio en la detección de objetos.
@@ -922,7 +964,7 @@
             </p>
         </section>
 
-        <h2><span class="typewriter">PSFEx (Point Spread Function Extractor)</span></h2>
+        <h2 id="psfex"><span class="typewriter">PSFEx (Point Spread Function Extractor)</span></h2>
 
         <section>
 
@@ -969,13 +1011,11 @@
 
             <pre><code>$ make <br> $ make install</code></pre>
 
-            <h3 class="hr-lines">Requisitos de entrada</h3>
+            <h3 id="requisitos clave" class="hr-lines">Requisitos de entrada y parámetros de configuración clave</h3>
 
             <p>
                 Esta herramienta no funciona directamente con imagenes como <span class="typewriter">SExtractor</span>, sino sobre catálogo que <span class="typewriter">SExtractor</span> genera, estos deben contener pequeñas subimágenes (<code>VIGNET</code>) para cada detección, además, estos catálogos deben estar en formato binario <span class="typewriter">FITS_LDAC</span>.<a href="#ref9">[9]</a><a href="#ref10">[10]</a> 
             </p>
-
-            <h3 class="typewriter">Parámetros de configuración clave</h3>
 
             <p>
                 Los parámetros que se deben configurar que son más importantes son los sigueintes:
@@ -1053,6 +1093,13 @@
                 </tbody>
             </table>
 
+        </section>
+
+        <h2>Uso de <span class="typewriter">PSFEx</span></h2>
+
+        <section>
+
+            <h3 id="parametros iniciales" class="hr-lines">Parámetros iniciales.</h3>
             <p>
                 Para empezar a trabajar con <span class="typewriter">PSFEx</span> vamos a crear una carpeta nueva para <span class="typewriter">SExtractor</span> con la misma configuración con la que hemos trabajado. Ahora, el archivo donde estarán los parámetros le daremos el nombre de <i>prepsfex.param</i>, al cual agregaremos los siguientes parámetros:
             </p>
@@ -1170,7 +1217,7 @@ VIGNET(35,35)</code></pre>
                     Ya con el archivo creado, debemos empezar a editarlo antes de correr <span class="typewriter">PSFEx</span>
                 </p>
 
-                <h3 class="hr-lines">Parámetros clave a revisar</h3>
+                <h3 id="parametros clave" class="hr-lines">Parámetros clave a revisar</h3>
 
                 <p>
                     <b>Selección de estrellas</b><br>

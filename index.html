@@ -100,6 +100,8 @@
 
                     <li><a href="#instalacion psfex">Instalación de <span class="typewriter">PSFEx</span></a></li>
 
+                    <li><a href="#como trabaja psfex">¿Cómo trabaja <span class="typewriter">PSFEx</span>?</a></li>
+
                     <li><a href="#requisitos clave">Requisitos de entrada y parámetros de configuración clave</a></li>
 
                     <li>
@@ -110,6 +112,8 @@
                             <li><a href="#parametros iniciales">Parámetros iniciales</a></li>
 
                             <li><a href="#parametros clave">Parámetros clave a revisar</a></li>
+
+                            <li><a href="#xml">Datos del archivo XML</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1009,7 +1013,130 @@
                 </li>
             </ol>
 
-            <pre><code>$ make <br> $ make install</code></pre>
+            <pre><code>$ make <br>$ make install</code></pre>
+
+            <h3 id="como trabaja psfex" class="hr-lines">¿Cómo trabaja <span class="typewriter">PSFEx</span>?</h3>
+
+            <ol>
+                <li>
+                    <b>Punto de partida: "Vignettes"</b><br>
+
+                    <span class="typewriter">PSFEx</span> no trabaja con la imagen completa, trabaja únicamente con los recortes que <span class="typewriter">SExtractor</span> extrajo al rededor de cada fuente (<code>VIGNET</code>). Cada vignette es una pequeña imagen centrada aproximadamente en el centroide de la fuente, con el fondo ya sustraído por <span class="typewriter">SExtractor</span>.<br>
+
+                    Esto es muy importante: <i><span class="typewriter">PSFEx</span> no vuelve a tocar la imagen original</i>, todo el trabajo que realiza ocurre sobre los recortes, por ello, antes de usar esta herramienta, se debe tener un catálogo lo suficientemente bueno. <a href="#ref9">[9]</a><a href="#ref10">[10]</a>
+                </li>
+
+                <li>
+                    <b>Selección de la muestra de entrenamiento</b><br>
+
+                    <span class="typewriter">PSFEx</span> decide cuáles de las vignettes corresponden realmente a estrellas puntuales, esto lo hace mediante el algoritmo de <code>SAMPLE_AUTOSELECT</code>: <a href="#ref9">[9]</a><a href="#ref10">[10]</a>
+                    
+                    <ul>
+                        <li>Construye un histograma de FWHM vs. magnitud de todas las fuentes.</li>
+
+                        <li>Busca la "moda"- el pico de densidad donde se concentran los objetos puntuales (las estrellas forman una línea vertical de FWHM constante en ese diagrama, mientras las galaxias se dispersan hacia FWHM mayores).</li>
+
+                        <li>Aplica los filtros que se configuran en el archivo principal (<code>SAMPLE_FWHMRANGE</code>, <code>SAMPLE_VARIABILITY</code>,etc.) alrededor de la moda para obtener una muestra "limpia".</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <b>Normalización y remuestreo de cada estrella</b><br>
+
+                    Cada vignette que fue aceptada pasa por un preprocesamiento:
+
+                    <ul>
+                        <li>
+                            <b>Recentrado (<code>PSF_RECENTER</code>):</b> <span class="typewriter">PSFEx</span> re-estima el centroide de cada estrella con más precisión que el centroide inicial de <span class="typewriter">SExtractor</span>, típicamente ajustando un perfil analítico o usando momentos de la imagen, y desplaza la vignette para que quede perfectamente centrada en el píxel central.
+                        </li>
+
+                        <li>
+                            <b>Normalización de flujo:</b> el flujo de cada estrella se normaliza para que sean comparables entre sí.
+                        </li>
+
+                        <li>
+                            <b>Remuestreo según <code>PSF_SAMPLING:</code></b> si el modelo de PSF se va a construir a una resolución distinta de la imagen original, cada vignette se interpola a esa nueva grilla
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <b>Construcción de la base del modelo</b><br>
+
+                    En esta etapa entra <code>BASIS_TYPE</code>, <span class="typewriter">PSFEx</span> necesita representar la forma del PSF con algún conjunto de funciones base:
+
+                    <ul>
+                        <li>
+                            Si <code>BASIS_TYPE=PIXEL</code> o <code>PIXEL_AUTO</code>: cada píxel del modelo se trata como un parámetro libre independiente. Es decir, la "base" son literalmente funciones delta en cada posición del píxel del stamp del modelo.
+                        </li>
+
+                        <li>
+                            Si <code>BASIS_TYPE= GAUSS_LAGUERRE</code>: en vez de píxeles independientes, usa un conjunto de funciones anal+iticas ortogonales, esto regulariza naturalmente el modelo, dando resultados más suaves con menos estrellas.
+                        </li>
+
+                        <li>
+                            <code>BASIS_NUMBER</code> controla cuántos elementos de esa base se usan.
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <b>El ajuste usando mínimos cuadrados con variabilidad espacial</b><br>
+
+                    <span class="typewriter">PSFEx</span> no ajusta un PSF por estrella y luego promedia, ajusta un modelo global que depende simultáneamente de:
+
+                    <ol>
+                        <li>La posición del píxel dentro del stamp del PSF (u,v)</li>
+                        <li>La posición de la estrella en el campo de la imagen (X,Y)</li>
+                    </ol>
+
+                    El modelo completo se escribe como una combinación de la base espaciales (píxeles o Gauss-Laguerre) multiplicada por un polinomio en las coordenadas de campo:
+
+                    $$\Psi(u,v;X,Y)= \sum_{k}a_k(X,Y)\cdot B_k(u,v) $$
+
+                    donde cada coeficiente $a_k(X,Y)$ no es un número fijo, sino él mismo un polinomio en X,Y de grado <code>PSFVAR_DEGREES</code>:
+
+                    $$a_k(X,Y)=\sum_{i,j}c_{kij}\cdot X^iY^j$$
+
+                    <span class="typewriter">PSFEx</span> resuelve todos estos coeficientes $c_{kij}$ simultáneamente planteando un sistema de mínimos cuadrados gigante: para cada estrella de la muestra (con su posición X,Y conocida y su vignette observada), la predicción del modelo debe acercarse lo más posible al valor observado en cada píxel, sumando el error de todas las estrellas y todos los píxeles a la vez.
+                </li>
+
+                <li>
+                    <b>Iteración</b><br>
+
+                    El ajuste que hace <span class="typewriter">PSFEx</span> se hace de manera iterativa: 
+
+                    <ol>
+                        <li>Ajusta el modelo con toda la muestra actual.</li>
+                        <li>Calcula el $\chi^2$ de cada estrella individual contra el modelo recién ajustado.</li>
+                        <li>Rechaza las estrellas con $\chi^2$ anormalmente alto.</li>
+                        <li>Vuelve a ajustar con la muestra depurada.</li>
+                    </ol>
+                </li>
+
+                <li>
+                    <b>Salida final</b><br>
+
+                    El resultado de todo el proceso no es una imagen, es una tabla de coeficientes $c_{kij}$ guardada en formato FITS, contiene:
+
+                    <ul>
+                        <li>Los coeficientes de la base</li>
+                        <li>Los coeficientes polinomiales de variación espacial</li>
+                        <li>Metadatos de normalización</li>
+                    </ul>
+
+                    Cuando después usamos el archivo final en <span class="typewriter">SExtractor</span> lo que hace es evaluar esta fórmula matemática en la posición (X,Y) exacta de cada fuente para reconstruir el PSF local y hacer fotometría PSF.
+                </li>
+            </ol>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/criterio.jpeg" alt="Grafico de FWHM vs magnitud">
+
+                <figcaption>
+                    <strong>Figura 17:</strong> Diagrama de <b>radio de media luz</b> (<code>FLUX_RADIUS</code>) vs. magnitud
+                </figcaption>
+            </figure>
 
             <h3 id="requisitos clave" class="hr-lines">Requisitos de entrada y parámetros de configuración clave</h3>
 
@@ -1123,7 +1250,7 @@ VIGNET(35,35)</code></pre>
                     <img src="IMAGENES/prepsfexsex.jpeg" alt="Configuración del catálogo en sextractor para PSFEx">
 
                     <figcaption>
-                        <strong>Figura 17:</strong> Configuración del catálogo de salida para usar con PSFEx
+                        <strong>Figura 18:</strong> Configuración del catálogo de salida para usar con PSFEx
                     </figcaption>
                 </figure>
 
@@ -1208,7 +1335,7 @@ VIGNET(35,35)</code></pre>
                     <img src="IMAGENES/defaultpsfex.jpeg" alt="Archivo de configuración para PSFEx">
 
                     <figcaption>
-                        <strong>Figura 18:</strong> Archivo de configuración para empezar a usar <span class="typewriter">PSFEx</span>
+                        <strong>Figura 19:</strong> Archivo de configuración para empezar a usar <span class="typewriter">PSFEx</span>
                     </figcaption>
 
                 </figure>
@@ -1466,7 +1593,72 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
                 </p>
 
                 <pre><code>$ psfex prepsfex.fits -c default.psfex</code></pre>
+
+                <p>
+                    Esto nos genera los diferentes archivos que se definieron para <code>CHECKIMAGE_TYPE</code>: Chi,Prototypes, Samples, Residuals y Snapshots, además, un archivo XML, este último se puede visualizar con ayuda del software <span class="typewriter">TopCat</span>. Sin embargo, para este caso se hizo un código en python para ver estos datos en un histograma, como se muestra a continuación:
+                </p>
+
+                <h3 id="xml" class="hr-lines">Datos del archivo XML</h3>
+
+                <figure class="figura">
+
+                    <img src="IMAGENES/estadisticaspsf.jpeg" alt="Estadísticas obtenidas de psfex">
+
+                    <figcaption>
+                        <strong>Figura 20:</strong> Estadísticas obtenidas de <span class="typewriter">PSFEx</span>
+                    </figcaption>
+
+                </figure>
                 
+                <p>
+                    Vamos a interpretar los resultados mostrados:
+                </p>
+
+                <p>
+                    <b>FWHM (píxeles y arcosegundos):</b><br>
+
+                    El valor del FWHM esta entre 3.85 y 4.16, con una media de 3.95, equivalente a $\approx 1.01-1.09\ \text{arcsec}$ con una media de 1.04. El rango entre mínimo y máximo es pequeño (8%) lo que nos indicaría que el seeing/PSF es bastante homogéneo entre las estrellas usadas.
+                </p>
+
+                <p>
+                    <b>Elipticidad:</b><br>
+
+                    Tenemos un mínimo de 0, media de 0.002 y un máximo de 0.017, recordemos que una elipticidad de 0 significa que la PSF es perfectamente circular, tenemos una media de 0.002 y un máximo de apenas 0.017 que indica que las estrellas son muy circulares y consistentes.
+                </p>
+
+                <p>
+                    <b>Parámetro beta de Moffat:</b><br>
+
+                    Tenemos un mínimo de 3.25, una media de 4.23 y un máximo de 4.96, este parámetro describe qué tan "pesadas" son las alas del perfil PSF. Valores de $\beta$ entre 3 y 5 son típicos y físicamente razonables para PSFs.
+                </p>
+
+                <p>
+                    <b>Residuos del ajuste PSF:</b><br>
+
+                    Aquí tenemos un mínimo de 0.020, una media de 0.022 y un máximo de 0.033. Esta es la métrica más importante para juzgar la calidad del ajuste, si se tienen valores bajos y con poca dispersión indican que el modelo ajusta consistentemente bien a casi todas las estrellas.
+                </p>
+
+                <p>
+                    <b>Número de estrellas:</b><br>
+
+                    Tenemos que <span class="typewriter">PSFEx</span> cargó 403 fuentes candidatas del catálogo, pero solo aceptó 342 (un 85%) para construir el modelo final, descartando 60 (un 15%) por no cumplir los criterios de selección.
+                </p>
+
+                <p>
+                    Con estos resultados obtenidos parece que el modelo de PSF obtenido es bueno para comenzar a usarlo con <span class="typewriter">SExtractor</span>, pero también tenemos las imagenes de chequeo que pedimos a <span class="typewriter">PSFEx</span> (<code>CHI,PROTOTYPES,SAMPLES,RESIDUALS,SNAPSHOTS</code>).
+                </p>
+
+                <figure class="figura">
+
+                    <img src="IMAGENES/snapshots.jpeg" alt="Snapshots obtenidos de psfex">
+
+                    <figcaption>
+                        <strong>Figura 21:</strong> Imagen de chequeo <code>SNAPSHOTS</code>, muestra una colección de que <span class="typewriter">PSFEx</span> seleccionó para construir el modelo de la PSF.
+                    </figcaption>
+                </figure>
+
+                En la figura anterior podemos observar distintos recuadros con estrellas, cada uno corresponde a una estrella extraída del catálogo generado por <span class="typewriter">SExtractor</span>. Podemos observar que las estrellas estan bien centradas y tienen una forma similar entre sí. 
+
         </section>
 
 

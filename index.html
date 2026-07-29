@@ -113,10 +113,14 @@
 
                             <li><a href="#parametros clave">Parámetros clave a revisar</a></li>
 
-                            <li><a href="#xml">Datos del archivo XML</a></li>
+                            <li><a href="#xml">Resultados: imagenes de chequeo y datos del archivo XML</a></li>
                         </ul>
                     </li>
                 </ul>
+            </li>
+
+            <li>
+                <a href="#sex+psfex"><span class="typewriter">SExtractor + PSFEx:</span> Clasificación estrella/galaxia</a>
             </li>
 
         </ul>
@@ -1134,9 +1138,21 @@
                 <img src="IMAGENES/criterio.jpeg" alt="Grafico de FWHM vs magnitud">
 
                 <figcaption>
-                    <strong>Figura 17:</strong> Diagrama de <b>radio de media luz</b> (<code>FLUX_RADIUS</code>) vs. magnitud
+                    <strong>Figura 17:</strong> Diagrama de <b>radio de media luz</b> (<code>FLUX_RADIUS</code>) vs. magnitud (imagen tomada de <a href="#ref9">[9]</a>)
                 </figcaption>
             </figure>
+
+            <figure class="figura">
+                <img src="IMAGENES/Grafico.png" alt="grafico obtenido apartir del catálogo generado por sextractor para el locus stelar">
+
+                <figcaption>
+                    <strong>Figura 18:</strong> Diagrama del radio de media luz <code>FLUX_RADIUS</code> vs. magnitud <code>MAG_AUTO</code> obtenido a partir del catálogo generado por <span class="typewriter">SExtractor</span> 
+                </figcaption>
+            </figure>
+
+            <p>
+                En la figura 18 podemos observar una similitud con el diagrama mostrado en la documentación de <span class="typewriter">PSFEx</span>. Las estrellas puntuales forman una secuencia estrecha con valores casi constantes de <code>FLUX_RADIUS</code>, lo que se conoce como <i>locus estelar</i>. <span class="typewriter">PSFEx</span> identifica automáticamente esta región para seleccionar las estrellas que serán utilizadas en la construcción del modelo del PSF. Los objetos con radios mayores corresponden principalmente a galaxias u otras fuentes extendidas.
+            </p>
 
             <h3 id="requisitos clave" class="hr-lines">Requisitos de entrada y parámetros de configuración clave</h3>
 
@@ -1250,7 +1266,7 @@ VIGNET(35,35)</code></pre>
                     <img src="IMAGENES/prepsfexsex.jpeg" alt="Configuración del catálogo en sextractor para PSFEx">
 
                     <figcaption>
-                        <strong>Figura 18:</strong> Configuración del catálogo de salida para usar con PSFEx
+                        <strong>Figura 19:</strong> Configuración del catálogo de salida para usar con PSFEx
                     </figcaption>
                 </figure>
 
@@ -1335,7 +1351,7 @@ VIGNET(35,35)</code></pre>
                     <img src="IMAGENES/defaultpsfex.jpeg" alt="Archivo de configuración para PSFEx">
 
                     <figcaption>
-                        <strong>Figura 19:</strong> Archivo de configuración para empezar a usar <span class="typewriter">PSFEx</span>
+                        <strong>Figura 20:</strong> Archivo de configuración para empezar a usar <span class="typewriter">PSFEx</span>
                     </figcaption>
 
                 </figure>
@@ -1598,14 +1614,14 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
                     Esto nos genera los diferentes archivos que se definieron para <code>CHECKIMAGE_TYPE</code>: Chi,Prototypes, Samples, Residuals y Snapshots, además, un archivo XML, este último se puede visualizar con ayuda del software <span class="typewriter">TopCat</span>. Sin embargo, para este caso se hizo un código en python para ver estos datos en un histograma, como se muestra a continuación:
                 </p>
 
-                <h3 id="xml" class="hr-lines">Datos del archivo XML</h3>
+                <h3 id="xml" class="hr-lines">Resultados: imagenes de chequeo y datos del archivo XML</h3>
 
                 <figure class="figura">
 
                     <img src="IMAGENES/estadisticaspsf.jpeg" alt="Estadísticas obtenidas de psfex">
 
                     <figcaption>
-                        <strong>Figura 20:</strong> Estadísticas obtenidas de <span class="typewriter">PSFEx</span>
+                        <strong>Figura 21:</strong> Estadísticas obtenidas de <span class="typewriter">PSFEx</span>
                     </figcaption>
 
                 </figure>
@@ -1653,70 +1669,168 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
                     <img src="IMAGENES/snapshots.jpeg" alt="Snapshots obtenidos de psfex">
 
                     <figcaption>
-                        <strong>Figura 21:</strong> Imagen de chequeo <code>SNAPSHOTS</code>, muestra una colección de que <span class="typewriter">PSFEx</span> seleccionó para construir el modelo de la PSF.
+                        <strong>Figura 22:</strong> Imagen de chequeo <code>SNAPSHOTS</code>, muestra una colección de que <span class="typewriter">PSFEx</span> seleccionó para construir el modelo de la PSF.
                     </figcaption>
                 </figure>
 
-                En la figura anterior podemos observar distintos recuadros con estrellas, cada uno corresponde a una estrella extraída del catálogo generado por <span class="typewriter">SExtractor</span>. Podemos observar que las estrellas estan bien centradas y tienen una forma similar entre sí. 
+                <p>
+                    En la figura anterior podemos observar distintos recuadros con estrellas, cada uno corresponde a una estrella extraída del catálogo generado por <span class="typewriter">SExtractor</span>. Podemos observar que las estrellas estan bien centradas y tienen una forma similar entre sí. 
+                </p>
 
+                <figure class="figura">
+
+                    <img src="IMAGENES/prototypes.jpeg" alt="Imagen de los prototipos obtenidos de PSFEx">
+
+                    <figcaption>
+                        <strong>Figura 23:</strong> Prototipos o funciones base utilizadas para describir la variación de la PSF.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    En la figura 22 podemos observar la imagen de chequeo <code>PROTOTYPES</code>, como ya se explico antes, <span class="typewriter">PSFEx</span> no guarda un solo PSF fijo, sino una base de 6 imágenes que, combinadas con un polinomio de grado 2 en <code>X_IMAGE, Y_IMAGE</code> permiten reconstruir el PSF en cualquier posición del campo de la imagen. Estos prototipos permiten describir cómo cambia la PSF a lo largo de la imagen.
+                </p>
+
+                <p>
+                    Finalmente, algo que se debe verificar es la distribución de las estrellas que se usaron para el modelo de la PSF, para ello debemos activar el catálogo de salida de <span class="typewriter">PSFEx</span>, esto se hace modificando los siguientes parámetros en el archivo de onfiguración de <span class="typewriter">PSFEx</span>:
+                </p>
+
+                <pre><code>OUTCAT_TYPE     FITS_LDAC
+OUTCAT_NAME     psfex_accepted.cat</code></pre>
+
+                <p>
+                    Esto nos genera el catálogo con columans como <code>X_IMAGE, Y_IMAGE, DELTAX_IMAGE, DELTAY_IMAGE, FLAGS_PSF</code>, etc. 
+                </p>
+
+                Con esto, generamos un archivo de regiones con ayuda de <i>python</i> para visualizar las estrellas aceptadas y las estrellas rechazadas.
+
+                <figure class="figura">
+
+                    <img src="IMAGENES/ds9.jpeg" alt="Estrellas aceptadas marcadas con un circulo azul, las no aceptadas marcadas con una X">
+
+                    <figcaption>
+                        <strong>Figura 24:</strong> Distribución espacial de las estrellas seleccionadas por <span class="typewriter">PSFEx</span> para realizar el modelo de la PSF.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    En la figura anterior podemos observar que <span class="typewriter">PSFEx</span> tomo una distribución espacial aleatoria en el campo de la imagen, es decir, no tomo estrellas concentradas en una sola región. Esto es muy importante, ya que la PSF no es igual para estrellas que estan en una esquina de la imagen a las que estan en el centro de la misma. 
+                </p>
         </section>
 
 
         <!-- Clasificación Estrella/ Galaxia -->
+
+        <h2 id="sex+psfex"><span class="typewriter">SExtractor + PSFEx:</span> Clasificación estrella/galaxia</h2>
+
         <section>
-            <h2>Clasificación Estrella/Galaxia</h2>
+            
 
             <p>
-                Clasificar objetos entre estrellas y galaxias es una tarea importante en astronomía, SExtractor nos proporciona un parámetro llamado <code>CLASS_STAR</code> para separar ambos tipos de fuentes. Este clasificador se basa en una <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">red neuronal multicapa de propagación directa</a> entrenada a traves de aprendizaje supervisado, un <code>CLASS_STAR</code> cercano a 0 significa que muy probablemente el objeto es una galaxia, mientras que un valor cercano a 1 indica que el objeto es probablemente una estrella. Para más detalles sobre el funcionamiento de este clasificador se puede consultar en el manual de usuario. 
+                Después de haber generado el modelo del PSF, el siguiente paso es reinyectarlo a <span class="typewriter">SExtractor</span> para medir y obtener parámetros que dependen explícitamente de la forma de la PSF. <span class="typewriter">SExtractor</span> tiene dos enfoques para hacer esto: <a href="#ref1">[1]</a> <a href="#ref2">[2]</a>
             </p>
 
-            <h3 class="hr-lines">Uso del clasificador</h3>
+            <ol>
+                <li>
+                    <b><code>CLASS_STAR</code>:</b> Este clasificador se basa en una <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">red neuronal multicapa de propagación directa</a> entrenada a traves de aprendizaje supervisado, usa perfil de brillo, FWHM, y pico de intensidad. Funciona bien pero se degrada en el límite de baja SNR
+                </li>
+                <li>
+                    <b><code>SPREAD_MODEL</code>:</b> Compara el ajuste de un modelo de fuente puntual contra un modelo ligeramente extendido. Este es el estándar actual precisamente porque requiere del modelo PSF
+                </li>
+            </ol>
+            
+            <p>
+                El estimador <code>SPREAD_MODEL</code> indica cual de los modelos que mejor se ajustan coincide mejor con los datos de a imagen, ya sea el modelo de PSF local remuestreado en la posición actual $\tilde{\phi}$ (representando una fuente puntual) o un modelo remuestreado lieramente más "borroso" $\tilde{G}$ (representando una galaxia). Aquí $\tilde{G}$ se obtiene convolucionando el modelo de PSF local con un modelo exponencial circular con una logitud de escala $=1/16\ \text{FWHM}$, y remuestreando el resultado en la posición actual en la cuadrícula de píxeles. <a href="#ref1">[1]</a><a href="#ref2">[2]</a>
+            </p>
 
             <p>
-                Para hacer uso del clasificador de estrellas y galaxias, debemos añadir el parámetro <code>CLASS_STAR</code> a nuestro archivo <code>default.param</code> y volver a ejecutar SExtractor, esto nos actualizará el catálogo con el nuevo parámetro, siendo la cuarta columna en nuestro catálogo.
+                <code>SPREAD_MODEL</code> se normaliza para que la comparación de fuentes con diferentes PSF sea más práctica y coincidan: 
             </p>
 
-            <img src="IMAGENES/11.jpeg" alt="Catálogo con el parámetro CLASS_STAR">
-
-            <h3 class="hr-lines">Visualización de la clasificación</h3>
+            $$
+            \text{SPREAD_MODEL}=\frac{\tilde{G}^TWp}{\tilde{\phi}^TWp}-\frac{\tilde{G}^TW\tilde{\phi}}{\tilde{\phi}^TW\tilde{\phi}}
+            $$
 
             <p>
-                Para visualizar la clasificación en DS9 necesitamos un archivo <code>.reg</code>, cuando ejecutamos SExtractor este nos genera el catálogo <code>test.cat</code>, el problema es que este archivo solo tiene texto lleno de números. SAOImage ds9 es un visor de imágenes, pero no puede saber como queremos que interprete la información en la pantalla. El archivo <code>.reg</code> actúa como un traductor visual, toma los datos de nuestro catálogo y los convierte en instrucciones de dibujo que DS9 puede entender.
+                donde $p$ es el vector de imagen centrado en la fuente. $W$ es una matriz de pesos constante a lo largo de la diagonal.
             </p>
 
             <p>
-                En lugar de darle a DS9 una lista de números como esta:
+                El valor que se obtiene de <code>SPREAD_MODEL</code> nos dice que tipo de fuente es, para fuentes puntuales <code>SPREAD_MODEL</code> toma valores cercanos a cero, positivos para fuentes extendidas y negativo para detecciones más pequeñas que la PSF. Ahora vamos a hacer uso de estos estimadores, como siempre, empezaremos creando un directorio nuevo en donde pondremos todos los elementos que hemos venido ocupando para usar <span class="typewriter">SExtractor</span> pero ahora agregaremos el archivo .psf que nos dió <span class="typewriter">PSFEx</span> y en el archivo de configuración principal de <span class="typewriter">SExtractor</span> vamos a colocar lo siguiente:
             </p>
 
-            <pre><code>2374.4844 2920.0435 -5.7671 0.586</code></pre>
+            <figure class="figura">
+                <img src="IMAGENES/parametrospsf.jpeg" alt="Parámetros a configurar en el archivo .sex sobre la PSF">
+
+                <figcaption>
+                    <strong>Figura 25:</strong> Parámetros que se deben configurar en el archivo .sex para hacer uso del modelo PSF obtenido de <span class="typewriter">PSFEx</span>.
+                </figcaption>
+            </figure>
 
             <p>
-                El archivo <code>.reg</code> le da a DS9 una instrucción, como esta:
-            </p>
+                Y en el archivo de parámetros vamos a colocar los siguientes parámetros:
 
-            <pre><code>Dibuja una elipse verde en las coordenadas (2374.4844, 2920.0435) porque este objeto es una estrella.</code></pre>
+                <pre><code>CLASS_STAR
+SPREAD_MODEL
+SPREADERR_MODEL
+FLUX_RADIUS
+FWHM_IMAGE
+MAG_AUTO
+MAGERR_AUTO
+MAG_PSF
+MAGERR_PSF
+FLUX_AUTO
+FLUXERR_AUTO
+MU_MAX
+FLAGS
+SNR_WIN</code></pre>
+            </p>
 
             <p>
-                Para hacer esto se usa la herramienta <code>awk</code> en la terminal, para imprimir un "mapa de instrucciones de dibujo" que DS9 puede proyectar sobre nuestra imagen <code>.fits</code>, el comando es el siguiente:
+                Y finalmente corremos <span class="typewriter">SExtractor</span> con el siguiente comando:
             </p>
 
-            <pre><code>awk '!/^#/ { if ($3 > 0.8) {print "image; circle(" $1 "," $2 ", 10) # color=green"} 
-                else {print "image; circle(" $1 "," $2 ", 10) # color=red"} }' 
-                test.cat > clasificacion.reg</code></pre>
+            <pre><code>$ sex IMAGEN.fits -c pospsfex.sex </code></pre>
 
-            <ul>
-                <li><code>!/^#/</code> ignora las líneas del encabezado, las que comienzan con #</li>
-                <li><code>if ($3 > 0.8)</code> si la columna 3 (<code>CLASS_STAR</code>) es mayor que 0.8, lo clasifica como estrella</li>
-                <li>Usa las coordenadas X($1) y Y($2) para dibujar un círculo verde para estrellas y rojo para galaxias con un radio de 10 píxeles, y todo se guarda en un nuevo archivo llamado clasificacion.reg</li>
-            </ul>
+            <figure class="figura">
+                <img src="IMAGENES/pospsfex.jpeg" alt="Imagen que muestra el tiempo que tardo sextractor">
 
-            <img src="IMAGENES/12.jpeg" alt="Archivo de regiones con clasificación">
+                <figcaption>
+                    <strong>Figura 26:</strong> <span class="typewriter">SExtractor</span> tardo más en procesar la imagen empleando el modelo del PSF, exactamente 630.3 s.
+                </figcaption>
+            </figure>
 
             <p>
-                Finalmente, para observar nuestra clasificación en DS9 cargamos nuestra imagen y luego cargamos el archivo de regiones en la pestaña Region > Open y seleccionamos nuestro archivo <code>clasificacion.reg</code>, obteniendo una visualización con círculos verdes y rojos.
+                Esto nos genera nuestro catálogo con los parámetros que le solicitamos a <span class="typewriter">SExtractor</span>, vamos a visualizar los datos del catálogo obtenido para la clasificación estrella/galaxia, esto lo haremos empleando <i>Python</i>, vamos a convertir nuestro catálogo <b>FITS_LDAC</b> a un DataFrame con pandas. Luego, revisamos los datos obtenidos con el clasificador <code>SPREAD_MODEL</code>, para ello vamos a determinar un umbral para elegir nuestras estrellas, aquí debemos tomar en cuenta que <code>SPREAD_MODEL</code> tiene una incertidumbre (<code>SPREADERR_MODEL</code>) y no es la misma para todas las mediciones, por ello el umbral será determinado por:
+
+                $$|\text{SPREAD_MODEL}|< 0.002 + \text{SPREADERR_MODEL}$$
             </p>
 
-            <img src="IMAGENES/13.jpeg" alt="Visualización de clasificación en DS9">
+
+            <p>
+                por ejemplo si tomamos los datos del primer elemento en nuestro <i>DataFrame</i>: Se obtuvo un <code>SPREAD_MODEL</code>: 0.026486, <code>SPREADERR_MODEL</code>: 0.000007, por lo que: $|0.026486|< 0.002 + (0.000007)= 0.002007 \Longrightarrow 0.026486 > 0.002007$, por lo que este primer objeto no es considerado una estrella, vamos a ubicarlo en nuestra imagen:
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/primerelemento.png" alt="Primer elemento determinado en el catálogo">
+
+                <figcaption>
+                    <strong>Figura 27:</strong> Primer objeto determinado en el catálogo (parte inferior).
+                </figcaption>
+            </figure>
+
+            <p>
+                Al ubicarlo en la imagen podemos darnos cuenta que, efectivamente, el objeto no es una estrella sino una galaxia que parece ser del tipo S0. Ahora vamos a ver la distribución de los datos de <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/spreadmodel_magauto.png" alt="Spread_model en función de MAG_AUTO">
+
+                <figcaption>
+                    <strong>Figura 28:</strong> Grafico obtenido del catálogo, <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, las estrellas rondan cerca de 0.
+                </figcaption>
+            </figure>
+
         </section>
 
         <!-- Referencias -->

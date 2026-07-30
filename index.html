@@ -1698,10 +1698,8 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
 OUTCAT_NAME     psfex_accepted.cat</code></pre>
 
                 <p>
-                    Esto nos genera el catálogo con columans como <code>X_IMAGE, Y_IMAGE, DELTAX_IMAGE, DELTAY_IMAGE, FLAGS_PSF</code>, etc. 
+                    Esto nos genera el catálogo con columans como <code>X_IMAGE, Y_IMAGE, DELTAX_IMAGE, DELTAY_IMAGE, FLAGS_PSF</code>, etc. Así, generamos un archivo de regiones con ayuda de <i>python</i> para visualizar las estrellas aceptadas y las estrellas rechazadas.
                 </p>
-
-                Con esto, generamos un archivo de regiones con ayuda de <i>python</i> para visualizar las estrellas aceptadas y las estrellas rechazadas.
 
                 <figure class="figura">
 
@@ -1739,7 +1737,7 @@ OUTCAT_NAME     psfex_accepted.cat</code></pre>
             </ol>
             
             <p>
-                El estimador <code>SPREAD_MODEL</code> indica cual de los modelos que mejor se ajustan coincide mejor con los datos de a imagen, ya sea el modelo de PSF local remuestreado en la posición actual $\tilde{\phi}$ (representando una fuente puntual) o un modelo remuestreado lieramente más "borroso" $\tilde{G}$ (representando una galaxia). Aquí $\tilde{G}$ se obtiene convolucionando el modelo de PSF local con un modelo exponencial circular con una logitud de escala $=1/16\ \text{FWHM}$, y remuestreando el resultado en la posición actual en la cuadrícula de píxeles. <a href="#ref1">[1]</a><a href="#ref2">[2]</a>
+                El estimador <code>SPREAD_MODEL</code> indica cual de los modelos que mejor se ajustan coincide mejor con los datos de a imagen, ya sea el modelo de PSF local remuestreado en la posición actual $\tilde{\phi}$ (representando una fuente puntual) o un modelo remuestreado ligeramente más "borroso" $\tilde{G}$ (representando una galaxia). Aquí $\tilde{G}$ se obtiene convolucionando el modelo de PSF local con un modelo exponencial circular con una longitud de escala $=1/16\ \text{FWHM}$, y remuestreando el resultado en la posición actual en la cuadrícula de píxeles. <a href="#ref1">[1]</a><a href="#ref2">[2]</a>
             </p>
 
             <p>
@@ -1830,6 +1828,43 @@ SNR_WIN</code></pre>
                     <strong>Figura 28:</strong> Grafico obtenido del catálogo, <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, las estrellas rondan cerca de 0.
                 </figcaption>
             </figure>
+
+            <p>
+                Notemos que existe una clara separación entre estrellas y galaxias (recordemos que para <code>SPREAD_MODEL</code> un valor cercano a 0 significa que es estrella), con las estrellas concentrandose alrededor de <code>SPREAD_MODEL</code>=0 y las galaxias con valores positivos. Para objetos brillantes la separación entre ambas poblaciones es clara; sin embargo, conforme aumenta la magnitud (objetos más débiles) la disperción de <code>SPREAD_MODEL</code> crece como consecuencia de la disminución de la relación señal-ruido. 
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/errormodel.png" alt="Grafico de spreaderr_model en función de la magnitud">
+
+                <figcaption>
+                    <strong>Figura 29:</strong>Grafico del error del modelo (<code>SPREADERR_MODEL</code>) en función de la magnitud (<code>MAG_AUTO</code>). Para objetos brillantes entre 14 a 18 el error es casi constante, mientras que para objetos más débiles el error empieza a aumentar. 
+                </figcaption>
+            </figure>
+
+            <p>
+                Recordemos que <code>SPREAD_MODEL</code> compara la forma del objeto con la forma esperada de la PSF, cuando una estrella es brillante puede medirse con mucha precisión, mientras que si tenemos una estrella muy débil, el ruido puede modificar algunos valores de los píxeles, por lo que es más difícil saber cual es exactamente su perfil.
+            </p>
+
+            <p>
+                Ahora, veamos los datos obtenidos para el clasificador <code>CLASS_STAR</code>, recordemos que este parámetro toma un valor de 0 para objetos que parecen ser como una galaxia y 1 si es una estrella. De igual forma que con el modelo <code>SPREAD_MODEL</code>, tomaremos un umbral para elegir nuestras estrellas, estre umbral sera: $\text{es_estrella}>0.9$. Tomando el ejemplo anterior, el primer elemento del catálogo tiene un valor de <code>CLASS_STAR</code>=0.028627, tiene un valor cercano a 0 por lo que se considera una galaxia y como ya vimos, si es una galaxia.
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/classtar.png" alt="Grafica de class star en función de la magnitud">
+
+                <figcaption>
+                    <strong>Figura 30:</strong> Grafica del parámetro <code>CLASS_STAR</code> en función de la magnitud, tomando estrellas para valores mayores a 0.9 y galaxias para valores menores a 0.05
+                </figcaption>
+            </figure>
+
+            <p>
+                De esta grafica podemos notar algo similar que usando <code>SPREAD_MODEL</code>, para objetos brillantes las estrellas presentan valores cercanos a 1, mientras que las galaxias se concentran al rededor de 0; sin embrago, conforme aumenta la magnitud y los objetos se vuelven más débiles, la relación señal-ruido disminuye y la red neuronal de <span class="typewriter">SExtractor</span> asigna valores cada vez más intermedios, como resultado crece el número de objetos cuya clasificación es ambigua.
+            </p>
+
+            <p>
+                Ahora bien, por una parte tenemos <code>CLASS_STAR</code> que devuelve una probabilidad de entre 0 y 1, el cual funciona bien para objetos brillantes, sin embargo, pierde capacidad de discriminar cuando la relación señal-ruido disminuye. En cambio, <code>SPREAD_MODEL</code> es un parámetro morfológico basado principalmente en el ajuste de la PSF, además proporciona su incertidumbre (<code>SPREADERR_MODEL</code>) lo que permitiría construir otros criterios para la clasificación.
+            </p>
 
         </section>
 

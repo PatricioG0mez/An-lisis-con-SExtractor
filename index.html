@@ -123,6 +123,10 @@
                 <a href="#sex+psfex"><span class="typewriter">SExtractor + PSFEx:</span> Clasificación estrella/galaxia</a>
             </li>
 
+            <li>
+                <a href="#subaru">Imagen de ejemplo de <span class="typewriter">Subaru Suprime-Cam</span></a>
+            </li>
+
         </ul>
 
     </nav>
@@ -139,6 +143,66 @@
                 puede procesar imágenes de gran tamaño y manejar una gran variedad
                 de magnitudes de objetos. Por su parte, <span class="typewriter">PSFEx</span> es un software que permite modelar la función de dispersión puntual (PSF) a partir de una imagen astronómica. La PSF describe cómo un sistema óptico-detector responde a una fuente puntual de luz, como una estrella. La combinación de ambos programas permite realizar un análisis más completo y preciso de las imágenes astronómicas.
             </p>
+
+            <div class="page-info">
+
+                <div class="info-item">
+                    <span class="icon">👤</span>
+
+                    <div>
+                        <span class="label">Autor</span>
+                        <span class="value">
+                            Patricio Emanuel Gómez Gómez
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">🎓</span>
+
+                    <div>
+                        <span class="label">Institución</span>
+                        <span class="value">
+                            Facultad de Ciencias, Universidad Nacional Autónoma de México
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">✉️</span>
+
+                    <div>
+                        <span class="label">Correo electrónico</span>
+                        <span class="value">
+                            <a href="mailto:patriciogomez@ciencias.unam.mx">
+                                patriciogomez@ciencias.unam.mx
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">📅</span>
+
+                    <div>
+                        <span class="label">Última actualización</span>
+                        <span class="value" id="lastModified"></span>
+                    </div>
+                </div>
+            </div>
+
+<script>
+
+    const fecha = new Date(document.lastModified);
+
+    document.getElementById("lastModified").textContent =
+        fecha.toLocaleDateString("es-MX", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+
+</script>
         </section>
 
 <!-- Instalación -->
@@ -1864,6 +1928,98 @@ SNR_WIN</code></pre>
 
             <p>
                 Ahora bien, por una parte tenemos <code>CLASS_STAR</code> que devuelve una probabilidad de entre 0 y 1, el cual funciona bien para objetos brillantes, sin embargo, pierde capacidad de discriminar cuando la relación señal-ruido disminuye. En cambio, <code>SPREAD_MODEL</code> es un parámetro morfológico basado principalmente en el ajuste de la PSF, además proporciona su incertidumbre (<code>SPREADERR_MODEL</code>) lo que permitiría construir otros criterios para la clasificación.
+            </p>
+
+            <p>
+                Puedes consultar las configuraciones y los códigos empleados para generar los archivos de regiones y algunas graficas <a href="https://drive.google.com/drive/folders/1zBZVBZl5aykhPWFlgEkymqHw276jSQNs?usp=drive_link">AQUÍ</a>
+            </p>
+
+        </section>
+
+        <!-- SUBARU -->
+
+        <h2 id="subaru">Imagen de ejemplo de <span class="typewriter">Subaru Suprime-Cam</span></h2>
+
+        <section>
+
+            <p>
+                Para este ejemplo vamos a emplear la siguiente imagen <i>FITS</i>, esta es un mosaico apilado usando <span class="typewriter">SWarp</span> hecho con datos de <b>Subaru Suprime-Cam</b>
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/subaru.jpeg" alt="Imagen de la región a emplear para el análisis">
+
+                <figcaption>
+                    <strong>Figura 31:</strong> Imagen de la región a análizar con <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            <p>
+                Empezamos, al igual que antes, por leer el header de la imagen <i>FITS</i> para obtener información que nos sea útil.
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/headersubaru.jpeg" alt="Encabezado de la imagen FITS empleada">
+
+                <figcaption>
+                    <strong>Figura 32:</strong>Encabezado de la imagen <i>FITS</i> empleada, de donde podemos obtener el <code>GAIN, SATUR_LEVEL, PIXEL_SCALE</code> y <code>SEEING_FWHM</code><div class=""></div>
+                </figcaption>
+            </figure>
+
+            <p>
+                De aquí obtenemos los siguientes datos para usarlos en nuestro archivo de configuración principal de <span class="typewriter">SExtractor</span>:
+            </p>
+
+            <table>
+                <tr>
+                    <th><code>GAIN</code></th>
+                    <th>2835</th>
+                </tr>
+                <tr>
+                    <th><code>SATUR_LEVEL</code></th>
+                    <th>1330</th>
+                </tr>
+                <tr>
+                    <th>PIXEL_SCALE</th>
+                    <th>$5.160235\times 10^{-5}\times 3600 \approx 0.186\ \text{arcsec/pixel}$</th>
+                </tr>
+                <tr>
+                    <th><code>SEEING_FWHM</code></th>
+                    <th>0.789</th>
+                </tr>
+            </table>
+
+            <p>
+                Ahora, vamos a determinar que filtro de convolución vamos a emplear, esto lo hacemos al igual que con la imagen anterior del <i>Legacy survey</i>:
+            </p>
+
+            $$
+            FWHM_{pix}=\frac{0.789}{0.186}\approx 4.2
+            $$
+
+            <p>
+                Con esta escala del FWHM en píxeles podemos determinar que el filtro conveniente a usar es <code>gauss_3.0_5x5.conv</code>, ya con estos parámetros iniciales modificados podemos empezar a determinar el background, para ello usaremos los parámetros que están por defecto (<code>BACK_SIZE</code>=64 y <code>BACK_FILTERSIZE</code>=3) y pedimos las imagenes de chequeo <code>BACKGROUND, -BACKGROUND</code>.
+            </p>
+            
+            <figure class="figura">
+                <img src="IMAGENES/backsubaru.jpeg" alt="Imagen empleada (izq) e imagen de chequeo -background">
+
+                <figcaption>
+                    <strong>Figura 33:</strong>Imagen original (izq) e imagen de chequeo <code>-BACKGROUND</code> (der), podemos notar como algunos objetos perdieron algo de brillo.
+                </figcaption>
+            </figure>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/backgroundsubaru.jpeg" alt="Imagen de chequeo BACKGROUND">
+
+                <figcaption>
+                    <strong>Figura 34:</strong>Background que <span class="typewriter">SExtractor</span> obtuvo, podemos ver que tomo parte de algunos objetos brillantes de la imagen. (imagen de chequeo <code>BACKGROUND</code>) 
+                </figcaption>
+            </figure>
+
+            <p>
+                En la figura 33, podemos notar como cambio el brillo de algunos objetos, esto puede indicar que hubo una sobresustracción del fondo, esto mismo lo podemos corroborar en la figura 34, en donde vemos como "huecos" de los mismos objetos que notamos en la figura 33. Para corregir esto vamos a probar modificar <code>BACK_FILTERSIZE</code> de 3 a 5. 
             </p>
 
         </section>

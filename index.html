@@ -109,7 +109,7 @@
 
                         <ul class="subsubmenu">
 
-                            <li><a href="#parametros iniciales">Parámetros iniciales</a></li>
+                            <li><a href="#parametros iniciales psfex">Parámetros iniciales</a></li>
 
                             <li><a href="#parametros clave">Parámetros clave a revisar</a></li>
 
@@ -1306,7 +1306,7 @@
 
         <section>
 
-            <h3 id="parametros iniciales" class="hr-lines">Parámetros iniciales.</h3>
+            <h3 id="parametros iniciales psfex" class="hr-lines">Parámetros iniciales.</h3>
             <p>
                 Para empezar a trabajar con <span class="typewriter">PSFEx</span> vamos a crear una carpeta nueva para <span class="typewriter">SExtractor</span> con la misma configuración con la que hemos trabajado. Ahora, el archivo donde estarán los parámetros le daremos el nombre de <i>prepsfex.param</i>, al cual agregaremos los siguientes parámetros:
             </p>
@@ -1420,10 +1420,6 @@ VIGNET(35,35)</code></pre>
 
                 </figure>
 
-                <p>
-                    Ya con el archivo creado, debemos empezar a editarlo antes de correr <span class="typewriter">PSFEx</span>
-                </p>
-
                 <h3 id="parametros clave" class="hr-lines">Parámetros clave a revisar</h3>
 
                 <p>
@@ -1457,8 +1453,8 @@ PSFVAR_DEGREES       2           </code></pre>
                 <p>
                     <b>Salidas de verificación</b><br>
 
-                    <pre><code>CHECKPLOT_TYPE       FWHM,ELLIPTICITY,COUNTS,COUNT_FRACTION,CHI2,RESIDUALS
-CHECKPLOT_NAME       fwhm,ellipticity,counts,countfrac,chi2,resi
+                    <pre><code>CHECKPLOT_TYPE       FWHM,ELLIPTICITY
+CHECKPLOT_NAME       fwhm.png,ellipticity.png
 
 CHECKIMAGE_TYPE      CHI,PROTOTYPES,SAMPLES,RESIDUALS,SNAPSHOTS
 CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
@@ -1751,11 +1747,11 @@ CHECKIMAGE_NAME      chi,proto,samp,resi,snap</code></pre>
                 </figure>
 
                 <p>
-                    En la figura 22 podemos observar la imagen de chequeo <code>PROTOTYPES</code>, como ya se explico antes, <span class="typewriter">PSFEx</span> no guarda un solo PSF fijo, sino una base de 6 imágenes que, combinadas con un polinomio de grado 2 en <code>X_IMAGE, Y_IMAGE</code> permiten reconstruir el PSF en cualquier posición del campo de la imagen. Estos prototipos permiten describir cómo cambia la PSF a lo largo de la imagen.
+                    En la figura anterior podemos observar la imagen de chequeo <code>PROTOTYPES</code>, como ya se explico antes, <span class="typewriter">PSFEx</span> no guarda un solo PSF fijo, sino una base de 6 imágenes que, combinadas con un polinomio de grado 2 en <code>X_IMAGE, Y_IMAGE</code> permiten reconstruir el PSF en cualquier posición del campo de la imagen. Estos prototipos permiten describir cómo cambia la PSF a lo largo de la imagen.
                 </p>
 
                 <p>
-                    Finalmente, algo que se debe verificar es la distribución de las estrellas que se usaron para el modelo de la PSF, para ello debemos activar el catálogo de salida de <span class="typewriter">PSFEx</span>, esto se hace modificando los siguientes parámetros en el archivo de onfiguración de <span class="typewriter">PSFEx</span>:
+                    Para complementar, podemos verificar la distribución de estrellas que se usaron para el modelo de la PSF, para ello debemos activar el catálogo de salida de <span class="typewriter">PSFEx</span>, esto se hace modificando los siguientes parámetros en el archivo de configuración de <span class="typewriter">PSFEx</span>:
                 </p>
 
                 <pre><code>OUTCAT_TYPE     FITS_LDAC
@@ -1775,8 +1771,28 @@ OUTCAT_NAME     psfex_accepted.cat</code></pre>
                 </figure>
 
                 <p>
-                    En la figura anterior podemos observar que <span class="typewriter">PSFEx</span> tomo una distribución espacial aleatoria en el campo de la imagen, es decir, no tomo estrellas concentradas en una sola región. Esto es muy importante, ya que la PSF no es igual para estrellas que estan en una esquina de la imagen a las que estan en el centro de la misma. 
+                    En la figura anterior podemos observar que <span class="typewriter">PSFEx</span> tomo una distribución espacial aleatoria en el campo de la imagen, es decir, no tomo estrellas concentradas en una sola región. Esto es muy importante, ya que la PSF no es igual para estrellas que estan en una esquina de la imagen a las que estan en el centro de la misma.
                 </p>
+
+                <figure class="comparacion-grid2">
+
+                
+                    <img src="IMAGENES/fwhm.png" alt="Mapa de distribución de FWHM de las estrellas aceptadas por PSFEx">
+                    
+
+                    
+                    <img src="IMAGENES/elepticidad.png" alt="Mapa de distribución de elipticidad de las estrellas aceptadas por PSFEx">
+        
+
+                    <figcaption>
+                        <strong>Figura 25:</strong> <i>gráficos de diagnóstico <b>(Check-plots)</b></i>. Distribución de FWHM y elipticidad de las estrellas aceptadas por <span class="typewriter">PSFEx</span>.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    En los gráficos anteriores podemos observar la distribución de FWHM y la elipticidad, el mapa de FWHM nos permite visualizar como cambia el ancho de la PSF a lo largo de la imagen, las áreas que tienen colores consistentes indican que el ancho de la PSF es estable en esa región, mientras que las áreas con cambios de color indican que hay cambios en el tamaño de la PSF. El mapa de elipticidad nos permite ver como cambia la forma de la PSF a lo largo de la imagen, 
+                </p>
+                
         </section>
 
 
@@ -1824,7 +1840,7 @@ OUTCAT_NAME     psfex_accepted.cat</code></pre>
                 <img src="IMAGENES/parametrospsf.jpeg" alt="Parámetros a configurar en el archivo .sex sobre la PSF">
 
                 <figcaption>
-                    <strong>Figura 25:</strong> Parámetros que se deben configurar en el archivo .sex para hacer uso del modelo PSF obtenido de <span class="typewriter">PSFEx</span>.
+                    <strong>Figura 26:</strong> Parámetros que se deben configurar en el archivo .sex para hacer uso del modelo PSF obtenido de <span class="typewriter">PSFEx</span>.
                 </figcaption>
             </figure>
 
@@ -1857,7 +1873,7 @@ SNR_WIN</code></pre>
                 <img src="IMAGENES/pospsfex.jpeg" alt="Imagen que muestra el tiempo que tardo sextractor">
 
                 <figcaption>
-                    <strong>Figura 26:</strong> <span class="typewriter">SExtractor</span> tardo más en procesar la imagen empleando el modelo del PSF, exactamente 630.3 s.
+                    <strong>Figura 27:</strong> <span class="typewriter">SExtractor</span> tardo más en procesar la imagen empleando el modelo del PSF, exactamente 630.3 s.
                 </figcaption>
             </figure>
 
@@ -1876,7 +1892,7 @@ SNR_WIN</code></pre>
                 <img src="IMAGENES/primerelemento.png" alt="Primer elemento determinado en el catálogo">
 
                 <figcaption>
-                    <strong>Figura 27:</strong> Primer objeto determinado en el catálogo (parte inferior).
+                    <strong>Figura 28:</strong> Primer objeto determinado en el catálogo (parte inferior).
                 </figcaption>
             </figure>
 
@@ -1889,7 +1905,7 @@ SNR_WIN</code></pre>
                 <img src="IMAGENES/spreadmodel_magauto.png" alt="Spread_model en función de MAG_AUTO">
 
                 <figcaption>
-                    <strong>Figura 28:</strong> Grafico obtenido del catálogo, <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, las estrellas rondan cerca de 0.
+                    <strong>Figura 29:</strong> Grafico obtenido del catálogo, <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, las estrellas rondan cerca de 0.
                 </figcaption>
             </figure>
 
@@ -1902,7 +1918,7 @@ SNR_WIN</code></pre>
                 <img src="IMAGENES/errormodel.png" alt="Grafico de spreaderr_model en función de la magnitud">
 
                 <figcaption>
-                    <strong>Figura 29:</strong>Grafico del error del modelo (<code>SPREADERR_MODEL</code>) en función de la magnitud (<code>MAG_AUTO</code>). Para objetos brillantes entre 14 a 18 el error es casi constante, mientras que para objetos más débiles el error empieza a aumentar. 
+                    <strong>Figura 30: </strong> Grafico del error del modelo (<code>SPREADERR_MODEL</code>) en función de la magnitud (<code>MAG_AUTO</code>). Para objetos brillantes entre 14 a 18 el error es casi constante, mientras que para objetos más débiles el error empieza a aumentar. 
                 </figcaption>
             </figure>
 
@@ -1918,7 +1934,7 @@ SNR_WIN</code></pre>
                 <img src="IMAGENES/classtar.png" alt="Grafica de class star en función de la magnitud">
 
                 <figcaption>
-                    <strong>Figura 30:</strong> Grafica del parámetro <code>CLASS_STAR</code> en función de la magnitud, tomando estrellas para valores mayores a 0.9 y galaxias para valores menores a 0.05
+                    <strong>Figura 31:</strong> Grafica del parámetro <code>CLASS_STAR</code> en función de la magnitud, tomando estrellas para valores mayores a 0.9 y galaxias para valores menores a 0.05
                 </figcaption>
             </figure>
 
@@ -1926,14 +1942,7 @@ SNR_WIN</code></pre>
                 De esta grafica podemos notar algo similar que usando <code>SPREAD_MODEL</code>, para objetos brillantes las estrellas presentan valores cercanos a 1, mientras que las galaxias se concentran al rededor de 0; sin embrago, conforme aumenta la magnitud y los objetos se vuelven más débiles, la relación señal-ruido disminuye y la red neuronal de <span class="typewriter">SExtractor</span> asigna valores cada vez más intermedios, como resultado crece el número de objetos cuya clasificación es ambigua.
             </p>
 
-            <p>
-                Ahora bien, por una parte tenemos <code>CLASS_STAR</code> que devuelve una probabilidad de entre 0 y 1, el cual funciona bien para objetos brillantes, sin embargo, pierde capacidad de discriminar cuando la relación señal-ruido disminuye. En cambio, <code>SPREAD_MODEL</code> es un parámetro morfológico basado principalmente en el ajuste de la PSF, además proporciona su incertidumbre (<code>SPREADERR_MODEL</code>) lo que permitiría construir otros criterios para la clasificación.
-            </p>
-
-            <p>
-                Puedes consultar las configuraciones y los códigos empleados para generar los archivos de regiones y algunas graficas <a href="https://drive.google.com/drive/folders/1zBZVBZl5aykhPWFlgEkymqHw276jSQNs?usp=drive_link">AQUÍ</a>
-            </p>
-
+            
         </section>
 
         <!-- SUBARU -->
@@ -2069,6 +2078,10 @@ SNR_WIN</code></pre>
 
                 <li id="ref10">
                     DeepWiki. (2025, May 10).<i>PSFEX Overview.</i> DeepWiki. https://deepwiki.com/astromatic/psfex/1-psfex-overview
+                </li>
+
+                <li id="ref11">
+                    DeepWiki. (2025, May 10). <i>Check plots</i>. DeepWiki. https://deepwiki.com/astromatic/psfex/5.1-check-plots
                 </li>
 
 

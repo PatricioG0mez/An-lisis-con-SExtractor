@@ -1,5 +1,3 @@
-// Abre/cierra un grupo de botones tipo acordeón: al abrir uno,
-// se cierran los demás que estén al MISMO nivel (mismos hermanos).
 function inicializarAcordeon(selectorBoton) {
 
     document.querySelectorAll(selectorBoton).forEach(button => {

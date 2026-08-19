@@ -81,111 +81,81 @@
             </figure>
 
             <p>
-                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> estarán en un valor de 1.5, y el parámetro <code>DETECT_MINAREA</code> tomaremos distintos valores (3,5,7,10,12,15) para ver como cambia el número de objetos detectados. Además, pediremos una imagen de chequeo <code>APERTURES</code>.
+                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> los vamos a tomar con los valores por defecto, es decir, de 1.5, sin embargo, para determinar si este nivel de umbral es el indicado vamos a tomar los datos de la imagen de manera negativa, así, en teoría, si el nivel de umbral es el correcto, deberíamos detectar ningun objeto ya que no hay fuentes negativas. Para ello, vamos a realizar un pequeño código en <i>python</i>:
+            </p>
+
+            <pre><code>from astropy.io import fits
+
+hdul = fits.open('/content/SCLA.175.295.W-S-Z+.fits', ignore_missing_simple=True)
+data, hdr = fits.getdata('/content/SCLA.175.295.W-S-Z+.fits', header=True)
+fits.writeto('imagen_neg.fits', -data, hdr, overwrite=True)
+            </code></pre>
+
+            <p>
+                Con esto, corremos <span class="typewriter">SExtractor</span> con la imagen negativa que generamos con el código anterior, y solicitamos las imagenes de chequeo <code>APERTURES</code> y <code>SEGMENTATION</code>.
+            </p>
+
+            <figure class="figura">
+
+                <img src="../IMAGENES/SUBARU/segmentacionnegativa.png" alt="Imagen de chequeo SEGMENTATION de la imagen negativa">
+
+                <figcaption>
+                    <strong>Figura 35:</strong> Imagen de chequeo <code>SEGMENTATION</code> de la imagen negativa, vemos claramente que hay detecciones de objetos, la mayoria se encuentran en la parte superior derecha de la imagen.
+                </figcaption>
+            </figure>
+
+            <figure class="figura">
+                <img src="../IMAGENES/SUBARU/aperturesnegativa.png" alt="Imagen de chequeo APERTURES de la imagen negativa">
+
+                <figcaption>
+                    <strong>Figura 36:</strong> Imagen de chequeo <code>APERTURES</code> de la imagen negativa, en esta imagen nos enfocamos en la región superior derecha donde se concentra la mayoría de las detecciones.
+                </figcaption>
+            </figure>
+
+            <p>
+                En las figuras 35 y 36, podemos notar que <span class="typewriter">SExtractor</span> esta detectando objetos en la imagen negativa, por lo que nuestro nivel de umbralización es demasiado bajo, vamos a volver a correr <span class="typewriter">SExtractor</span> con <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> con valores de (2.0, 2.5, 3.0, 3.5 y 4.0).
             </p>
 
             <table>
                 <thead>
                     <tr>
-                        <th><code>DETECT_MINAREA</code></th>
+                        <th>Nivel de umbralización</th>
                         <th>Objetos detectados</th>
-                        <th>Objetos extraídos</th>
+                        <th>Objetos extraidos</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>3</td>
-                        <td>98261</td>
-                        <td>85947</td>
+                        <td>1.5</td>
+                        <td>3688</td>
+                        <td>2973</td>
                     </tr>
                     <tr>
-                        <td>5</td>
-                        <td>92334</td>
-                        <td>81911</td>
+                        <td>2.0</td>
+                        <td>875</td>
+                        <td>736</td>
                     </tr>
                     <tr>
-                        <td>7</td>
-                        <td>87856</td>
-                        <td>78674</td>
+                        <td>2.5</td>
+                        <td>566</td>
+                        <td>462</td>
                     </tr>
                     <tr>
-                        <td>10</td>
-                        <td>81917</td>
-                        <td>73842</td>
+                        <td>3.0</td>
+                        <td>472</td>
+                        <td>403</td>
                     </tr>
                     <tr>
-                        <td>12</td>
-                        <td>78568</td>
-                        <td>71028</td>
+                        <td>3.5</td>
+                        <td>404</td>
+                        <td>350</td>
                     </tr>
                     <tr>
-                        <td>15</td>
-                        <td>73911</td>
-                        <td>67043</td>
+                        <td>4.0</td>
+                        <td>342</td>
+                        <td>297</td>
                     </tr>
                 </tbody>
             </table>
-
-            <div class="comparacion-grid3">
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_3.png" alt="Imagen de chequeo con DETECT_MINAREA de 3">
-
-                    <figcaption><strong>a)</strong></figcaption>
-                </figure>
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_5.png" alt="Imagen de chequeo con DETECT_MINAREA de 5">
-
-                    <figcaption><strong>b)</strong></figcaption>
-                </figure>
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_7.png" alt="Imagen de chequeo con DETECT_MINAREA de 7">
-
-                    <figcaption><strong>c)</strong></figcaption>
-                </figure>
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_10.png" alt="Imagen de chequeo con DETECT_MINAREA de 10">
-
-                    <figcaption><strong>d)</strong></figcaption>
-                </figure>
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_12.png" alt="Imagen de chequeo con DETECT_MINAREA de 12">
-
-                    <figcaption><strong>e)</strong></figcaption>
-                </figure>
-
-                <figure>
-                    <img src="IMAGENES/SUBARU/aper_15.png" alt="Imagen de chequeo con DETECT_MINAREA de 15">
-
-                    <figcaption><strong>f)</strong></figcaption>
-                </figure>
-
-                <figcaption class="caption-general">
-                    <strong>Figura 35:</strong> Imagenes de chequeo <code>APERTURES</code> con distintos valores de <code>DETECT_MINAREA</code>, a) 3, b) 5, c) 7, d) 10, e) 12, f) 15. Podemos notar que conforme aumenta el valor de <code>DETECT_MINAREA</code> el número de objetos detectados disminuye.
-                </figcaption>
-            </div>
-
-            <figure class="comparacion-grid2">
-
-                <img src="IMAGENES/SUBARU/aper_3.png" alt="Imagen de chequeo con DETECT_MINAREA de 3">
-
-                <img src="IMAGENES/SUBARU/aper_15.png" alt="Imagen de chequeo con DETECT_MINAREA de 15">
-
-                <figcaption>
-                    <strong>Figura 36:</strong> Comparación de imagenes de chequeo <code>APERTURES</code>, a la izquierda con <code>DETECT_MINAREA</code>=3 y a la derecha con <code>DETECT_MINAREA</code>=15.
-                </figcaption>
-            </figure>
-
-            <p>
-                Como se hablo para el ejemplo con la imagen anterior, el valor que eliges para estos parámetros depende de los objetos que se quieran observar, para este caso tomaremos el valor de <code>DETECT_MINAREA=5</code>, con esto podemos pasar con la parte de separación de fuentes <i>deblending</i>, para ello vamos a modificar los parámetros <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code>.
-            </p>
-
-            <p>
-                Para el proceso de <i>deblending</i> vamos a tomar el parámetro <code>DEBLEND_NTHRESH</code> en 32 niveles y <code>DEBLEND_MINCONT</code> en 4 distintos valores (0.001, 0.005, 0.01, 0.05), para ver como cambia el número de objetos detectados y extraídos.
-            </p>
-        
+            
         </section>

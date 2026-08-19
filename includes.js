@@ -1,18 +1,18 @@
 
 
 const secciones = [
-    { id: "seccion-inicio",                archivo: "inicio.html" },
-    { id: "seccion-instalacion",           archivo: "instalacion.html" },
-    { id: "seccion-como-trabajaSExtractor",          archivo: "como-trabajaSExtractor.html" },
-    { id: "seccion-archivos-configuracionSExtractor",archivo: "archivos-configuracionSExtractor.html" },
-    { id: "seccion-parametros-entradaSExtractor",    archivo: "parametros-entradaSExtractor.html" },
-    { id: "seccion-psf",                   archivo: "psf.html" },
-    { id: "seccion-uso-sextractor",        archivo: "uso-sextractor.html" },
-    { id: "seccion-psfex",                 archivo: "psfex.html" },
-    { id: "seccion-clasificacion",         archivo: "clasificacion.html" },
-    { id: "seccion-referencias",           archivo: "referencias.html" },
-    { id: "seccion-uso-psfex",             archivo: "uso-psfex.html" },
-    { id: "seccion-subaru",                archivo: "subaru.html"},  
+    { id: "seccion-inicio",                archivo: "Secciones/inicio.html" },
+    { id: "seccion-instalacion",           archivo: "Secciones/instalacion.html" },
+    { id: "seccion-como-trabajaSExtractor",          archivo: "Secciones/como-trabajaSExtractor.html" },
+    { id: "seccion-archivos-configuracionSExtractor",archivo: "Secciones/archivos-configuracionSExtractor.html" },
+    { id: "seccion-parametros-entradaSExtractor",    archivo: "Secciones/parametros-entradaSExtractor.html" },
+    { id: "seccion-psf",                   archivo: "Secciones/psf.html" },
+    { id: "seccion-uso-sextractor",        archivo: "Secciones/uso-sextractor.html" },
+    { id: "seccion-psfex",                 archivo: "Secciones/psfex.html" },
+    { id: "seccion-clasificacion",         archivo: "Secciones/clasificacion.html" },
+    { id: "seccion-referencias",           archivo: "Secciones/referencias.html" },
+    { id: "seccion-uso-psfex",             archivo: "Secciones/uso-psfex.html" },
+    { id: "seccion-subaru",                archivo: "Secciones/subaru.html"},  
 ];
 
 async function cargarSeccion({ id, archivo }) {

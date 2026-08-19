@@ -1,0 +1,277 @@
+        <!-- Uso de SExtractor-->
+
+        <h2 id="Uso de sextractor">Uso de SExtractor</h2>
+        <section>
+
+            <h3 id="parametros iniciales">Parámetros iniciales</h3>
+
+            <p>
+                Ahora que se han explicado los parámetros del archivo principal de configuración <code>default.sex</code>, podemos empezar a usar <span class="typewriter">SExtractor</span> siguiendo los pasos mencionados al principio. Para empezar, creamos un directorio en donde guardaremos nuestra imagen y los archivos de configuración principales mencionados anteriormente. En este caso, el directorio tendra una carpeta para los aarchivos <span class="typewriter">default</span>, para la imagen y otra para las corridas que hagamos en <span class="typewriter">SExtractor</span>, además de tener un excel con todos los cambios que se haga a cada parámetro, todo lo anterior es opcional pero ayuda a mantener un orden en el análisis.
+            </p>
+
+            <p>
+                Antes de determinar el background de nuestra imagen, debemos que los parámetros sobre la información de la imagen sean correctos, esto es como si fueramos a hacer un experimento, antes de empezar con las mediciones debemos asegurarnos que las herramientas que vamos a emplear esten calibradas y funcionando correctamente. Para ello, debemos leer el encabezado de nuestra imagen en este caso se usó el software de <a href="https://sites.google.com/cfa.harvard.edu/saoimageds9" target="_blank"><span class="typewriter">SAOImageDS9</span></a> (también se puede leer el encabezado con ayuda de python). 
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/header.jpeg" alt="Encabezado de la imagen mostrado con SAO">
+
+                <figcaption>
+                    <strong>Figura 8:</strong> Encabezado de la imagen que usamos para el análisis, mostrado con <span class="typewriter">SAOImageDS9</span>.
+                </figcaption>
+
+            </figure>
+            
+
+            <p>
+                Del encabezado podemos obtener algo de información que nos es útil, lo primero es notar que nuestra imagen proviene del <b>DESI Legacy Survey</b> que son un conjunto de proyectos astronómicos que fueron diseñados para capturar imágenes profundas de una gran región del cielo extragaláctico. <a href="#ref8">[8]</a>
+            </p>
+
+            <b>Información básica de la imagen</b>
+            <ul>
+                <li>
+                    <code>NAXIS1/NAXIS2=3600 x 3600</code>: La imagen es de 3600 x 3600 píxeles
+                </li>
+                <li>
+                    Imagen tipo <i>coadd</i> (imagen combinada/apilada de múltiples exposiciones).
+                </li>
+            </ul>
+
+            <p>
+                Además, la versión del pipeline que se registró es <code>LEGPIPEV=DR9.6.7</code>
+            </p>
+
+            <b>Instrumento y observación</b>
+
+            <ul>
+                <li>
+                    <code>TELESCOP=CTIO 4.0-m telescope</code> (Blanco telescope en Cerro Tololo, Chile)
+                </li>
+                <li>
+                    <code>INSTRUME=DECam</code> (Dark Energy Camera)
+                </li>
+            </ul>
+
+            <p>
+                Finalmente, los parámetros que podemos obtener del header para configurar en nuestro archivo <code>default.sex</code> son los siguientes:
+            </p>
+
+            <ul>
+                <li>
+                    <code>MAG_ZEROPOINT 22.5</code>
+                </li>
+
+                <li>
+                    <code>
+                        CD1_1 = -7.27777777777778E-05  (deg/pix)
+
+                        CD2_2 =  7.27777777777778E-05  (deg/pix)
+                    </code>
+
+                    Esto nos da la escala de placa (pixel scale), convertido a arcsec/pixel:
+
+                    $$7.27777778\times10^{-5}\times3600=0.262\ \text{arcsec/pix}$$
+                </li>
+            </ul>
+
+            <p>
+                Además, investigando un poco encontramos que un valor típico <code>SEEING_FWHM</code> publicado por el DESI Legacy Survey ronda entre 1.0-1.3 arcsec, por lo que se tomaremos un valor de 1.2 arcsec como punto de partida y refinarlo posteriormente con parámetros que <span class="typewriter">SExtractor</span> nos proporciona. Por otra parte, para elegir nuestro filtro de convolución, tomamos nuestros valor de <code>SEEING_FWHM</code> y lo convertimos a píxeles:
+
+                $$\text{FWHM}_{\text{pxls}}=\frac{1.2}{0.262}=4.5$$
+
+                Por lo que usaremos el filtro <code>gauss_4.0_7x7.conv</code>.
+            </p>
+        </section>
+
+<! -- Background --!> 
+
+        <section>
+            <h3 id="back" class="hr-lines">Background</h3>
+
+            <p>
+                Después de hacer una configuración inicial a los parámetros, se puede empezar a determinar el background de la imagen, aquí entran en juego los parámetros <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code>, en muchos artículos se menciona que para estos parámetros, valores más comunes son de 64 y 3 respectivamente <a href="#ref5">[5]</a> <a href="#ref6">[6]</a>. Para visualizar el background usaremos los parámetros <code>CHECKIMAGE_TYPE</code> y <code>CHECKIMAGE_NAME</code> que están en el archivo <code>default.sex</code>, para el primero tomaremos el valor de <code>BACKGROUND</code> y el segundo parámetro será para el nombre del archivo de salida, que en este caso será <code>background.fits</code>:
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/parametros_background.jpeg" alt="Parámetros para el background y checkimage">
+
+                <figcaption>
+                    <strong>Figura 9:</strong> Parámetros para la determinación del background y la salida de la imagen de background en el archivo <code>default.sex</code>. 
+                </figcaption>
+            </figure>
+
+            <p>
+                Con los parámetros configurados, en nuestra terminal vamos a posicionarnos en el directorio donde tenemos nuestra imagen y los archivos de configuración, y ejecutamos el siguiente comando: 
+            </p>
+
+            <pre><code>$ sex IMAGEN.fits</code></pre>
+
+            <p>
+                Lo que nos generará dos archivos de salida, uno es el catálogo con el nombre que le dimos en el parámetro <code>CATALOG_NAME</code> y el otro archivo es la imagen del background con el nombre que le dimos en el parámetro <code>CHECKIMAGE_NAME</code>, este último podemos visualizarlo en DS9.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/fondo.jpeg" alt="Background de la imagen obtenido con SExtractor">
+
+                <figcaption>
+                    <strong>Figura 10:</strong> Background de la imagen obtenido con <span class="typewriter">SExtractor</span> (derecha) comparado con la imagen original (izquierda)
+                </figcaption>
+
+            </figure>
+
+            <p>
+                En la figura 10 podemos ver que el background obtenido está tomando algo de brillo de los objetos ubicados en la parte central de la imagen; en la imagen original se observa que corresponden a dos galaxias muy brillantes. Esto ocurre porque, con un <code>BACK_SIZE</code> relativamente pequeño, las celdas de la malla que caen sobre las galaxias no contienen suficientes píxeles de cielo puro, por lo que el algoritmo de sigma-clipping no logra excluir completamente su flujo, sobreestimando el background local en esa zona. Aumentar <code>BACK_SIZE</code> (o <code>BACK_FILTERSIZE</code>) puede mitigar este efecto, pero si se hace demasiado grande, el background se vuelve excesivamente suave y puede terminar absorbiendo objetos extendidos de bajo brillo superficial.<br>
+            </p>
+
+            <p>
+                Vamos a verificar el resultado final de la sustracción poniendo como valor, en <code>CHECKIMAGE_TYPE</code>, <code>-BACKGROUND</code>; esto es la imagen original menos el mapa de background. Lo anterior nos devuelve la siguiente imagen .fits
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/-background.jpeg" alt="Imagen con el fondo sustraído">
+
+                <figcaption>
+                    <strong>Figura 11:</strong> Imagen final con el fondo sustraído, se logra ver una mancha oscura justo encima/entre las galaxias ubicadas al centro de la imagen.
+                </figcaption>
+
+            </figure>
+
+            <p>
+                En la figura 11 podemos ver una región más oscura justo sobre las dos galaxias centrales, lo cual evidencia una sobre-sustracción de flujo en esa zona; es decir, el background estimado ahí fue mayor al real. Una opción podría ser aumentar el tamaño de la malla, sin embargo, para este caso, se decidió mantener el tamaño de la malla y continuar con la detección de objetos.
+            </p>
+        </section>
+
+<! -- umbralizacion --!>
+
+        <section>
+
+            <h3 id="Umbralizacion" class="hr-lines">Detección de objetos (Umbralización)</h3>
+
+            <p>
+                Lo siguiente es definir el umbral que <span class="typewriter">SExtractor</span> usará para detectar objetos, para este caso tomaremos el valor de <code>DETECT_THRESH</code> de 1.5 así como el valor de <code>ANALYSIS_THRESH</code> de 1.5, además de un valor de <code>DETECT_MINAREA</code> de 3 píxeles, y generaremos otro checkimage con el valor de <code>APERTURES</code>. Al correr <span class="typewriter">SExtractor</span> podemos visualizar lo siguiente en la terminal:
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/terminal.jpeg" alt="Salida obtenida en la terminal después de correr SExtractor">
+                
+                <figcaption>
+                    <strong>Figura 12:</strong> Salida obtenida en la terminal después de correr <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            <p>
+                Podemos observar que el valor global del background es muy cercano a cero, además tenemos el valor de la desviación estándar del background, que es de 0.00294733 y con un umbral de detección de 0.004421. Por otra parte, podemos notar que <span class="typewriter">SExtractor</span> obtuvo 2812 objetos que superaron el umbral inicial de detección, de los cuales 2577 fueron considerados como objetos válidos después del proceso de deblending y cleaning (aún no se configuran estos parámetros, por lo que se toman los valores por defecto).<br>
+            </p>
+
+            <p>
+                Ahora, usando la opción de <code>CHECKIMAGE_TYPE</code> con el valor de <code>APERTURES</code>, podemos visualizar los objetos detectados por <span class="typewriter">SExtractor</span> a los que se les dibuja un circulo o una elipse, esto es la apertura fotométrica.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/apertures.jpeg" alt="Aperturas fotométricas sobre los objetos detectados">
+
+                <figcaption>
+                    <strong>Figura 13:</strong> Aperturas fotométricas sobre los objetos detectados por <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            Además, con ayuda de DS9, podemos sobreponer en la imagen el catálogo obtenido lo que mostrará un circulo verde sobre cada objeto detectado. 
+
+            <figure class="figura">
+
+                <img src="IMAGENES/catalogoaperturas.jpeg" alt="Aperturas fotométricas con el catálogo.">
+
+                <figcaption>
+                    <strong>Figura 14:</strong> Visualización de la detección de objetos en circulos verdes usando el catálogo obtenido por <span class="typewriter">SExtractor</span>.
+                </figcaption>
+            </figure>
+        </section>
+
+<! -- deblending --!>
+
+        <section>
+            <h3 id="separacion" class="hr-lines">Deblending</h3>
+
+            <p>
+                Para el proceso de deblending, se tomará un valor de <code>DEBLEND_NTHRESH</code> de 32 y probaremos para 4 valores distintos de <code>DEBLEND_MINCONT</code> (0.0001,0.001, 0.005 y 0.01) para observar algun cambio en la detección de objetos.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>DEBLEND_MINCONT</th>
+                        <th>Detected</th>
+                        <th>Sextracted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>0.0001</th>
+                        <th>2865</th>
+                        <th>2626</th>
+                    </tr>
+                    <tr>
+                        <th>0.001</th>
+                        <th>2837</th>
+                        <th>2598</th>
+                    </tr>
+                    <tr>
+                        <th>0.005</th>
+                        <th>2812</th>
+                        <th>2577</th>
+                    </tr>
+                    <tr>
+                        <th>0.01</th>
+                        <th>2802</th>
+                        <th>2569</th>
+                    </tr>
+
+                </tbody>
+            </table>
+        </section>
+
+        <section class="comparacion-grid">
+
+            <figure>
+                <img src="IMAGENES/0001.jpeg" alt="Deblendmincont de 0.0001">
+
+                <figcaption>
+                    <code>DEBLEND_MINCONT=0.0001</code>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img src="IMAGENES/001.jpeg" alt="Deblendmincont=0.001">
+                <figcaption><code>DEBLEND_MINCONT=0.001</code></figcaption>
+            </figure>
+
+            <figure>
+                <img src="IMAGENES/005.jpeg" alt="Deblendmincont=0.005">
+                <figcaption><code>DEBLEND_MINCONT=0.005</code></figcaption>
+            </figure>
+            
+            <figure>
+                <img src="IMAGENES/01.jpeg" alt="Deblendmincont=0.01">
+                <figcaption><code>DEBLEND_MINCONT=0.01</code></figcaption>
+            </figure>
+
+            <figcaption>
+                <strong>Figura 15:</strong> Comparación de la detección de objetos con diferentes valores de <code>DEBLEND_MINCONT</code>. A medida que el valor aumenta, se detectan menos objetos, lo que indica una menor separación de fuentes cercanas. La imagen empleada es con el parámetro <code>APERTURES</code>.<br><br>
+            </figcaption>
+
+            <p>
+                La elección del valor para <code>DEBLEND_MINCONT</code> depende del objetivo del análisis, valores pequeños favorecen la separación de fuentes cercanas con gran diferencia de brillo, útiles para blends de galaxias como el observado en este campo, pero con riesgo de sobre-fragmentar objetos extendidos con estructura interna compleja. Valores más grandes son más conservadores, evitando divisiones espurias en galaxias con subestructura, pero corren el riesgo de no separar componentes reales de bajo contraste de brillo respecto a su vecino.<br>
+            </p>
+
+            <p>
+                Para este caso, se optó por un valor de <code>DEBLEND_MINCONT=0.005</code> que es un valor intermedio, con el proposito de separar las galaxias brillantes del centro de la imagen. 
+            </p>
+        </section>
+
+

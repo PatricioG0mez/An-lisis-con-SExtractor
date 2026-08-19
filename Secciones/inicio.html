@@ -1,0 +1,69 @@
+        <section id="inicio" class="hero">
+            <h1>Análisis con <br> SExtractor + PSFEx</h1>
+
+            <p>
+                <span class="typewriter">SExtractor</span> es una herramienta para el análisis de imágenes astronómicas,
+                crea un catálogo de objetos a partir de estas imágenes. Este software
+                puede procesar imágenes de gran tamaño y manejar una gran variedad
+                de magnitudes de objetos. Por su parte, <span class="typewriter">PSFEx</span> es un software que permite modelar la función de dispersión puntual (PSF) a partir de una imagen astronómica. La PSF describe cómo un sistema óptico-detector responde a una fuente puntual de luz, como una estrella. La combinación de ambos programas permite realizar un análisis más completo y preciso de las imágenes astronómicas.
+            </p>
+
+            <div class="page-info">
+
+                <div class="info-item">
+                    <span class="icon">👤</span>
+
+                    <div>
+                        <span class="label">Autor</span>
+                        <span class="value">
+                            Patricio Emanuel Gómez Gómez
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">🎓</span>
+
+                    <div>
+                        <span class="label">Institución</span>
+                        <span class="value">
+                            Facultad de Ciencias, Universidad Nacional Autónoma de México
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">✉️</span>
+
+                    <div>
+                        <span class="label">Correo electrónico</span>
+                        <span class="value">
+                            <a href="mailto:patriciogomez@ciencias.unam.mx">
+                                patriciogomez@ciencias.unam.mx
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <span class="icon">📅</span>
+
+                    <div>
+                        <span class="label">Última actualización</span>
+                        <span class="value" id="lastModified"></span>
+                    </div>
+                </div>
+            </div>
+
+<script>
+    const fecha = new Date(document.lastModified);
+
+    document.getElementById("lastModified").textContent =
+        fecha.toLocaleDateString("es-MX", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+</script>
+
+        </section>

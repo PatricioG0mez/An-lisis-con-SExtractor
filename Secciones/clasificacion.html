@@ -1,0 +1,150 @@
+        <!-- Clasificación Estrella/ Galaxia -->
+
+        <h2 id="sex+psfex"><span class="typewriter">SExtractor + PSFEx:</span> Clasificación estrella/galaxia</h2>
+
+        <section>
+            
+
+            <p>
+                Después de haber generado el modelo del PSF, el siguiente paso es reinyectarlo a <span class="typewriter">SExtractor</span> para medir y obtener parámetros que dependen explícitamente de la forma de la PSF. <span class="typewriter">SExtractor</span> tiene dos enfoques para hacer esto: <a href="#ref1">[1]</a> <a href="#ref2">[2]</a>
+            </p>
+
+            <ol>
+                <li>
+                    <b><code>CLASS_STAR</code>:</b> Este clasificador se basa en una <a href="https://en.wikipedia.org/wiki/Multilayer_perceptron">red neuronal multicapa de propagación directa</a> entrenada a traves de aprendizaje supervisado, usa perfil de brillo, FWHM, y pico de intensidad. Funciona bien pero se degrada en el límite de baja SNR
+                </li>
+                <li>
+                    <b><code>SPREAD_MODEL</code>:</b> Compara el ajuste de un modelo de fuente puntual contra un modelo ligeramente extendido. Este es el estándar actual precisamente porque requiere del modelo PSF
+                </li>
+            </ol>
+            
+            <p>
+                El estimador <code>SPREAD_MODEL</code> indica cual de los modelos que mejor se ajustan coincide mejor con los datos de a imagen, ya sea el modelo de PSF local remuestreado en la posición actual $\tilde{\phi}$ (representando una fuente puntual) o un modelo remuestreado ligeramente más "borroso" $\tilde{G}$ (representando una galaxia). Aquí $\tilde{G}$ se obtiene convolucionando el modelo de PSF local con un modelo exponencial circular con una longitud de escala $=1/16\ \text{FWHM}$, y remuestreando el resultado en la posición actual en la cuadrícula de píxeles. <a href="#ref1">[1]</a><a href="#ref2">[2]</a>
+            </p>
+
+            <p>
+                <code>SPREAD_MODEL</code> se normaliza para que la comparación de fuentes con diferentes PSF sea más práctica y coincidan: 
+            </p>
+
+            $$
+            \text{SPREAD_MODEL}=\frac{\tilde{G}^TWp}{\tilde{\phi}^TWp}-\frac{\tilde{G}^TW\tilde{\phi}}{\tilde{\phi}^TW\tilde{\phi}}
+            $$
+
+            <p>
+                donde $p$ es el vector de imagen centrado en la fuente. $W$ es una matriz de pesos constante a lo largo de la diagonal.
+            </p>
+
+            <p>
+                El valor que se obtiene de <code>SPREAD_MODEL</code> nos dice que tipo de fuente es, para fuentes puntuales <code>SPREAD_MODEL</code> toma valores cercanos a cero, positivos para fuentes extendidas y negativo para detecciones más pequeñas que la PSF. Ahora vamos a hacer uso de estos estimadores, como siempre, empezaremos creando un directorio nuevo en donde pondremos todos los elementos que hemos venido ocupando para usar <span class="typewriter">SExtractor</span> pero ahora agregaremos el archivo .psf que nos dió <span class="typewriter">PSFEx</span> y en el archivo de configuración principal de <span class="typewriter">SExtractor</span> vamos a colocar lo siguiente:
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/parametrospsf.jpeg" alt="Parámetros a configurar en el archivo .sex sobre la PSF">
+
+                <figcaption>
+                    <strong>Figura 26:</strong> Parámetros que se deben configurar en el archivo .sex para hacer uso del modelo PSF obtenido de <span class="typewriter">PSFEx</span>.
+                </figcaption>
+            </figure>
+
+            <p>
+                Y en el archivo de parámetros vamos a colocar los siguientes parámetros:
+
+                <pre><code>CLASS_STAR
+SPREAD_MODEL
+SPREADERR_MODEL
+FLUX_RADIUS
+FWHM_IMAGE
+MAG_AUTO
+MAGERR_AUTO
+MAG_PSF
+MAGERR_PSF
+FLUX_AUTO
+FLUXERR_AUTO
+MU_MAX
+FLAGS
+SNR_WIN</code></pre>
+            </p>
+
+            <p>
+                Y finalmente corremos <span class="typewriter">SExtractor</span> con el siguiente comando:
+            </p>
+
+            <pre><code>$ sex IMAGEN.fits -c pospsfex.sex </code></pre>
+
+            <figure class="figura">
+                <img src="IMAGENES/pospsfex.jpeg" alt="Imagen que muestra el tiempo que tardo sextractor">
+
+                <figcaption>
+                    <strong>Figura 27:</strong> <span class="typewriter">SExtractor</span> tardo más en procesar la imagen empleando el modelo del PSF, exactamente 630.3 s.
+                </figcaption>
+            </figure>
+
+            <p>
+                Esto nos genera nuestro catálogo con los parámetros que le solicitamos a <span class="typewriter">SExtractor</span>, vamos a visualizar los datos del catálogo obtenido para la clasificación estrella/galaxia, esto lo haremos empleando <i>Python</i>, vamos a convertir nuestro catálogo <b>FITS_LDAC</b> a un DataFrame con pandas. Luego, revisamos los datos obtenidos con el clasificador <code>SPREAD_MODEL</code>, para ello vamos a determinar un umbral para elegir nuestras estrellas, aquí debemos tomar en cuenta que <code>SPREAD_MODEL</code> tiene una incertidumbre (<code>SPREADERR_MODEL</code>) y no es la misma para todas las mediciones, por ello el umbral será determinado por:
+
+                $$|\text{SPREAD_MODEL}|< 0.002 + \text{SPREADERR_MODEL}$$
+            </p>
+
+
+            <p>
+                por ejemplo si tomamos los datos del primer elemento en nuestro <i>DataFrame</i>: Se obtuvo un <code>SPREAD_MODEL</code>: 0.026486, <code>SPREADERR_MODEL</code>: 0.000007, por lo que: $|0.026486|< 0.002 + (0.000007)= 0.002007 \Longrightarrow 0.026486 > 0.002007$, por lo que este primer objeto no es considerado una estrella, vamos a ubicarlo en nuestra imagen:
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/primerelemento.png" alt="Primer elemento determinado en el catálogo">
+
+                <figcaption>
+                    <strong>Figura 28:</strong> Primer objeto determinado en el catálogo (parte inferior).
+                </figcaption>
+            </figure>
+
+            <p>
+                Al ubicarlo en la imagen podemos darnos cuenta que, efectivamente, el objeto no es una estrella sino una galaxia que parece ser del tipo S0. Ahora vamos a ver la distribución de los datos de <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>.
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/spreadmodel_magauto.png" alt="Spread_model en función de MAG_AUTO">
+
+                <figcaption>
+                    <strong>Figura 29:</strong> Grafico obtenido del catálogo, <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, las estrellas rondan cerca de 0.
+                </figcaption>
+            </figure>
+
+            <p>
+                Notemos que existe una clara separación entre estrellas y galaxias (recordemos que para <code>SPREAD_MODEL</code> un valor cercano a 0 significa que es estrella), con las estrellas concentrandose alrededor de <code>SPREAD_MODEL</code>=0 y las galaxias con valores positivos. Para objetos brillantes la separación entre ambas poblaciones es clara; sin embargo, conforme aumenta la magnitud (objetos más débiles) la disperción de <code>SPREAD_MODEL</code> crece como consecuencia de la disminución de la relación señal-ruido. 
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/errormodel.png" alt="Grafico de spreaderr_model en función de la magnitud">
+
+                <figcaption>
+                    <strong>Figura 30: </strong> Grafico del error del modelo (<code>SPREADERR_MODEL</code>) en función de la magnitud (<code>MAG_AUTO</code>). Para objetos brillantes entre 14 a 18 el error es casi constante, mientras que para objetos más débiles el error empieza a aumentar. 
+                </figcaption>
+            </figure>
+
+            <p>
+                Recordemos que <code>SPREAD_MODEL</code> compara la forma del objeto con la forma esperada de la PSF, cuando una estrella es brillante puede medirse con mucha precisión, mientras que si tenemos una estrella muy débil, el ruido puede modificar algunos valores de los píxeles, por lo que es más difícil saber cual es exactamente su perfil.
+            </p>
+
+            <p>
+                Ahora, veamos los datos obtenidos para el clasificador <code>CLASS_STAR</code>, recordemos que este parámetro toma un valor de 0 para objetos que parecen ser como una galaxia y 1 si es una estrella. De igual forma que con el modelo <code>SPREAD_MODEL</code>, tomaremos un umbral para elegir nuestras estrellas, estre umbral sera: $\text{es_estrella}>0.9$. Tomando el ejemplo anterior, el primer elemento del catálogo tiene un valor de <code>CLASS_STAR</code>=0.028627, tiene un valor cercano a 0 por lo que se considera una galaxia y como ya vimos, si es una galaxia.
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/classtar.png" alt="Grafica de class star en función de la magnitud">
+
+                <figcaption>
+                    <strong>Figura 31:</strong> Grafica del parámetro <code>CLASS_STAR</code> en función de la magnitud, tomando estrellas para valores mayores a 0.9 y galaxias para valores menores a 0.05
+                </figcaption>
+            </figure>
+
+            <p>
+                De esta grafica podemos notar algo similar que usando <code>SPREAD_MODEL</code>, para objetos brillantes las estrellas presentan valores cercanos a 1, mientras que las galaxias se concentran al rededor de 0; sin embrago, conforme aumenta la magnitud y los objetos se vuelven más débiles, la relación señal-ruido disminuye y la red neuronal de <span class="typewriter">SExtractor</span> asigna valores cada vez más intermedios, como resultado crece el número de objetos cuya clasificación es ambigua.
+            </p>
+
+            <p>
+                
+            </p>
+        </section>

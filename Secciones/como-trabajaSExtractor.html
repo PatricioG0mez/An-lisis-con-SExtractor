@@ -1,0 +1,58 @@
+        <h2>¿Cómo trabaja <span class="typewriter">SExtractor</span></h2>
+
+        <section id="como trabaja">
+            <p>
+                En general, para hacer uso de <span class="typewriter">SExtractor</span>, se siguien los siguientes pasos:
+            </p>
+
+            
+            <ol>
+                <li>Identificar y medir el nivel de fondo (Background).</li> 
+                <li>Aplicar un umbral a la imagen respecto al fondo.</li>
+                <li>Localizar y separar fuentes que aparecen por encima del umbral.</li>
+                <li>Producir un catálogo de fuentes y sus propiedades medidas.</li>
+            </ol>
+
+            <figure class="figura">
+                <img src="IMAGENES/sexlayout.svg" alt="Diagrama de flujo del proceso de análisis con SExtractor">
+
+                <figcaption>
+                    <strong>Figura 1:</strong> Flujo de trabajo de <span class="typewriter"> SExtractor</span>, las flechas discontinuas representan entradas opcionales (imagen tomada de <a href="#ref1">[1]</a>).
+                </figcaption>
+            </figure>
+
+            <p>
+                Para usar SExtractor se necesita una imagen en formato FITS.
+                Se puede descargar una imagen de ejemplo desde el
+                <a href="https://www.eso.org/sci/observing/tools/standards/spectra/eso_2012_09_26_0001.fits"
+                    target="_blank">
+                    siguiente enlace
+                </a>.
+            </p>
+
+            <p>
+                La imagen que utilizaremos tendrá el nombre de
+                <code>IMAGEN.fits</code>.
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/IMAGEN.jpg" alt="Imagen astronómica de ejemplo">
+
+                <figcaption>
+                    <strong>Figura 2:</strong> Imagen astronómica de ejemplo que se utilizará para el análisis.
+                </figcaption>
+            </figure>
+
+            <p>
+                Para hacer uso de <span class="typewriter">SExtractor</span> se necesitan 3 archivos de configuración que vienen por defecto en el paquete fuente de <span class="typewriter">SExtractor</span>
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/archivos principales.jpeg" alt="Copia de archivos default">
+
+                <figcaption>
+                    <strong>Figura 3:</strong> Archivos principales de configuración necesarios para hacer uso de <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+            
+        </section>

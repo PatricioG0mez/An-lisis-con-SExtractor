@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis con SExtractor + PSFEx</title>
+    <link rel="icon" type="image/png" href="../telescopio.png">
+
+    <!-- Archivo CSS -->
+    <link rel="stylesheet" href="../styless.css">
+
+    <!-- Configuración de MathJax -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+    </script>
+
+    <!-- Biblioteca MathJax -->
+    <script
+        id="MathJax-script"
+        async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+</head>
+
+<body>
+    <canvas id="stars"></canvas>
+
+    <nav class="sidebar">
+
+        <h2 class="logo">
+            🔭 SExtractor + PSFEx
+        </h2>
+
+
+        <ul class="menu">
+
+            <li>
+                <a href="#inicio">Inicio</a>
+            </li>
+            <li>
+                <button class="typewriter menu-btn">SExtractor</button>
+
+                <ul class="submenu">
+
+                    <li><a href="#instalacion sex">Instalación de <span class="typewriter">SExtractor</span></a></li>
+
+                    <li><a href="#como trabaja">¿Cómo trabaja <span class="typewriter">SExtractor</span>?</a></li>
+
+                    <li><a href="#archivos principales">Archivos principales de configuración</a></li>
+
+                    <li>
+                        <button class="submenu-btn">Parámetros de entrada</button>
+
+                        <ul class="subsubmenu">
+
+                            <li><a href="#infoimagen">Información de la imagen</a></li>
+
+                            <li><a href="#background">Determinación del fondo (background)</a></li>
+
+                            <li><a href="#umbral">Umbralización</a></li>
+
+                            <li><a href="#filtro">Filtrado</a></li>
+
+                            <li><a href="#deblending">Deblending</a></li>
+
+                            <li><a href="#clean">Cleaning</a></li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button class="submenu-btn">Uso de <span class="typewriter">SExtractor</span></button>
+
+                        <ul class="subsubmenu">
+                            <li><a href="#parametros iniciales">Parámetros iniciales</a></li>
+
+                            <li><a href="#back">Background</a></li>
+
+                            <li><a href="#Umbralizacion">Umbralización</a></li>
+
+                            <li><a href="#separacion">Deblending</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li><a href="#PSF">Point Spread Function</a></li>
+
+            <li>
+                <button class="typewriter menu-btn">PSFEx</button>
+
+                <ul class="submenu">
+
+                    <li><a href="#instalacion psfex">Instalación de <span class="typewriter">PSFEx</span></a></li>
+
+                    <li><a href="#como trabaja psfex">¿Cómo trabaja <span class="typewriter">PSFEx</span>?</a></li>
+
+                    <li><a href="#requisitos clave">Requisitos de entrada y parámetros de configuración clave</a></li>
+
+                    <li>
+                        <button class="submenu-btn">Uso de <span class="typewriter">PSFEx</span></button>
+
+                        <ul class="subsubmenu">
+
+                            <li><a href="#parametros iniciales psfex">Parámetros iniciales</a></li>
+
+                            <li><a href="#parametros clave">Parámetros clave a revisar</a></li>
+
+                            <li><a href="#xml">Resultados: imagenes de chequeo y datos del archivo XML</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#sex+psfex"><span class="typewriter">SExtractor + PSFEx:</span> Clasificación estrella/galaxia</a>
+            </li>
+
+            <li>
+                <a href="#subaru">Imagen de ejemplo de <span class="typewriter">Subaru Suprime-Cam</span></a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+    <main>
+
+        <div id="seccion-inicio"></div>
+        <div id="seccion-instalacion"></div>
+        <div id="seccion-como-trabajaSExtractor"></div>
+        <div id="seccion-archivos-configuracionSExtractor"></div>
+        <div id="seccion-parametros-entradaSExtractor"></div>
+        <div id="seccion-psf"></div>
+        <div id="seccion-uso-sextractor"></div>
+        <div id="seccion-psfex"></div>
+        <div id="seccion-uso-psfex"></div>
+        <div id="seccion-clasificacion"></div>
+        <div id="seccion-subaru"></div>
+        <div id="seccion-referencias"></div>
+
+    </main>
+
+    <script src="../stars.js"></script>
+    <script src="../menu.js"></script>
+    <script src="../includes.js"></script>
+</body>
+
+</html>

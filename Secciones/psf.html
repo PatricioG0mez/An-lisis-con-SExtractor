@@ -1,0 +1,49 @@
+        <!-- PSF -->
+        <h2 id="PSF">Point Spread Function (PSF, función de dispersión de punto)</h2>
+
+        <section>
+
+            <p>
+                Esta función describe cómo un sistema óptico-detector responde a una fuente puntual de luz. En términos sencillos, una estrella (que idealmente debería verse como un punto matemático) aparece en una imagen astronómica como una mancha extendida con un perfil de brillo característico, debido a los efectos de la atmósfera, las imperfecciones del telescopio, la difracción y las características del detector. Esa mancha es la PSF del sistema.
+            </p>
+
+            <p>
+                Es un elemento muy importante debido a que determina el tamaño aparente de las estrellas, influye en la separación de estrellas cercanas y permite distinguir fuentes puntuales de objetos extendidos. En observaciones desde la tierra, la forma que tiene la PSF está dominada por el seeing atmosférico, por ello, el parámetro <code>SEEING_FWHM</code> de <span class="typewriter">SExtractor</span> es un elemento importante.
+            </p>
+
+            <h3 class="hr-lines">Modelos analíticos de la PSF</h3>
+
+            <p>
+                Usualmente se usan varios modelos paramétricos para describir la PSF, estos suelen ser una <i>Gaussiana</i>, o una <i>Lorentziana modificada</i>, o una función de <i>Moffat</i>, u ocasionalmente la suma de una Gaussiana y una Lorentziana. De forma más simple, estas funciones son: <a href="#ref6">[6]</a>
+            </p>
+
+            <ol>
+                <li>
+                    <b>Gaussiana</b><br>
+
+                    Este es el modelo más simple, con el perfil de brillo en función del radio $r$ igual a:
+
+                    $$G(r)=e^{-r^2/2\alpha^2}$$ 
+                </li>
+
+                <li>
+                    <b>Moffat</b><br>
+
+                    Fue propuesto por Moffat (1969), este modelo es más realista para perfiles limitados por el seeing:
+
+                    $$M(r)=\frac{1}{(1+r^2/\alpha^2)^\beta} $$
+                </li>
+
+                <li>
+                    <b>Lorentziana modificada</b><br>
+
+                    Este modelo es poco usado aun que específico para algunos casos. 
+
+                    $$L(r)=\frac{1}{1+(r^2/\alpha^2)^\beta}$$
+                </li>
+            </ol>
+
+            <p>
+                Más adelante en este análisis entraremos más en detalle en el uso de la PSF con el sofware de <span class="typewriter">PSFEx</span>, explicando desde como instalarlo, hasta como generar un modelo de PSF y como usarlo para obtener parámetros más precisos de los objetos detectados.
+            </p>
+        </section>

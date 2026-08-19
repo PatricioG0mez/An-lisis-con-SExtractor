@@ -1,1 +1,0 @@
-# An-lisis-con-SExtractor

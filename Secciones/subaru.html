@@ -1,0 +1,191 @@
+<!-- SUBARU -->
+
+        <h2 id="subaru">Imagen de ejemplo de <span class="typewriter">Subaru Suprime-Cam</span></h2>
+
+        <section>
+
+            <p>
+                Para este ejemplo vamos a emplear la siguiente imagen <i>FITS</i>, esta es un mosaico apilado usando <span class="typewriter">SWarp</span> hecho con datos de <b>Subaru Suprime-Cam</b>
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/subaru.jpeg" alt="Imagen de la región a emplear para el análisis">
+
+                <figcaption>
+                    <strong>Figura 31:</strong> Imagen de la región a análizar con <span class="typewriter">SExtractor</span>
+                </figcaption>
+            </figure>
+
+            <p>
+                Empezamos, al igual que antes, por leer el header de la imagen <i>FITS</i> para obtener información que nos sea útil.
+            </p>
+
+            <figure class="figura">
+                <img src="IMAGENES/headersubaru.jpeg" alt="Encabezado de la imagen FITS empleada">
+
+                <figcaption>
+                    <strong>Figura 32:</strong>Encabezado de la imagen <i>FITS</i> empleada, de donde podemos obtener el <code>GAIN, SATUR_LEVEL, PIXEL_SCALE</code> y <code>SEEING_FWHM</code><div class=""></div>
+                </figcaption>
+            </figure>
+
+            <p>
+                De aquí obtenemos los siguientes datos para usarlos en nuestro archivo de configuración principal de <span class="typewriter">SExtractor</span>:
+            </p>
+
+            <table>
+                <tr>
+                    <th><code>GAIN</code></th>
+                    <th>2835</th>
+                </tr>
+                <tr>
+                    <th><code>SATUR_LEVEL</code></th>
+                    <th>1330</th>
+                </tr>
+                <tr>
+                    <th>PIXEL_SCALE</th>
+                    <th>$5.160235\times 10^{-5}\times 3600 \approx 0.186\ \text{arcsec/pixel}$</th>
+                </tr>
+                <tr>
+                    <th><code>SEEING_FWHM</code></th>
+                    <th>0.789</th>
+                </tr>
+            </table>
+
+            <p>
+                Ahora, vamos a determinar que filtro de convolución vamos a emplear, esto lo hacemos al igual que con la imagen anterior del <i>Legacy survey</i>:
+            </p>
+
+            $$
+            FWHM_{pix}=\frac{0.789}{0.186}\approx 4.2
+            $$
+
+            <p>
+                Con esta escala del FWHM en píxeles podemos determinar que el filtro conveniente a usar es <code>gauss_3.0_5x5.conv</code>, ya con estos parámetros iniciales modificados podemos empezar a determinar el background, para ello usaremos los parámetros que están por defecto (<code>BACK_SIZE</code>=64 y <code>BACK_FILTERSIZE</code>=3) y pedimos las imagenes de chequeo <code>BACKGROUND, -BACKGROUND</code>.
+            </p>
+            
+            <figure class="figura">
+                <img src="IMAGENES/backsubaru.jpeg" alt="Imagen empleada (izq) e imagen de chequeo -background">
+
+                <figcaption>
+                    <strong>Figura 33:</strong>Imagen original (izq) e imagen de chequeo <code>-BACKGROUND</code> (der), podemos notar como algunos objetos perdieron algo de brillo.
+                </figcaption>
+            </figure>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/backgroundsubaru.jpeg" alt="Imagen de chequeo BACKGROUND">
+
+                <figcaption>
+                    <strong>Figura 34:</strong> Background que <span class="typewriter">SExtractor</span> obtuvo, podemos ver que tomo parte de algunos objetos brillantes de la imagen. (imagen de chequeo <code>BACKGROUND</code>) 
+                </figcaption>
+            </figure>
+
+            <p>
+                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> estarán en un valor de 1.5, y el parámetro <code>DETECT_MINAREA</code> tomaremos distintos valores (3,5,7,10,12,15) para ver como cambia el número de objetos detectados. Además, pediremos una imagen de chequeo <code>APERTURES</code>.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><code>DETECT_MINAREA</code></th>
+                        <th>Objetos detectados</th>
+                        <th>Objetos extraídos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3</td>
+                        <td>98261</td>
+                        <td>85947</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>92334</td>
+                        <td>81911</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>87856</td>
+                        <td>78674</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>81917</td>
+                        <td>73842</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>78568</td>
+                        <td>71028</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>73911</td>
+                        <td>67043</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="comparacion-grid3">
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_3.png" alt="Imagen de chequeo con DETECT_MINAREA de 3">
+
+                    <figcaption><strong>a)</strong></figcaption>
+                </figure>
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_5.png" alt="Imagen de chequeo con DETECT_MINAREA de 5">
+
+                    <figcaption><strong>b)</strong></figcaption>
+                </figure>
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_7.png" alt="Imagen de chequeo con DETECT_MINAREA de 7">
+
+                    <figcaption><strong>c)</strong></figcaption>
+                </figure>
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_10.png" alt="Imagen de chequeo con DETECT_MINAREA de 10">
+
+                    <figcaption><strong>d)</strong></figcaption>
+                </figure>
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_12.png" alt="Imagen de chequeo con DETECT_MINAREA de 12">
+
+                    <figcaption><strong>e)</strong></figcaption>
+                </figure>
+
+                <figure>
+                    <img src="IMAGENES/SUBARU/aper_15.png" alt="Imagen de chequeo con DETECT_MINAREA de 15">
+
+                    <figcaption><strong>f)</strong></figcaption>
+                </figure>
+
+                <figcaption class="caption-general">
+                    <strong>Figura 35:</strong> Imagenes de chequeo <code>APERTURES</code> con distintos valores de <code>DETECT_MINAREA</code>, a) 3, b) 5, c) 7, d) 10, e) 12, f) 15. Podemos notar que conforme aumenta el valor de <code>DETECT_MINAREA</code> el número de objetos detectados disminuye.
+                </figcaption>
+            </div>
+
+            <figure class="comparacion-grid2">
+
+                <img src="IMAGENES/SUBARU/aper_3.png" alt="Imagen de chequeo con DETECT_MINAREA de 3">
+
+                <img src="IMAGENES/SUBARU/aper_15.png" alt="Imagen de chequeo con DETECT_MINAREA de 15">
+
+                <figcaption>
+                    <strong>Figura 36:</strong> Comparación de imagenes de chequeo <code>APERTURES</code>, a la izquierda con <code>DETECT_MINAREA</code>=3 y a la derecha con <code>DETECT_MINAREA</code>=15.
+                </figcaption>
+            </figure>
+
+            <p>
+                Como se hablo para el ejemplo con la imagen anterior, el valor que eliges para estos parámetros depende de los objetos que se quieran observar, para este caso tomaremos el valor de <code>DETECT_MINAREA=5</code>, con esto podemos pasar con la parte de separación de fuentes <i>deblending</i>, para ello vamos a modificar los parámetros <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code>.
+            </p>
+
+            <p>
+                Para el proceso de <i>deblending</i> vamos a tomar el parámetro <code>DEBLEND_NTHRESH</code> en 32 niveles y <code>DEBLEND_MINCONT</code> en 4 distintos valores (0.001, 0.005, 0.01, 0.05), para ver como cambia el número de objetos detectados y extraídos.
+            </p>
+        
+        </section>

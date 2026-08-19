@@ -1,33 +1,27 @@
-function inicializarAcordeon(selectorBoton) {
+// Botones principales
 
-    document.querySelectorAll(selectorBoton).forEach(button => {
+document.querySelectorAll(".menu-btn").forEach(button=>{
 
-        button.addEventListener("click", () => {
+    button.addEventListener("click",()=>{
 
-            const submenuActual = button.nextElementSibling;
-            const yaEstabaAbierto = submenuActual.classList.contains("open");
+        button.classList.toggle("active");
 
-            // <ul> que contiene a este botón: define su "nivel"
-            const listaPadre = button.closest("ul");
+        button.nextElementSibling.classList.toggle("open");
 
-            // Cierra únicamente los botones/submenús que son hermanos
-            // directos dentro de esa misma lista (mismo nivel)
-            listaPadre.querySelectorAll(`:scope > li > ${selectorBoton}`).forEach(btn => {
-                btn.classList.remove("active");
-                btn.nextElementSibling.classList.remove("open");
-            });
-
-            // Si el botón clickeado estaba cerrado, lo abre
-            if (!yaEstabaAbierto) {
-                button.classList.add("active");
-                submenuActual.classList.add("open");
-            }
-        });
     });
-}
 
-// Botones principales (primer nivel)
-inicializarAcordeon(".menu-btn");
+});
 
-// Botones secundarios (segundo nivel)
-inicializarAcordeon(".submenu-btn");
+// Botones secundarios
+
+document.querySelectorAll(".submenu-btn").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        button.classList.toggle("active");
+
+        button.nextElementSibling.classList.toggle("open");
+
+    });
+
+});

@@ -1,0 +1,338 @@
+        <!-- Parámetros de entrada -->
+
+        <h2>Parámetros de entrada.</h2>
+
+        <section id="parametros de entrada">
+
+                <p>
+                    <span class="typewriter">SExtractor</span> obtiene información del encabezado de la imagen FITS, sin embargo, muchos de los parámetros se deben ser especificados en el archivo <code>default.sex</code>. Los parámetros que están por defecto pueden ser listados con el comando <code>sex -d</code>
+                </p>
+
+            <h3 id="infoimagen" class="hr-lines">Información de la imagen.</h3>
+
+            <ul>
+                <li>
+                    <code>GAIN</code>: Representa la ganancia del detector, es decir, la relación entre los electrones generados en el CCD y las cuentas digitales ADU almacenadas en la imagen. Se expresa en 
+
+                    $$\text{GAIN}=\frac{\text{electrones}}{\text{ADU}}$$
+                </li>
+
+                <li>
+                    <code>MAG_GAMMA</code>: Este parámetro se empleaba cuando <span class="typewriter">SExtractor</span> se aplicaba a placas fotográficas en donde esta es la pendiente de la función de respuesta de la emulsión utilizada en las placas en cuestión.
+                </li>
+
+                <li>
+                    <code>DETECT_TYPE</code>: Especifica el tipo de imagen que se va a analizar, puede ser <code>CCD</code> o <code>PHOTO</code>, dependiendo del tipo de imagen que se tenga, se deben ajustar otros parámetros como el <code>GAIN</code> y el <code>MAG_GAMMA</code>.
+                </li>
+
+                <li>
+                    <code>MAG_ZEROPOINT</code>: Es el punto cero para la escala de magnitudes, que se utiliza para convertir las cuentas en magnitudes absolutas. 
+                </li>
+                
+                <li>
+                    <code>PIXEL_SCALE</code>: Es la escala del pixel en arcsegundos por pixel, que se utiliza para convertir las coordenadas de los objetos en unidades de ángulo, es decir, que tanto del cielo hay en un pixel. Este es un parámetro importante para la clasificación estrella-galaxia, y que con suerte se puede obtener del encabezado de la imagen.
+                </li>
+
+                <li>
+                    <code>SATUR_LEVEL</code>: Es el nivel de saturación del detector, que se utiliza para identificar objetos saturados en la imagen. Este valor también se puede obtener del encabezado de la imagen.
+                </li>
+
+                <li>
+                    <code>SEEING_FWHM</code>: Representa el <b>Full Width at Half Maximum</b> expresado en segundos de arco. Este parámetro constituye una de las calibraciones iniciales del análisis, ya que proporciona a <span class="typewriter">SExtractor</span> una estimación del tamaño aparente de las fuentes puntuales en la imagen. Este valor es utilizado principalmente en la clasificación estrella-galaxia mediante el parámetro <code>CLASS_STAR</code>.
+                    <br>
+                    <br>
+                    Físicamente el <i>seeing</i> describe cuanto se ensanchan las imágenes de las estrellas debido principalmente a la turbulencia atmosférica. Si una estrella fuera una funente puntual perfecta, la atmósfera y la óptica del telescopio la transformarían en una distribución extendida de luz. Esta distribución se le conoce como la función de dispersión puntal (<i>point spread function</i>, PSF), la cual describe cómo un punto luminoso ideal es registrado por el sistema de observación, en muchos casos la PSF puede aproximarse a una distribución gaussiana. El parámetro <code>FWHM</code> mide el ancho de esta distribución a la mitad de su intensidad máxima.
+                </li>
+            </ul>
+
+            <h3 id="background" class="hr-lines">Determinación del fondo (Background).</h3>
+
+            <p>
+                En una imagen astronómica, el valor que se mide en un píxel es la suma de la luz de los objetos que nos interesan (estrellas, galaxias, etc.) y una señal de "fondo" que proviene del cielo. <span class="typewriter">SExtractor</span> crea un mapa de fondo que representa este valor en cualquier posición de la imagen, para poder restarlo y trabajar solo con el flujo de las fuentes.<br>
+            </p>
+
+            <p>
+                El algoritmo se desglosa en los siguientes pasos: 
+            </p>
+
+            <ol>
+                <li>
+                    <span class="typewriter">SExtractor</span> divide la imagen en una cuadrícula de mallas, el tamaño de estas mallas se define con el parámetro <code>BACK_SIZE</code>. Para cada celda de esta cuadrícula, se analizan los píxeles que contiene de forma independiente.
+                </li>
+
+                <li>
+                    Para cada cuadrícula, <span class="typewriter">SExtractor</span> construye un histograma con los valores de los píxeles y aplica un proceso iterativo de recorte $\kappa\sigma$ (kappa-sigma clipping) para eliminar la luz de las fuentes.
+
+                    <ul>
+                        <li>
+                            <b>Recorte iterativo:</b> Se calcula la mediana y la desviación estándar ($\sigma$) de los píxeles en la celda. Luego, se descartan todos los píxeles que están a más de $\pm3\sigma$ de la mediana y se recalcula la mediana y $\sigma$ con los píxeles restantes. Este proceso se repite hasta que los valores convergen. Esto asegura que los píxeles brillantes de las estrellas no contaminen la estimación del fondo.
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    Una vez que se tiene la distribución de píxeles "limpia", se estima la moda (el valor más frecuente). <span class="typewriter">SExtractor</span> utiliza una relación empírica para estimar la moda a partir de la mediana y la media de la distribución recortada.
+
+                    $$\text{Moda}= 2.5 \times \text{Mediana} - 1.5 \times \text{Media}$$
+                </li>
+
+                <li>
+                    Después, ya que se tiene un valor de fondo para cada celda de la cuadrícula, se aplica un filtro mediana de tamaño <code>BACK_FILTERSIZE</code> sobre la rejilla. Esto ayuda a eliminar sobreestimaciones del fondo causadas por estrellas muy brillantes.
+                </li>
+
+                <li>
+                    Finalmente, <span class="typewriter">SExtractor</span> interpola los valores de la rejilla filtrada utilizando una <i>bicubic-spline</i> para generar un mapa de fondo continuo que tenga el mismo tamaño que la imagen original. Este mapa de fondo se puede restar de la imagen original para obtener una imagen con el fondo corregido.
+                </li>
+            </ol>
+
+            Para obtener valores más precisos del fondo, este se puede calcular en un área centrada alrededor de un objeto. Para ello se establece el parámetro <code>BACKPHOTO_TYPE</code> a <code>LOCAL</code> y se elije un <code>BACKPHOTO_THICK</code>.
+
+            <ul>
+                <li>
+                    <code>BACKPHOTO_TYPE</code>: Indica qué fondo utilizar cuando <span class="typewriter">SExtractor</span> calcula el flujo de un objeto. Puede tener valores de <code>GLOBAL</code> o <code>LOCAL</code>.
+
+                    <ul>
+                        <li>
+                            <code>GLOBAL</code>: <span class="typewriter">SExtractor</span> utiliza el mapa de fondo global para restar el fondo de la imagen. Este es el método por defecto y es adecuado para la mayoría de las imágenes, especialmente aquellas con un fondo uniforme.
+                        </li>
+
+                    
+                        <li>
+                            <code>LOCAL</code>: <span class="typewriter">SExtractor</span> calcula un fondo local para cada objeto utilizando una corona alrededor del objeto. El tamaño de esta corona se define con el parámetro <code>BACKPHOTO_THICK</code>. Este método es útil para imágenes con un fondo no uniforme o con gradientes de fondo, ya que permite una estimación más precisa del fondo en las proximidades de cada objeto.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3 id="umbral" class="hr-lines">Umbralización.</h3>
+
+            <p>
+                <span class="typewriter">SExtractor</span> detecta objetos en la imagen comparando el valor de cada píxel con un umbral definido por el usuario. Este umbral se establece en términos de la desviación estándar del fondo, y se define con los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>. Los píxeles que superan este umbral se consideran parte de un objeto.
+            </p>
+
+            <ul>
+                <li>
+                    <code>DETECT_THRESH</code>: Define el umbral de detección en unidades de desviación estándar del ruido de fondo ($\sigma$). Por ejemplo, un valor de 1.5 significa que <span class="typewriter">SExtractor</span> considerará como parte de un objeto a todos los píxeles que estén a 1.5 veces la desviación estándar por encima del fondo. 
+                </li>
+            </ul>
+            <p>
+                Posteriormente a que <span class="typewriter">SExtractor</span> estima y sustrae el fondo de la imagen, calcula el ruido asociado al fondo, luego, compara la intencidad de cada píxel con el umbral seleccionado:
+            </p>
+
+                $$I_{pixel} > \text{BACKGROUND}+(\text{DETECT_THRESH})\sigma$$ 
+
+            <p>
+                Todos aquellos píxeles que superan el umbral son marcados como candidatos a pertenecer a un objeto. En <a href="#ref2">[2]</a> el autor menciona 3 requisitos para un objeto candidato:
+            </p>
+
+            <ol>
+                <li>Todos los píxeles esta por encima del <code>DETECT_THRESH</code>.</li>
+                <li>Todos estos píxeles son adyacentes entre sí (con esquinas o lados en común).</li>
+                <li>Hay más de un número mínimo de píxeles (especificado por el parámetro <code>DETECT_MINAREA</code>).</li>
+            </ol>
+
+            <ul>
+                <li>
+                    <code>ANALYSIS_THRESH</code>: Define un umbral de brillo que un píxel debe superar para ser considerado en las mediciones del objeto, como el cálculo de su forma (FWHM), brillo superficial, o flujo total. <span class="typewriter">SExtractor</span> identifica un objeto empleando el umbral de detección (<code>DETECT_THRESH</code>). Luego, para medir sus propiedades, utiliza todos los píxeles conectados que superen este segundo umbral (más bajo o igual) 
+                </li>
+
+                <li>
+                    <code>DETECT_MINAREA</code>: Este parámetro establece el número mínimo de píxeles conectados y contiguos que deben superar el umbral de detección para que <span class="typewriter">SExtractor</span> los considere objetos. Este parámetro actúa como un filtro de tamaño para eliminar detecciones espurias causadas por píxeles de ruido aislado
+                </li>
+            </ul>
+
+            <p>
+                El flujo de trabajo para esta parte podemos resumirla de la siguiente manera:
+            </p>
+
+            <ol>
+                <li>
+                    <b>Filtrado y umbralización:</b> <span class="typewriter">SExtractor</span> analiza los píxeles de la imagen y marca todos aquellos que superan el nivel establecido por <code>DETECT_THRESH</code>.
+                </li>
+
+                <li>
+                    <b>Agrupación:</b> Los píxeles marcados que están conectados entre sí (tocándose por los lados o las esquinas) se agrupan en "islas" o regiones candidatas a ser objetos.
+                </li>
+
+                <li>
+                    <b>Aplicación de <code>DETECT_MINAREA</code>:</b> <span class="typewriter">SExtractor</span> examina cada una de las "islas" y si el número total de píxeles que la componen es menor que el valor de <code>DETECT_MINAREA</code>, la isla es descartada como una detección espuria. 
+                </li>
+
+                <li>
+                    <b>Medición con <code>ANALYSIS_THRESH</code>:</b> Finalmente, para las islas que sobreviven al filtro de tamaño (aquellas que si son objetos), <span class="typewriter">SExtractor</span> realiza las mediciones. Para definir el área exacta sobre la cual medir el flujo, utiliza el segundo umbral <code>ANALYSIS_THRESH</code>.
+                </li>
+            </ol>
+
+            <h3 id="filtro" class="hr-lines"> Filtrado </h3>
+
+            <p>
+                Antes de hacer la umbralización de píxeles, se puede aplicar un filtro el cual, esencialmente, suaviza la imagen. Aplicar este filtro puede ayudar a detectar objetos débiles y extendidos. Hay cuatro tipos de filtros que se puede aplicar: Gaussiano, sombrero Mexicano (Mexican hat), sombrero de copa (tophat) y funcion de bloque de varios tamaños y normalizados. Dentro del directorio de <span class="typewriter">SExtractor</span> el archivo <code>README</code> explica estos tipos de filtrados de la siguiente manera:<a href="#ref2">[2]</a>   
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>default.conv</th>
+                        <th>pequeña función piramidal</th>
+                    </tr>
+                    <tr>
+                        <th>gauss*.conv</th>
+                        <th>conjunto de funciones gausianas, para FWHMs de <i>seeing</i> de entre 1.5 y 5 píxeles (ideal para detección de objetos débiles).</th>
+                    </tr>
+                    <tr>
+                        <th>tophat*.conv</th>
+                        <th>conjunto de funciones "top-hat". Se usan para detectar objetos extendidos, de bajo brillo superficial, con un umbral muy bajo.</th>
+                    </tr>
+                    <tr>
+                        <th>mexhat*.conv</th>
+                        <th>"wavelents", produciendo un filtrado de banda pasante de la imagen, ajustado para FWHMs con un <i>seeing</i> entre 1.5 y 5 píxeles. Es útil para campos estelares muy poblados, sin embargo, necesita un umbral muy alto</th>
+                    </tr>
+                    <tr>
+                        <th>block_3x3.conv</th>
+                        <th>una pequeña función de "bloque" (para imágenes rebinadas como las del estudio DENIS).</th>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                La forma en que estan nombrados los filtros normalmente parece tener la forma de <span class="typewriter">name_seeingFWHM_size.conv</span>
+            </p>
+
+            <h3 id="deblending" class="hr-lines">Deblending: separación en diferentes objetos</h3>
+
+            <p>
+                Con el método anterior para detectar objetos, se necesita hacer una separación de objetos vecinos que han sido extraídos como una sola fuente. <a href="#ref3">[3]</a>  
+            </p>
+
+            <p style="text-align: center;">
+                "<i>Se ha puesto gran cuidado en el diseño de la rutina de deblending para objetos fusionados. En muchas imágenes astronómicas, <span class="typewriter">SExtractor</span> debe tratar simultáneamente con objetos brillantes y extensos, como galaxias (que deben considerarse entidades individuales), y con pares o grupos de galaxias ópticamente débiles e interactuantes (que deben considerarse objetos separados). Tradicionalmente, este es un punto en el que muchos programas de extracción fallan, produciendo catálogos que contienen galaxias extendidas divididas en varias detecciones más pequeñas.</i>"<a href="#ref3">[3]</a>
+            </p>
+
+            <p>
+                El algoritmo de <i>deblending</i> de <span class="typewriter">SExtractor</span> se basa en una técnica de multiumbralización en la que se identifican diferentes picos de brillo dentro de una misma región detectada. Este proceso se controla mediante los parámetro <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code>. <a href="#ref3">[3]</a>
+            </p>
+
+            <p>Podemos describir el proceso del algoritmo de la siguiente manera:</p>
+
+            <ol>
+                <li>
+                    <b>Detección inicial:</b> Se identifica el conjunto de píxeles conectados que superen el umbral de detección dado por <code>DETECT_THRESH</code>.
+                </li>
+                <li>
+                    <b>Análisis de la estructura:</b> <span class="typewriter">SExtractor</span> analiza la estructura interna, en lugar de asumir que toda la "isla" es un solo objeto.
+                </li>
+                <li>
+                    <b>Aplicación de sub-umbrales:</b> Se aplican una serie de umbrales de brillo decrecientes, comenzando desde el valor más alto dentro de la isla y descendiendo hasta el nivel definido por <code>DETECT_THRESH</code>. El número de sub-umbrales se define con el parámetro <code>DEBLEND_NTHRESH</code>, un valor típico para este parámetro suele ser de 32
+                </li>
+                <li>
+                    <b>Construcción del árbol de mezcla:</b> En cada sub-umbral se identifican grupos de píxeles que quedan aislados. Cuando el umbral desciende, estos grupos se conectan lo que forma una estructura jerárquica que se asemeja a un árbol o un dendograma (ver la imágen siguiente). Este proceso muestra que picos de brillo están anidados dentro de otros más brillantes.
+                </li>
+                <li>
+                    <b>Evaluación del contraste:</b> Finalmente, se analiza el "árbol de mezcla" para decidir cuándo un pico de brillo es suficientemente significativo como para ser considerado un objeto separado. Esta decisión se basa en el parámetro <code>DEBLEND_MINCONT</code>
+                </li>
+            </ol>
+
+            <p>Entonces, los dos parámetros escenciales son <code>DEBLEND_NTHRESH</code> y <code>DEBLEND_MINCONT</code></p>
+
+            <ul>
+                <li>
+                    <code>DEBLEND_NTHRESH</code>: Define los niveles de brillo que se usan para construir el árbol, por ejemplo, <code>DEBLEND_NTHRESH=32</code> significa que se va a analizar el objeto con 32 niveles de intensidad distintos.
+                </li>
+                <li>
+                    <code>DEBLEND_MINCONT</code>: Básicamente controla que tan importante debe ser una rama para ser considerada un objeto independiente. Matemáticamente: 
+
+                    $$\frac{F_{\text{rama}}}{F_{\text{total}}}>\alpha_c$$
+
+                    En donde $F_{\text{rama}}$ es el flujo de la rama, $F_{\text{total}}$ es el flujo del objeto completo y $\alpha_c$ es el parámetro <code>DEBLEND_MINCONT</code>. Por ejemplo, supongamos que tenemos uun flujo total de $F_{\text{total}}=10000$ y una rama tiene $F_{\text{rama}}=3000$, entonces:
+
+                    $$\frac{3000}{10000}=0.3$$
+
+                    Si <code>DEBLEND_MINCONT=0.005</code>, como $0.3>0.005$ la rama se considera un objeto independiente.
+                </li>
+            </ul>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/deblending.jpeg" alt="Gráfico de árbol de mezcla para deblending.">
+
+                <figcaption>
+                    <strong>Figura 6:</strong> Gráfico de árbol de mezcla para deblending. La línea horizontal representa el umbral de detección, las líneas punteadas representan los niveles de brillo que <span class="typewriter">SExtractor</span> analiza, y las ramas representan los picos de brillo que se encuentran dentro del objeto detectado. (Imagen tomada de <a href="#ref1">[1]</a>)
+                </figcaption>
+            </figure>
+            
+
+            <p>
+                Cuando <span class="typewriter">SExtractor</span> detecta una fuente mediante el umbral principal determinado por el parámetro <code>DETECT_THRESH</code>, todo lo que está por encima de este umbral se considera <i>inicialmente</i> un único objeto, hasta ahora <span class="typewriter">SExtractor</span> no sabe todavía si son varios objetos. En la figura anterior, esto corresponde a toda la región que vemos sombreada.
+            </p>
+
+            <p>
+                Las líneas horizontales punteadas representan los niveles de brillo que <span class="typewriter">SExtractor</span> analiza, estos niveles están controlados por <code>DEBLEND_NTHRESH</code>. <span class="typewriter">SExtractor</span> comienza analizando los niveles más altos de intensidad, en la figura podemos ver pequeños máximos, de los cuales cada uno puede ser potencialmente una fuente independiente. 
+            </p>
+
+            <p>
+                En la figura tenemos una región etiquetada como <b>A</b> que posee tres picos, primero aparecen tres máximos separados. Más abajo, estos máximos se unen y finalmente toda la estructura forma una única región. Para la región <b>B</b> que contiene dos máximos de nuevo <span class="typewriter">SExtractor</span> evalúa si debe separarlos o no. Cuando dos ramas se unen <span class="typewriter">SExtractor</span> calcula el flujo de cada una, que es el mismo ejemplo que se menciono antes.
+            </p>
+
+            <p>
+                En la siguiente imagen, tomada de la referencia <a href="#ref4">[4]</a>, podemos ver la salida obtenida para dos valores distintos de <code>DEBLEND_MINCONT</code>
+            </p>
+
+            <figure class="figura">
+
+                <img src="IMAGENES/deblend_mincont-removebg-preview.png" alt="Comparación de valores del parámetro DEBLEND_MINCONT">
+
+                <figcaption>
+                    <strong>Figura 7:</strong> Comparación de valores del parámetro <code>DEBLEND_MINCONT</code> en la separación de objetos. A la izquierda, con un valor de 0.005, se separan más objetos, mientras que a la derecha, con un valor de 0.1, se separan menos objetos. (Imagen tomada de <a href="#ref4">[4]</a>)
+                </figcaption>
+            </figure>
+            
+
+            <h3 id="clean" class="hr-lines">Cleaning</h3>
+
+            <p>
+                Si hay una estrella o galaxia muy brillante, sus "alas" de luz (el halo o perfil de la PSF) pueden extenderse y elevar el nivel de fondo en una región grande de la imagen. Esto puede ocasionar que pequeños bultos de ruido superen el umbral de detección, creando detecciones falsas. EL proceso de Cleaning se diseño para detectar y eliminar estos "fantasmas" creados por otras fuentes más brillantes. El proceso con el que funciona se puede desglozar de la siguiente manera: <a href="#ref2">[2]</a><a href="#ref4">[4]</a><a href="#ref5">[5]</a>
+            </p>
+
+            <ol>
+                <li>Tras la detección inicial, el algoritmo identifica los objetos que son suficientemente brillantes como para contaminar el entorno.</li>
+
+                <li>
+                    Para cada uno de estos objetos brillantes capaces de contaminar el entorno, <span class="typewriter">SExtractor</span> modela el perfil de luz, que según la documentación <a href="#ref2">[2]</a><a href="#ref4">[4]</a><a href="#ref5">[5]</a> para esta estimación se utiliza un <b>perfil de Moffat</b>
+
+                    $$\frac{I(r)}{I(\theta)} =\frac{1}{(1 + k \cdot r²)^\beta} $$
+
+                    En donde $I(\theta)$ es el brillo central, $r$ es el radio, y $\beta$ es un parámetro que controla el ensanchamiento de las alas del perfil.
+                </li>
+                <li>
+                    El algoritmo calcula la contribución de la luz de las alas del perfil de Moffat en la ubicación de otros objetos cercanos y la sustrae de la imagen de detección. Posteriormente, para los objetos candidatos determina si seguiría siendo detectado sin la luz de su vecino brillante.<a href="#ref4">[4]</a><a href="#ref5">[5]</a>
+                </li>
+            </ol>
+
+            <p>
+                Parámetros para cleaning:
+            </p>
+
+            <ul>
+                <li>
+                    <code>CLEAN</code>: (Y/N), determina si se activa o desactiva todo el proceso.
+                </li>
+
+                <li>
+                    <code>CLEAN_PARAM</code>: Ajusta la agresividad del proceso. Controla directamente el valor de $\beta$ en el perfil de Moffat.
+
+                    <li>
+                        Valores más bajos hacen que las alas del perfin de Moffat sean más brillantes, se eliminan más objetos (pudiendo eliminar algunos reales).
+                    </li>
+
+                    <li>
+                        Valores más altos producen un cleaning más conservador.
+                    </li>
+                </li>
+            </ul>
+        </section>

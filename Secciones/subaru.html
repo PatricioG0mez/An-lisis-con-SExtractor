@@ -42,7 +42,7 @@
                     <th>1330</th>
                 </tr>
                 <tr>
-                    <th>PIXEL_SCALE</th>
+                    <th><code>PIXEL_SCALE</code></th>
                     <th>$5.160235\times 10^{-5}\times 3600 \approx 0.186\ \text{arcsec/pixel}$</th>
                 </tr>
                 <tr>
@@ -81,7 +81,7 @@
             </figure>
 
             <p>
-                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> los vamos a tomar con los valores por defecto, es decir, de 1.5, sin embargo, para determinar si este nivel de umbral es el indicado vamos a tomar los datos de la imagen de manera negativa, así, en teoría, si el nivel de umbral es el correcto, deberíamos detectar ningun objeto ya que no hay fuentes negativas. Para ello, vamos a realizar un pequeño código en <i>python</i>:
+                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> los vamos a tomar con los valores por defecto, es decir, de 1.5, sin embargo, para determinar si este nivel de umbral es el indicado vamos a tomar los datos de la imagen de manera negativa, así, en teoría, si el nivel de umbral es el correcto, no deberíamos detectar ningun objeto ya que no hay fuentes negativas. Para ello, vamos a realizar un pequeño código en <i>python</i>:
             </p>
 
             <pre><code>from astropy.io import fits
@@ -157,5 +157,83 @@ fits.writeto('imagen_neg.fits', -data, hdr, overwrite=True)
                     </tr>
                 </tbody>
             </table>
+
+            <figure class="figura">
+            
+                <img src="../IMAGENES/deteccionesumbral.png" alt="Grafico de detecciones de objetos en la imagen negativa con diferentes niveles de umbralización">
+
+                <figcaption>
+                    <strong>Figura 37:</strong> Gráfico de detecciones de objetos en la imagen negativa con diferentes niveles de umbralización.
+                </figcaption>
+            </figure>
+
+            <figure class="figura">
+                <img src="../IMAGENES/SUBARU/aperturesnegativa2,5.png" alt="Imagen de chequeo de APERTURES de la imagen negativa con un nivel de umbral de 2.5">
+
+                <figcaption>
+                    <strong>Figura 38:</strong> Imagen de chequeo <code>APERTURES</code> de la imagen negativa con un nivel de umbral de 2.5, podemos notar una gran disminución en la región superior derecha de la imagen, en comparación con la figura 36, sin embargo aún hay detecciones de objetos.
+                </figcaption>
+            </figure>
+
+            <p>
+                Con el umbral configurado, pasaremos a establecer el valor para <code>DETECT_MINAREA</code>, tomaremos valores de (3,5,7,10,12,15) y analizaremos el número de objetos detectados y extraidos, tomemos en cuenta que ya dejamos de lado la imagen negativa para usar la imagen original.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><code>DETECT_MINAREA</code></th>
+                        <th>Objetos detectados</th>
+                        <th>Objetos extraidos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3</td>
+                        <td>69498</td>
+                        <td>62910</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>66021</td>
+                        <td>60065</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>63249</td>
+                        <td>57764</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>59181</td>
+                        <td>54085</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>56889</td>
+                        <td>52059</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>53262</td>
+                        <td>48791</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="comparacion-grid3">
+
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin3.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=3">
+
+                    <figcaption>
+                        <strong>a)</strong>
+                    </figcaption>
+                </figure>
+
+                figure
+
+            </div>
+
             
         </section>

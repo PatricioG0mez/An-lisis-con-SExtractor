@@ -227,13 +227,287 @@ fits.writeto('imagen_neg.fits', -data, hdr, overwrite=True)
                     <img src="../IMAGENES/SUBARU/aperturesmin3.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=3">
 
                     <figcaption>
-                        <strong>a)</strong>
+                        <strong>a)</strong> 3
                     </figcaption>
                 </figure>
 
-                figure
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin5.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=5">
 
+                    <figcaption>
+                        <strong>b)</strong> 5
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin7.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=7">
+
+                    <figcaption>
+                        <strong>c)</strong> 7
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin10.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=10">
+
+                    <figcaption>
+                        <strong>d)</strong> 10
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin12.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=12">
+
+                    <figcaption>
+                        <strong>e)</strong> 12
+                    </figcaption>
+                </figure>
+
+                <figure>
+                    <img src="../IMAGENES/SUBARU/aperturesmin15.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=15">
+
+                    <figcaption>
+                        <strong>f)</strong> 15
+                    </figcaption>
+                </figure>
+
+                <figcaption class="caption-general">
+                    <strong>Figura 39:</strong> Imágenes de chequeo <code>APERTURES</code> con diferentes valores de <code>DETECT_MINAREA</code>, podemos notar que a medida que aumentamos el valor de este parámetro el número de objetos detectados y extraidos disminuye.
+                </figcaption>
             </div>
 
+            <figure class="comparacion-grid2">
+
+                
+                    <img src="../IMAGENES/SUBARU/aperturesmin3.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=3">
+                    
+
+                    
+                    <img src="../IMAGENES/SUBARU/aperturesmin15.png" alt="Imagen de chequeo APERTURES con un valor de DETECT_MINAREA=15">
+        
+
+                    <figcaption>
+                        <strong>Figura 40:</strong> Comparación de imágenes de chequeo <code>APERTURES</code> con valores de <code>DETECT_MINAREA</code> de 3 (izq) y 15 (der).
+                    </figcaption>
+                </figure>
+
+                <p>
+                    Con estas imágenes de chequeo podemos decidir que un valor de <code>DETECT_MINAREA</code>, y como se ha mencionado antes, el valor que se elige depende de las detecciones que se quieren obtener, particularmente, para este caso, vamos a elegir un valor de 5, ya que nos permite obtener un número considerable de objetos detectados y extraidos.
+                </p>
+
+                <p>
+                    Con lo anterior, podemos pasar al proceso de <i>deblending</i>, para ello vamos a tomar el parámetro <code>DEBLEND_NTHRESH</code> en 32 niveles y el parámetro <code>DEBLEND_MINCONT</code> con valores de (0.001, 0.005, 0.01, 0.05, 0.1 y 0.5).
+                </p>
             
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th><code>DEBLEND_MINCONT</code></th>
+                            <th>Objetos detectados</th>
+                            <th>Objetos extraidos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0.001</td>
+                            <td>67624</td>
+                            <td>61359</td>
+                        </tr>
+
+                        <tr>
+                            <td>0.005</td>
+                            <td>66021</td>
+                            <td>60065</td>
+                        </tr>
+
+                        <tr>
+                            <td>0.01</td>
+                            <td>65188</td>
+                            <td>59349</td>
+                        </tr>
+
+                        <tr>
+                            <td>0.05</td>
+                            <td>63182</td>
+                            <td>57373</td>
+                        </tr>
+
+                        <tr>
+                            <td>0.1</td>
+                            <td>62304</td>
+                            <td>56420</td>
+                        </tr>
+
+                        <tr>
+                            <td>0.5</td>
+                            <td>61309</td>
+                            <td>55248</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="comparacion-grid3">
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont001.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.001">
+
+                        <figcaption>
+                            <strong>a)</strong> 0.001
+                        </figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont005.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.005">
+
+                        <figcaption>
+                            <strong>b)</strong> 0.005
+                        </figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont01.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.01">
+
+                        <figcaption>
+                            <strong>c)</strong> 0.01
+                        </figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont05.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.05">
+
+                        <figcaption>
+                            <strong>d)</strong> 0.05
+                        </figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont1.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.1">
+
+                        <figcaption>
+                            <strong>e)</strong> 0.1
+                        </figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="../IMAGENES/SUBARU/mincont5.png" alt="Imagen de chequeo APERTURES con un valor de DEBLEND_MINCONT=0.5">
+
+                        <figcaption>
+                            <strong>f)</strong> 0.5
+                        </figcaption>
+                    </figure>
+
+                    <figcaption class="caption-general">
+                        <strong>Figura 41: </strong> Imagenes de chequeo <code>APERTURES</code> con diferentes valores de <code>DEBLEND_MINCONT</code>, a medida que el valor de este parámetro aumenta, el número de objetos detectados y extraidos disminuye, esto se debe a que <span class="typewriter">SExtractor</span> junto objetos que considera que son parte de un mismo objeto.
+                    </figcaption>
+                </div>
+
+                <p>
+                    Analizando las imagenes anteriores, tenemos diferencias bastante notorias incluso entre los valores de 0.001 y 0.005, y al igual que antes, el valor que se elige depende de las detecciones que se quieren obtener, para este caso, vamos a elegir un valor de 0.005, ya que hace un deblending bastante bueno.
+                </p>
+
+                <p>
+                    Con esto, ya tenemos los parámetros de <span class="typewriter">SExtractor</span> necesarios para obtener un catálogo adecuado, sin embargo, aún nos falta el proceso de <span class="typewriter">PSFEx</span> para obtener un catálogo con parámetros más precisos. Para ello, vamos a correr <span class="typewriter">SExtractor</span> con los siguientes parámetros: 
+                </p>
+
+                <pre><code>X_IMAGE
+Y_IMAGE
+FLUX_RADIUS
+FLUX_APER(1)
+FLUXERR_APER(1)
+ELONGATION
+FLAGS
+SNR_WIN
+VIGNET(35,35)</code></pre>
+
+                <p>
+                    Además, debemos asegurarnos de que el catálogo que generamos tenga el formato <code>FITS_LDAC</code>, finalmente creamos nuestro catálogo con el archivo de configuración que se edito (archivo .sex) y los parámetros necesarios para usar <span class="typewriter">PSFEx</span>.
+                </p>
+
+
+                <p>
+                    Con esto, creamos un nuevo directorio en donde emplearemos <span class="typewriter">PSFEx</span>, creando el archivo principal de configuración con el siguiente comando:
+                </p>
+
+                <pre><code>psfex -dd > default.psfex</code></pre> 
+
+                <p>
+                    Ahora, debemos editar este archivo para hacer uso de <span class="typewriter">PSFEx</span>, para ello vamos a tomar los siguientes valores para cada parámetro:
+                </p>
+
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><code>PSF_SIZE</code></td>
+                            <td>35,35</td>
+                        </tr>
+
+                        <tr>
+                            <td><code>BASIS_TYPE</code></td>
+                            <td><code>PIXEL_AUTO</code></td>
+                        </tr>
+
+                        <tr>
+                            <td><code>PSFVAR_KEYS</code></td>
+                            <td><code>X_IMAGE, Y_IMAGE</code></td>
+                        </tr>
+
+                        <tr>
+                            <td><code>PSFVAR_DEGREES</code></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td><code>SAMPLE_MINSN</code></td>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <td><code>SAMPLE_MAXELLIP </code></td>
+                            <td>0.3</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <p>
+                    Con el archivo ya configurado, vamos a correr <span class="typewriter">PSFEx</span> y analizamos los resultados obtenidos, para ello hacemos uso del siguiente comando:
+                </p>
+
+                <pre><code>psfex prepsfex.fits -c default.psfex</code></pre>
+
+                <p>
+                    Esto nos genera un archivo XML con información de la PSF, además, solicitamos las imagenes de chequeo y las graficas de distintos parámetros. Primero, veamos la información del archivo XML:
+                </p>
+
+                <figure class="figura">
+
+                    <img src="../IMAGENES/SUBARU/psf_metrics_summary.png" alt="Metricas obtenidas de la información dada por psfex en el archivo xml">
+
+                    <figcaption>
+                        <strong>Figura 42:</strong> Información obtenida sobre la <i>PSF</i> modelada por <span class="typwriter">PSFEx</span>.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    <b>FWHM</b>, recordemos que este parámetro mide que tan "ancha" o dispera se ve una fuente puntual en la imagen, para este caso tenemos un valor mínimo de 4.087 y una media de 4.100, teniendo valores cercanos, sin embargo, tenemos un máximo de 4.7, este valor se dispara sugiriendo que en la mayoría del campo se tiene un buen enfoque, sin embargo, hay alguna zona o estrella con una <i>PSF</i> más ancha. <br>
+                    
+                    <b>Elipsicidad de la PSF</b>, este parámetro nos define que tan ovalada es la <i>PSF</i>, en los datos proporcionados por el archivo XML podemos notar que los valores son pequeños con un mínimo de 0.003, una media de 0.013 y un máximo de 0.030.<br>
+
+                    <b>Parámetro de Moffat</b>, <span class="typewriter">PSFEx</span> ajusta la forma de la <i>PSF</i> usando un perfil de Moffat, en donde el parámetro $\beta$ controla que tan "puntiagudo" es el centro vs. qué tan extendidas son las alas del perfil. Para este valor tenemos una media de 2.519 y un máximo de 3.502.<br>
+                    
+                    <b>Residuos del ajuste PSF</b>, este parámetro indica qué tan bien el modelo de <i>PSF</i> ajustado reproduce las estrellas reales usadas para construirlo (menor es mejor). Tenemos un mínimo de 0.011, una media de 0.014 y un máximo de 0.037, esta diferencia con el máximo podría deberse a la zona u estrella del FWHM máximo. <br>
+
+                    <b>Número de estrellas</b>, por último, <span class="typwriter">PSFEx</span> nos dice el número de estrellas que cargo y las que acepto, teniendo valores de 11526 y 10586 respectivamente. Esto significa que <span class="typewriter">PSFEx</span> uso el $91.8\%$ de las estrellas detectadas para construir el modelo de la <i>PSF</i>.
+                </p>
+
+                <p>
+                    Ahora, pasamos a verificar las imagenes de chequeo y las graficas que nos proporciona <span class="typewriter">PSFEx</span> para seguir analizando si el ajuste del modelo es limpo y bueno. Primero, veamos el diagrama de selección que uso <span class="typewriter">PSFEx</span> para elegir qué fuentes son "estrellas puntuales".
+                </p>
+
+                <figure class="figura">
+                    <img src="../IMAGENES/SUBARU/selfwhm_prepsfex.png" alt="Diagrama de selección de estrellas puntuales.">
+
+                    <figcaption>
+                        <strong>Figura 43:</strong> Diagrama de selección <i>SNR vs FWHM</i> para "estrellas puntuales".
+                    </figcaption>
+                </figure>
         </section>

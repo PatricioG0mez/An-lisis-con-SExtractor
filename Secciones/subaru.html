@@ -16,6 +16,8 @@
                 </figcaption>
             </figure>
 
+            <h3 class="hr-lines" id="Info-inicial-subaru">Parámetros iniciales.</h3>
+
             <p>
                 Empezamos, al igual que antes, por leer el header de la imagen <i>FITS</i> para obtener información que nos sea útil.
             </p>
@@ -59,6 +61,8 @@
             FWHM_{pix}=\frac{0.789}{0.186}\approx 4.2
             $$
 
+            <h3 class="hr-lines" id="background-subaru">Background.</h3>
+
             <p>
                 Con esta escala del FWHM en píxeles podemos determinar que el filtro conveniente a usar es <code>gauss_3.0_5x5.conv</code>, ya con estos parámetros iniciales modificados podemos empezar a determinar el background, para ello usaremos los parámetros que están por defecto (<code>BACK_SIZE</code>=64 y <code>BACK_FILTERSIZE</code>=3) y pedimos las imagenes de chequeo <code>BACKGROUND, -BACKGROUND</code>.
             </p>
@@ -81,7 +85,13 @@
             </figure>
 
             <p>
-                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> los vamos a tomar con los valores por defecto, es decir, de 1.5, sin embargo, para determinar si este nivel de umbral es el indicado vamos a tomar los datos de la imagen de manera negativa, así, en teoría, si el nivel de umbral es el correcto, no deberíamos detectar ningun objeto ya que no hay fuentes negativas. Para ello, vamos a realizar un pequeño código en <i>python</i>:
+                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. 
+            </p>
+
+            <h3 class="hr-lines" id="umbral-subaru">Umbralización.</h3>
+
+            <p>
+                Posteriormente, vamos a determinar los valores de umbralización que utilizará <span class="typewriter">SExtractor</span>, los parámetros <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> los vamos a tomar con los valores por defecto, es decir, de 1.5, sin embargo, para determinar si este nivel de umbral es el indicado vamos a tomar los datos de la imagen de manera negativa, así, en teoría, si el nivel de umbral es el correcto, no deberíamos detectar ningun objeto ya que no hay fuentes negativas. Para ello, vamos a realizar un pequeño código en <i>python</i>:
             </p>
 
             <pre><code>from astropy.io import fits
@@ -295,6 +305,8 @@ fits.writeto('imagen_neg.fits', -data, hdr, overwrite=True)
                     Con estas imágenes de chequeo podemos decidir que un valor de <code>DETECT_MINAREA</code>, y como se ha mencionado antes, el valor que se elige depende de las detecciones que se quieren obtener, particularmente, para este caso, vamos a elegir un valor de 5, ya que nos permite obtener un número considerable de objetos detectados y extraidos.
                 </p>
 
+                <h3 class="hr-lines" id="deblending-subaru">Deblending.</h3>
+
                 <p>
                     Con lo anterior, podemos pasar al proceso de <i>deblending</i>, para ello vamos a tomar el parámetro <code>DEBLEND_NTHRESH</code> en 32 niveles y el parámetro <code>DEBLEND_MINCONT</code> con valores de (0.001, 0.005, 0.01, 0.05, 0.1 y 0.5).
                 </p>
@@ -405,6 +417,8 @@ fits.writeto('imagen_neg.fits', -data, hdr, overwrite=True)
                 <p>
                     Analizando las imagenes anteriores, tenemos diferencias bastante notorias incluso entre los valores de 0.001 y 0.005, y al igual que antes, el valor que se elige depende de las detecciones que se quieren obtener, para este caso, vamos a elegir un valor de 0.005, ya que hace un deblending bastante bueno.
                 </p>
+
+                <h3 class="hr-lines" id="PSFEX-subaru">Usando <span class="typewriter">PSFEx</span>.</h3>
 
                 <p>
                     Con esto, ya tenemos los parámetros de <span class="typewriter">SExtractor</span> necesarios para obtener un catálogo adecuado, sin embargo, aún nos falta el proceso de <span class="typewriter">PSFEx</span> para obtener un catálogo con parámetros más precisos. Para ello, vamos a correr <span class="typewriter">SExtractor</span> con los siguientes parámetros: 
@@ -559,5 +573,45 @@ VIGNET(35,35)</code></pre>
                     </figcaption>
                 </figure>
 
+                <p>
+                    Con todo lo anterior, podemos concluir que la <i>PSF</i> es distinta a lo largo del campo de la imagen, y con los datos obtenidos del archivo XML, esta parece ser una buena <i>PSF</i> para usar, así podemos pasar a usarlo con <span class="typewriter">SExtractor</span> y obtener un catálogo con los clasificadores <code>CLASS_STAR</code> y <code>SPREAD_MODEL</code>. 
+                </p>
+
+                <h3 class="hr-lines" id="psf-sextractor"><span class="typewriter">SExtractor + PSFEx</span>.</h3>
+
+                <p>
+                    Para hacer uso del modelo <i>PSF</i> debemos editar el archivo <code>.sex</code> de la siguiente manera:
+                </p>
+
+                <figure class="figura">
+                    <img src="../IMAGENES/SUBARU/modelopsf.jpeg" alt="Parámetros del archivo .sex para usar psf">
+
+                    <figcaption>
+                        <strong>Figura 48:</strong> Parámetros del archivo <code>.sex</code> para hacer uso del modelo <i>PSF</i>.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    Además, en el archivo <code>.param</code> vamos a usar los siguientes parámetros para la clasificación estrella/galaxia:
+                </p>
+
+                <pre><code>CLASS_STAR
+SPREAD_MODEL
+SPREADERR_MODEL
+FLUX_RADIUS
+FWHM_IMAGE
+MAG_AUTO
+MAGERR_AUTO
+MAG_PSF
+MAGERR_PSF
+FLUX_AUTO
+FLUXERR_AUTO
+MU_MAX
+FLAGS
+SNR_WIN</code></pre>
                 
+
+                <p>
+                    Ahora, corremos <span class="typewriter">SExtractor</span> usando las configuraciones anteriores.
+                </p>
         </section>

@@ -1,0 +1,135 @@
+<section>
+
+    <p>
+        Al momento de meter el modelo <i>PSF</i> a <span class="typewriter">SExtractor</span> este tardaba demasiado en realizar el procesamiento de la imagen (esto debe ser por algun problema de la computadora en donde se esta trabajando), por lo que optamos en cortar la imagen desde el centro en 2500 x 2500 píxeles y continuar con el proceso.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/sextractor_subaru_recortada.jpeg" alt="Procesamiento de la imagen recortada en SExtractor">
+
+        <figcaption>
+            <strong>Figura 49:</strong> Salida en terminal al procesar la imagen recortada en <span class="typewriter">SExtractor</span> usando el modelo <i>PSF</i>.
+        </figcaption>
+    </figure>
+
+    <p>
+        Para el caso de la imagen recortada, tenemos que se detectaron 3717 objetos y <span class="typewriter">SExtractor</span> extrajo solo 3420, para los clasificadores <code>CLASS_STAR</code> y <code>SPREAD_MODEL</code> se tomo como umbral 0.95 y $|SPREAD\_MODEL|< 0.002 + SPREADERR\_MODEL$ respectivamente. <code>CLASS_STAR</code> clasificó como objeto puntual un total de 313 objetos, mientras que <code>SPREAD_MODEL</code> tomó 956 objetos. 
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/classstar_recortada.png" alt="grafico obtenido del clasificador class star">
+
+        <figcaption>
+            <strong>Figura 50:</strong> Clasificación obtenida con <code>CLASS_STAR</code>, tomando un umbral para fuentes puntuales de 0.95.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/spreadmodel_recortada.png" alt="grafico obtenido del clasificador spread model">
+
+        <figcaption>
+            <strong>Figura 51:</strong> Clasificación obtenida con <code>SPREAD_MODEL</code>, tomando un umbral de $|SPREAD\_MODEL|< 0.002 + SPREADERR\_MODEL$.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/errorspread_recortada.png" alt="grafico obtenido para el error del clasificador spread model">
+
+        <figcaption>
+            <strong>Figura 52:</strong> Error del clasificador <code>SPREAD_MODEL</code>, el error aumenta para magnitudes grandes.
+        </figcaption>
+    </figure>
+
+    <p>
+        Nuestro propósito es construir un criterio de clasificación que nos permita decir con seguridad hasta que magnitud la clasifiación es confiable, para ello vamos a hacer una segunda iteración de la imagen, en la que usaremos <code>CLASS_STAR</code> y extraeremos los objetos puntuales en un nuevo catálogo, este nuevo catálogo lo vamos a usar con <span class="typewriter">PSFEx</span> para que modele la <i>PSF</i>, esperando que sea un mejor modelo que el que obtuvimos en la primera iteración, y posteriormente vamos a usar este nuevo modelo para hacer una nueva clasifiación con <code>SPREAD_MODEL</code>.
+    </p>
+
+    <h3 class="hr-lines" id="segundasubaru">Segunda iteración.</h3>
+
+    <p>
+        Vamos a continuar con los mismos parámetros de configuración que usamos en la primera iteración, ahora vamos a pedirle a <span class="typewriter">SExtractor</span> <code>CLASS_STAR</code> usando el mismo umbral de 0.95 y tomaremos los objetos que superen ese umbral para generar un nuevo catálogo que usaremos con <span class="typewriter">PSFEx</span>, el catálogo que generaremos con <code>CLASS_STAR</code> es usando la imagen completa y no solo la región recortada, esto es porque queremos que <span class="typewriter">PSFEx</span> tenga más objetos para poder generar un modelo de <i>PSF</i> más preciso.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/segundaiteracion.jpeg" alt="Salida obtenida de la segunda iteración de SExtractor con CLASS_STAR">
+
+        <figcaption>
+            <strong>Figura 53: </strong> Salida obtenida de la segunda iteración de <span class="typewriter">SExtractor</span> usando <code>CLASS_STAR</code>. Se detectaron 56638 objetos, de los cuales 51844 fueron extraidos.
+        </figcaption>
+    </figure>
+
+    <p>
+        Ya con el catálogo generado, vamos a usar <i>python</i> para aplicar el filtro que queremos a <code>CLASS_STAR</code>, para ello usaremos el siguiente código:
+
+        <pre><code>from astropy.io import fits
+
+with fits.open('/content/class_star_prepsfex.fits') as hdul:
+    
+    data = hdul[2].data
+    mask = (data['CLASS_STAR'] > 0.95) & (data['FLAGS']==0)
+    filtered_data = data[mask]
+    
+    hdul[2].data = filtered_data
+    hdul.writeto('catalogo_estrellas.fits', overwrite=True)
+
+print(f"Objetos seleccionados: {mask.sum()} de {len(mask)}")</code></pre>
+    </p>
+
+    <p>
+        De donde obtenemos un catálogo con 3562 objetos que cumplen con el criterio de <code>CLASS_STAR</code> y que no tenga <code>FLAGS</code>, así pasamos a usar este nuevo catálogo con <span class="typewriter">PSFEx</span>, en donde vamos a dejar el parámetro <code>SAMPLE_AUTOSELECT</code> en <code>Y</code> para que <span class="typewriter">PSFEx</span> aplique un segundo filtro de selección de objetos para descartar posibles outliers.
+    </p>
+
+    
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/SUBARU/selfwhm_prepsfex.png" alt="Selección de FWHM del catálogo completo por PSFEx">
+
+        <img src="../IMAGENES/SUBARU/selfwhm_catalogo_estrellas.png" alt="Selección de FWHM del catálogo por PSFEx">
+
+        <figcaption>
+            <strong>Figura 54:</strong> Selección de FWHM para el catálogo completo <b>(izq)</b> y el catálogo obtenido con <code>CLASS_STAR>0.95</code> y <code>FLAGS==0</code> <b>(der)</b>.
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/SUBARU/ellipticity_prepsfex.png" alt="elipticad para el catalogo sin filtrar">
+
+        <img src="../IMAGENES/SUBARU/ellipticity_catalogo_estrellas.png" alt="Elipticidad para el catálogo filtrado.">
+
+        <figcaption>
+            <strong>Figura 55:</strong> Mapa de elipticidad obtenido con el catálogo sin filtrar <b>(izq)</b> y para el catálogo filtrado <b>(der)</b>.
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/SUBARU/fwhm_prepsfex.png" alt="FWHM para el catalogo sin filtrar">
+
+        <img src="../IMAGENES/SUBARU/fwhm_catalogo_estrellas.png" alt="FWHM para el catálogo filtrado">
+
+        <figcaption>
+            <strong>Figura 56:</strong> Mapa de FWHM obtenido con el catálogo sin filtrar <b>(izq)</b> y para el catálogo filtrado <b>(der)</b>.
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/SUBARU/psf_metrics_summary.png" alt="Metricas obtenidas para la psf sin filtrar">
+
+        <img src="../IMAGENES/SUBARU/psf_metrics_catalogo_estrellas.png" alt="Metricas obtenidas para la psf filtrada">
+
+        <figcaption>
+            <strong>Figura 57:</strong> Métricas obtenidas para la <i>PSF</i> usando el catálogo sin filtrar <b>(izq)</b> y usando el catálogo filtrado <b>(der)</b>.
+        </figcaption>
+    </figure>
+
+    <p>
+        Al comparar las imagenes obtenidas con el catálogo final podemos diferencias sutiles, en las métricas obtenidas, la media de FWHM cambio de 4.1 a 3.782, la media de la elipticidad cambio de 0.013 a 0.029, la media del parámetro de Moffat cambio de 2.519 a 2.868, la media de los residuals de la <i>PSF</i> cambio de 0.014 a 0.017. El poco cambió que muestran las métricas puede deverse a que <span class="typewriter">PSFEx</span> por si solo ya aplica los filtros necesarios para su selección de muestras, aunque al fijarnos en la figura 54, las muestras que toma para el nuevo catálogo parecen ser más "limpias" en comparación con el catálogo sin filtrar. 
+    </p>
+
+    <p>
+        Ahora, pasaremos a aplicar este modelo de <i>PSF</i> a nuestra imagen (recordemos que ahora trabajaremos con la imagen recortada por lo tardado que sería usar la imagen completa para la clasificación) y obtener el clasificador <code>SPREAD_MODEL</code>.
+    </p>
+
+</section>

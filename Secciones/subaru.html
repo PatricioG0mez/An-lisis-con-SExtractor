@@ -4,6 +4,7 @@
 
         <section>
 
+            <h3 class="hr-lines">Primera iteración.</h3>
             <p>
                 Para este ejemplo vamos a emplear la siguiente imagen <i>FITS</i>, esta es un mosaico apilado usando <span class="typewriter">SWarp</span> hecho con datos de <b>Subaru Suprime-Cam</b>
             </p>
@@ -64,7 +65,7 @@
             <h3 class="hr-lines" id="background-subaru">Background.</h3>
 
             <p>
-                Con esta escala del FWHM en píxeles podemos determinar que el filtro conveniente a usar es <code>gauss_3.0_5x5.conv</code>, ya con estos parámetros iniciales modificados podemos empezar a determinar el background, para ello usaremos los parámetros que están por defecto (<code>BACK_SIZE</code>=64 y <code>BACK_FILTERSIZE</code>=3) y pedimos las imagenes de chequeo <code>BACKGROUND, -BACKGROUND</code>.
+                Con esta escala del FWHM en píxeles podemos determinar que el filtro conveniente a usar es <code>gauss_4.0_7x7.conv</code>, ya con estos parámetros iniciales modificados podemos empezar a determinar el background, para ello usaremos los parámetros que están por defecto (<code>BACK_SIZE</code>=64 y <code>BACK_FILTERSIZE</code>=3) y pedimos las imagenes de chequeo <code>BACKGROUND, -BACKGROUND</code>.
             </p>
             
             <figure class="figura">
@@ -85,7 +86,7 @@
             </figure>
 
             <p>
-                En la figura anterior podemos observar algunas estrellas que parecen ser estrellas saturadas, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. 
+                En la figura anterior podemos observar algunos objetos que parecen estar saturados, sin embargo, el resto de la imagen parece estar bien, por lo que podemos continuar con el análisis de la imagen con los parámetros por defecto. 
             </p>
 
             <h3 class="hr-lines" id="umbral-subaru">Umbralización.</h3>

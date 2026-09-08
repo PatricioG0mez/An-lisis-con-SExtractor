@@ -1,0 +1,179 @@
+<h2 id="limite-magnitud">Determinación del límite de magnitud confiable en la clasificación objeto puntual/extendido.</h2>
+
+<section>
+
+    <p>
+        Tenemos dos parámetros de clasificación para objeto puntual/extendido para cada fuente detectada:
+
+        <ul>
+            <li>
+                <code>SPREAD_MODEL</code>: Compara el ajuste de un modelo de funte puntual contra un modelo ligeramente extendido (el mismo <i>PSF</i> convolucionando con un perfil exponencial). Un valor cercano a 0 indica fuente puntual; valores positivos indican fuente extendida.
+            </li>
+
+            <li>
+                <code>CLASS_STAR</code>: un clasificador basado en red neuronal, entrenado con features como <code>FWHM</code>, pico de intensidad y perfil de brillo. Va de un valor de 0 (para una fuente extendida) a 1 (fuente puntual).
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Ambos parámetros son útiles, sin embargo, ninguno es perfecto en todo el rango de magnitud.
+    </p>
+
+    <p>
+        Al momento de definir un umbral, no tomamos uno fijo, por ejemplo:
+
+        $$
+        |SPREAD\_MODEL| < 0.002 \Rightarrow estrella
+        $$
+    </p>
+
+    <p>
+        Este enfoque falla debido a que no todas las mediciones que hace <code>SPREAD_MODEL</code> tienen la misma precisión. <code>SPREAD_MODEL</code> es una medición fotométrica, y como tal hereda el ruido de la imagen. Ese ruido se propaga al ajuste y queda cuatificado en el parámetro <code>SPREADERR_MODEL</code>, el error asociado a cada medición individual. Aquí hay una relación con <code>SNR</code>, una fuente brillante tiene muchos fotones detectados, por lo que el ruido relativo es pequeño y <code>SPREADERR_MODEL</code> es diminuto, mientras que una fuente débil, cercana al límite de detección, tiene pocos fotones, ruido relativo grande, y por lo tanto <code>SPREADERR_MODEL</code> grande. Es decir, <code>SPREADERR_MODEL</code> es esencialmente un proxy del SNR de cada fuente individual.
+    </p>
+
+    <p>
+        Usar el mismo umbral fijo para fuentes de alta y baja precisión trata por igual mediciones que no son comparables en confiabilidad.
+    </p>
+
+    <h3 class="hr-lines">Significancia estadística.</h3>
+
+    <p>
+        En lugar de usar <code>SPREAD_MODEL</code> de forma aislada, se define la <b>significancia estadística</b> de cada medición respecto al valor esperado para una estrella (<code>SPREAD_MODEL=0</code>):
+    </p>
+
+    $$
+    n_\sigma=\frac{|SPREAD\_MODEL|}{SPREADERR\_MODEL}
+    $$
+
+    <p>
+        Esta cantidad responde: <i>¿a cuántas "barras de error" de distancia está esta medición de ser compatible con una fuente puntual?</i>
+    </p>
+
+    <ul>
+        <li>$n_\sigma < 1 $: la medición es estadísticamente indistinguible de una fuente puntual.</li>
+
+        <li>
+            $n_\sigma > 3-5$: la fuente se aleja de $0$ mucho más de lo que el ruido explicaría; es significativamente extendida.
+        </li>
+    </ul>
+
+    <p>
+        Sin embargo, existe un problema, al aplicar $n_\sigma$ de forma sobre datos reales, fuentes muy brillantes con <code>SPREADERR_MODEL</code> extremadamente pequeño produce valores de $n_\sigma$ artificialmente enormes. 
+
+        La causa es que, a muy alto SNR, el error puramente estadístico deja de ser el factor limitante de la medición. Lo que domina en ese régimen son errores sistemáticos: imperfecciones residuales del propio modelo de <i>PSF</i>.
+    </p>
+
+    <p>
+        Para corregir esto, se combina el error estadístico con un <b>piso sistemático</b> fijo en cuadratura:
+    </p>
+
+    $$
+    \begin{gather}
+    \sigma_{eff}=\sqrt{SPREADERR\_MODEL^2+\sigma_{sist}^2}\\
+    
+    \\
+    n_{\sigma,eff}=\frac{|SPREAD\_MODEL|}{\sigma_{eff}}
+    \end{gather}
+    $$
+
+    <p>
+        Con $\sigma_{sist}\approx 0.017$, esta corrección evita que la significancia estadística diverja de forma espuria en el régimen de alto SNR, y es análoga a cómo se combinan errores estadísticos y sistemáticos.
+    </p>
+
+    <h3 class="hr-lines">Criterio de clasificación combinado.</h3>
+
+    <p>
+        Para identificar candidatas a estrella de forma robusta, vamos a combinar dos clasificadores independientes:
+    </p>
+
+    $$
+
+    \begin{gather}
+
+    Estrella(SPREAD\_MODEL): \quad |SPREAD\_MODEL| < 0.005 + \kappa\cdot SPREADERR\_MODEL\\
+
+    \\
+
+    Estrella(CLASS\_STAR): \quad CLASS\_STAR > 0.9\\
+
+    \\
+
+    Candidata\ robusta=Estrella(SPREAD\_MODEL)\cap Estrella(CLASS\_STAR)
+    \end{gather}
+    $$
+
+    <p>
+        Cada uno de los clasificadores usan información e implementaciones distintas, por lo que exigir el acuerdo entre ambos métodos puede reducir el sesgo propio de un solo clasificador.
+    </p>
+
+    <h3 class="hr-lines">Limpieza previa del catálogo.</h3>
+
+    <p>
+        Antes de empezar el análisis, se debe hacer una limpieza previa al catálogo para dejar fuera posibles <i>outliers</i> como mediciones no físicas o fallidas.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/estadisticas_spread_model.jpeg" alt="Estadísticas del catálogo con spread model">
+
+        <figcaption>
+            <strong>Figura 58:</strong> Estadísticas obtenidas para el catálogo con <code>SPREAD_MODEL</code>.
+        </figcaption>
+    </figure>
+
+    <p>
+        En las estadísticas anteriores podemos ver que hay un valor máximo para <code>MAG_PSF</code> y <code>MAGERR_PSF</code> de 99. Entonces, vamos a eliminar algunas detecciones mala que tengan las siguientes caracteristicas:
+    </p>
+
+    <ul>
+        <li><code>FLAGS</code>$\geq 4$</li>
+        <li><code>MAG_PSF</code>$\geq 90$</li>
+        <li><code>MAGERR_PSF</code>$\geq 90$</li>
+        <li><code>FWHM_IMAGE</code>$\leq 0$</li>
+        <li><code>SPREADERR_MODEL</code>$\leq 0$</li>
+        <li><code>SNR_WIN</code>$\geq 20$</li>
+    </ul>
+
+    <p>
+        Al momento de hacer la limpieza del catálogo obtenemos un total de 3067 objetos, por lo que ahora podemos pasar a hacer nuestro análisis. Tomando los umbrales mencionados anteriormente, <code>CLASS_STAR</code> clasifica como <i>objetos puntuales</i> a 454 mientras que <code>SPREAD_MODEL</code> a 1673.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/spreadmodel_filtrada.png" alt="Imagen del clasificador spread model en función de la magnitud">
+
+        <figcaption>
+            <strong>Figura 59:</strong> Clasificación con <code>SPREAD_MODEL</code> usando el umbral mencionado antes.
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, en la grafica anterior, vamos a ubicar los objetos que clasifico <code>CLASS_STAR</code> con el umbral definido.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/spreadmodel_class_star.png" alt="Grafica de SPREAD MODEL en función de la magnitud marcando los objetos clasificados por CLASS STAR">
+
+        <figcaption>
+            <strong>Figura 60:</strong> <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, marcando los objetos clasificados como <i>puntuales</i> por <code>CLASS_STAR</code>.
+        </figcaption>
+    </figure>
+
+    <p>
+        En la grafica anterior podemos darnos cuentas que algunos objetos que marco <code>CLASS_STAR</code> como puntuales, <code>SPREAD_MODEL</code> no los considero puntuales. Entonces, la clasificación con objetos que cumplen ambos umbrales, es decir, aquellos objetos que cumplen nuestro criterio para <i>Estrella robusta</i>, se ve de la siguiente forma:
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/SUBARU/spread_y_class_star.png" alt="Grafico de spread model en funcion de la magnitud con los umbrales para class star y spread model">
+        <figcaption>
+            <strong>Figura 61:</strong> Grafico de <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, usando como umbral el definido para una <i>Estrella robusta</i>.
+        </figcaption>
+    </figure>
+
+    
+
+
+
+
+
+
+</section>

@@ -1,0 +1,238 @@
+<h2 id="GTC">Campo de Lockman con el telescopio <i>GTC</i></h2>
+
+<section>
+
+    <p>
+        Vamos a hacer más pruebas del mismo campo como en la imagen de <i>SUBARU</i>, ahora sera con la imagen obtenida del <i>Gran Telescopio de Canarias</i> (GTC). Vamos a determinar los parámetros necesarios empezando por leer el header de la imagen <code>.fits</code>
+    </p>
+
+    <table>
+        <tbody>
+            <tr>
+                <td><code>GAIN</code></td>
+                <td>0.95</td>
+            </tr>
+            <tr>
+                <td><code>CD1_1</code></td>
+                <td>$2.46216202880408\times10^{-07}$</td>
+            </tr>
+            <tr>
+                <td><code>CD2_2</code></td>
+                <td>$-2.2353063470549\times10^{-07}$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Con los valores anteriores podemos determinar <code>PIXEL_SCALE</code> que es de aproximadamente 0.254 arcsec/píxel, y para determinar el <i>seeing</i> vamos a hacer una primera corrida en <span class="typewriter">SExtractor</span> solicitando los siguientes parámetros:
+    </p>
+
+    <pre><code>FLUX_RADDIUS
+CLASS_STAR
+MAG_AUTO
+FLAGS
+SNR</code></pre>
+
+    <p>
+        Con esto vamos a determinar ese parámetro, ya que: 
+    </p>
+
+    $$
+    \text{FWHM}=2\cdot \text{FLUX RADIUS}
+    $$
+
+    <p>
+        A este catálogo le aplicamos algunos filtros como <code>CLASS_STAR > 0.9</code>, <code>FLAGS < 4</code> y <code>MAG_AUTO < 20 </code>, y calculamos el seeing, obteniendo un <code>SEEING_FWHM</code> de 2.224 píxeles o 0.565 arcsec, y el filtro de convolución que aplicaremos con <span class="typewriter">SExtractor</span> será <code>gauss_2.0_3x3.conv</code>.
+    </p>
+
+    <p>
+        Con estos parámetros listos, podemos empezar a determinar el <code>BACKGROUND</code> de la imagen, empezando con los valores predeterminados para <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code> con 64 y 3.
+    </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/background.png" alt="Imagen de chequeo BACKGROUND obtenida de sextractor">
+
+        <img src="../IMAGENES/GTC/-background.png" alt="Imagen de chequeo -BACKGROUND obtenida de sextractor">
+
+        <figcaption>
+            <strong>Figura 62: </strong> Background determinado (izq) y sustraido driectamente de la imagen (derecha)
+        </figcaption>
+    </figure>
+
+    <p>
+        En las imagenes de chequeo anteriores podemos notar que el background sustraído por <span class="typewriter">SExtractor</span> contiene una parte de algunas estrellas saturadas presentes en la imagen, además de algunas de las marcas con las que se unió la imagen. Dejaremos estos valores predeterminados.
+    </p>
+
+    <p>
+        Posteriormente, vamos a determinar los niveles de umbral de detección, es decir, los valores de <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>, para ello, primero vamos a usar la imagen negativa para determinar si hay detecciones falsas y seleccionar nuestro nivel de umbral.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/negativa.png" alt="Imagen negativa con las detecciones">
+
+        <figcaption>
+            <strong>Figura 63:</strong> Usando los datos invertidos, se obtuvieron un total de 24528 objetos detectados que finalmente se extrajeron 17787.
+        </figcaption>
+    </figure>
+
+    <p>
+        Observando la imagen anterior, podemos darnos cuenta que los valores predeterminados de 1.5 para ambos parámetros no es suficiente, probaremos con (2.0,2.5,3.0 y 3.5). 
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th><code>DETECT_THRESH</code>, <code>ANALYSIS_THRESH</code></th>
+                <th>Objetos detectados</th>
+                <th>Objetos extraidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1.5,1.5</td>
+                <td>24528</td>
+                <td>17787</td>
+            </tr>
+            <tr>
+                <td>2.0,2.0</td>
+                <td>5322</td>
+                <td>3721</td>
+            </tr>
+            <tr>
+                <td>2.5,2.5</td>
+                <td>1719</td>
+                <td>1271</td>
+            </tr>
+            <tr>
+                <td>3.0,3.0</td>
+                <td>871</td>
+                <td>749</td>
+            </tr>
+            <tr>
+                <td>3.5,3.5</td>
+                <td>646</td>
+                <td>591</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Para este caso en particular vamos a elegir un valor de $3.0$ ya que es donde parece que empieza a estabilizarse estas falsas detecciones.
+    </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/negativa.png" alt="Imagen negativa con umbral 1.5">
+
+        <img src="../IMAGENES/GTC/threshold.png" alt="Imagen negativa con umbral 3.0">
+
+        <figcaption>
+            <strong>Figura 64:</strong> Imagen negativa con distintos niveles de umbral 1.5 (izq) y 3.0 (der).
+        </figcaption>
+    </figure>
+
+    <p>
+        El valor de <code>DETECT_MINAREA</code> se quedara en el valor predeterminado de 5, con esto podemos pasar a determinar el valor de <code>DEBLEND_MINCONT</code> para 32 niveles de detección, para ello vamos a probar valores de (0.001, 0.005, 0.01, 0.05, 0.1 y 0.5).
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th><code>DEBLEND_MINCONT</code></th>
+                <th>Objetos detectados</th>
+                <th>Objetos extraidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>$0.001$</td>
+                <td>$23995$</td>
+                <td>$21155$</td>
+            </tr>
+            <tr>
+                <td>$0.005$</td>
+                <td>$23518$</td>
+                <td>$20833$</td>
+            </tr>
+            <tr>
+                <td>$0.01$</td>
+                <td>$23211$</td>
+                <td>$20641$</td>
+            </tr>
+            <tr>
+                <td>$0.05$</td>
+                <td>$22653$</td>
+                <td>$20158$</td>
+            </tr>
+            <tr>
+                <td>$0.1$</td>
+                <td>$22444$</td>
+                <td>$19929$</td>
+            </tr>
+            <tr>
+                <td>$0.5$</td>
+                <td>$22248$</td>
+                <td>$19719$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="comparacion-grid3">
+
+        <figure>
+            <img src="../IMAGENES/GTC/deblend0_001.png" alt="Aperturas fotometricas con deblend mincont 0.001">
+
+            <figcaption>
+                <strong>a)</strong> 0.001
+            </figcaption>
+        </figure>
+
+                <figure>
+            <img src="../IMAGENES/GTC/deblend0_005.png" alt="Aperturas fotometricas con deblend mincont 0.005">
+
+            <figcaption>
+                <strong>b)</strong> 0.005
+            </figcaption>
+        </figure>
+
+        <figure>
+            <img src="../IMAGENES/GTC/deblend0_01.png" alt="Aperturas fotometricas con deblend mincont 0.01">
+
+            <figcaption>
+                <strong>c)</strong> 0.01
+            </figcaption>
+        </figure>
+
+        <figure>
+            <img src="../IMAGENES/GTC/deblend0_05.png" alt="Aperturas fotometricas con deblend mincont 0.05">
+
+            <figcaption>
+                <strong>d)</strong> 0.05
+            </figcaption>
+        </figure>
+
+        <figure>
+            <img src="../IMAGENES/GTC/deblend0_1.png" alt="Aperturas fotometricas con deblend mincont 0.1">
+
+            <figcaption>
+                <strong>e)</strong> 0.1
+            </figcaption>
+        </figure>
+
+        <figure>
+            <img src="../IMAGENES/GTC/deblend0_5.png" alt="Aperturas fotometricas con deblend mincont 0.5">
+
+            <figcaption>
+                <strong>f)</strong> 0.5
+            </figcaption>
+        </figure>
+
+        <figcaption class="caption-general">
+            <strong>Figura 65:</strong> Aperturas fotométricas para cada objeto detectado con cada valor de <code>DEBLEND_MINCONT</code>.
+        </figcaption>
+    </div>
+
+
+
+</section>

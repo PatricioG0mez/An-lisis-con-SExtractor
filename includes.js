@@ -14,7 +14,8 @@ const secciones = [
     { id: "seccion-uso-psfex",             archivo: "Secciones/uso-psfex.html" },
     { id: "seccion-subaru",                archivo: "Secciones/subaru.html"},
     { id: "seccion-subaru-recortada",      archivo: "Secciones/subaru-recortada.html"},
-    { id: "seccion-spread-model",          archivo: "Secciones/spread-model.html"}  
+    { id: "seccion-spread-model",          archivo: "Secciones/spread-model.html"},
+    { id: "seccion-imagenGTC",             archivo: "Secciones/imagenGTC.html"}  
 ];
 
 async function cargarSeccion({ id, archivo }) {

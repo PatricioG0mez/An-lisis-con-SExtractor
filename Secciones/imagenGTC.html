@@ -3,143 +3,154 @@
 <section>
 
     <p>
-        Vamos a hacer más pruebas del mismo campo como en la imagen de <i>SUBARU</i>, ahora sera con la imagen obtenida del <i>Gran Telescopio de Canarias</i> (GTC). Vamos a determinar los parámetros necesarios empezando por leer el header de la imagen <code>.fits</code>
-    </p>
-
-    <table>
-        <tbody>
-            <tr>
-                <td><code>GAIN</code></td>
-                <td>0.95</td>
-            </tr>
-            <tr>
-                <td><code>CD1_1</code></td>
-                <td>$2.46216202880408\times10^{-07}$</td>
-            </tr>
-            <tr>
-                <td><code>CD2_2</code></td>
-                <td>$-2.2353063470549\times10^{-07}$</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <p>
-        Con los valores anteriores podemos determinar <code>PIXEL_SCALE</code> que es de aproximadamente 0.254 arcsec/píxel, y para determinar el <i>seeing</i> vamos a hacer una primera corrida en <span class="typewriter">SExtractor</span> solicitando los siguientes parámetros:
-    </p>
-
-    <pre><code>FLUX_RADDIUS
-CLASS_STAR
-MAG_AUTO
-FLAGS
-SNR</code></pre>
-
-    <p>
-        Con esto vamos a determinar ese parámetro, ya que: 
-    </p>
-
-    $$
-    \text{FWHM}=2\cdot \text{FLUX RADIUS}
-    $$
-
-    <p>
-        A este catálogo le aplicamos algunos filtros como <code>CLASS_STAR > 0.9</code>, <code>FLAGS < 4</code> y <code>MAG_AUTO < 20 </code>, y calculamos el seeing, obteniendo un <code>SEEING_FWHM</code> de 2.224 píxeles o 0.565 arcsec, y el filtro de convolución que aplicaremos con <span class="typewriter">SExtractor</span> será <code>gauss_2.0_3x3.conv</code>.
-    </p>
-
-    <p>
-        Con estos parámetros listos, podemos empezar a determinar el <code>BACKGROUND</code> de la imagen, empezando con los valores predeterminados para <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code> con 64 y 3.
-    </p>
-
-    <figure class="comparacion-grid2">
-
-        <img src="../IMAGENES/GTC/background.png" alt="Imagen de chequeo BACKGROUND obtenida de sextractor">
-
-        <img src="../IMAGENES/GTC/-background.png" alt="Imagen de chequeo -BACKGROUND obtenida de sextractor">
-
-        <figcaption>
-            <strong>Figura 62: </strong> Background determinado (izq) y sustraido driectamente de la imagen (derecha)
-        </figcaption>
-    </figure>
-
-    <p>
-        En las imagenes de chequeo anteriores podemos notar que el background sustraído por <span class="typewriter">SExtractor</span> contiene una parte de algunas estrellas saturadas presentes en la imagen, además de algunas de las marcas con las que se unió la imagen. Dejaremos estos valores predeterminados.
-    </p>
-
-    <p>
-        Posteriormente, vamos a determinar los niveles de umbral de detección, es decir, los valores de <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>, para ello, primero vamos a usar la imagen negativa para determinar si hay detecciones falsas y seleccionar nuestro nivel de umbral.
-    </p>
+        Para comenzar el análisis de la imagen empezamos leyendo el <i>header</i> para obtener información necesaria para los parámetros iniciales de <span class="typewriter">SExtractor</span>.
+    </p> 
 
     <figure class="figura">
-        <img src="../IMAGENES/GTC/negativa.png" alt="Imagen negativa con las detecciones">
+        <img src="../IMAGENES/GTC/headerGTC.jpeg" alt="Header de la imágen fits">
 
         <figcaption>
-            <strong>Figura 63:</strong> Usando los datos invertidos, se obtuvieron un total de 24528 objetos detectados que finalmente se extrajeron 17787.
-        </figcaption>
+            <strong>Figura 62:</strong> Header de la imágen <i>fits</i> visto directamente en <i>ds9</i>.
+        </figcaption> 
     </figure>
 
+    
     <p>
-        Observando la imagen anterior, podemos darnos cuenta que los valores predeterminados de 1.5 para ambos parámetros no es suficiente, probaremos con (2.0,2.5,3.0 y 3.5). 
-    </p>
+        De aquí, e investigando un poco, obtenemos los siguientes parámetros:
+    </p> 
 
     <table>
         <thead>
             <tr>
-                <th><code>DETECT_THRESH</code>, <code>ANALYSIS_THRESH</code></th>
-                <th>Objetos detectados</th>
-                <th>Objetos extraidos</th>
+                <th>Parámetro</th>
+                <th>Valor</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>1.5,1.5</td>
-                <td>24528</td>
-                <td>17787</td>
+                <td><code>NAXIS1</code></td>
+                <td>$6319$</td>
             </tr>
             <tr>
-                <td>2.0,2.0</td>
-                <td>5322</td>
-                <td>3721</td>
+                <td><code>NAXIS2</code></td>
+                <td>$6440$</td>
             </tr>
             <tr>
-                <td>2.5,2.5</td>
-                <td>1719</td>
-                <td>1271</td>
+                <td><code>MAG_ZEROPOINT</code></td>
+                <td>$29.8$</td>
             </tr>
             <tr>
-                <td>3.0,3.0</td>
-                <td>871</td>
-                <td>749</td>
+                <td><code>GAIN</code></td>
+                <td>$0.95$</td>
             </tr>
             <tr>
-                <td>3.5,3.5</td>
-                <td>646</td>
-                <td>591</td>
+                <td><code>PIXEL_SCALE</code></td>
+                <td>$0.254$ arcsec/pixel</td>
+            </tr>
+            <tr>
+                <td><code>SEEING_FWHM</code></td>
+                <td>$1.12$</td>
+            </tr>
+            <tr>
+                <td><code>SATUR_LEVEL</code></td>
+                <td>$65536$</td>
             </tr>
         </tbody>
     </table>
 
     <p>
-        Para este caso en particular vamos a elegir un valor de $3.0$ ya que es donde parece que empieza a estabilizarse estas falsas detecciones.
+        Con estos datos, tenemos que el <code>FWHM</code> en píxeles es de aproximadamente $4.48$ píxeles, por lo que usaremos <code>gauss_5.0_9x9.conv</code> como filtro. Ahora, inyectamos estos datos a <span class="typewriter">SExtractor</span> para el primer procesamiento de sustracción del <code>BACKGROUND</code>, para ello vamos usar los parámetros de <code>BACK_SIZE</code> y <code>BACK_FILTERSIZE</code>, probando distintos valores.
     </p>
+
+    <p>
+        Haciendo nuestra primera verificación del fondo, <span class="typewriter">SExtractor</span> detecto 24170 objetos y extrajo 21500, ahora verifiquemos las imagenes de chequeo que le pedimos a <span class="typewriter">SExtractor</span>.
+    </p>
+
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/back.png" alt="Imagen de chequeo BACKGROUND">
+
+        <figcaption>
+            <strong>Figura 63:</strong> Imagen de chequeo <code>BACKGROUND</code>, podemos ver como este toma partes de algunos objetos, en especial los más saturados. ( <code>BACK_SIZE=64</code>, <code>BACK_FILTERSIZE=3</code> )
+        </figcaption>
+    </figure>
 
     <figure class="comparacion-grid2">
 
-        <img src="../IMAGENES/GTC/negativa.png" alt="Imagen negativa con umbral 1.5">
+        <img src="../IMAGENES/GTC/imagenoriginal.png" alt="Imagen original">
 
-        <img src="../IMAGENES/GTC/threshold.png" alt="Imagen negativa con umbral 3.0">
+        <img src="../IMAGENES/GTC/sinbackground.png" alt="Imagen con el background restado">
 
         <figcaption>
-            <strong>Figura 64:</strong> Imagen negativa con distintos niveles de umbral 1.5 (izq) y 3.0 (der).
+            <strong>Figura 64:</strong> Comparación de la imagen original (izq) con la imagen con el fondo restrado (der) mostrado en la Figura 63.
         </figcaption>
     </figure>
 
     <p>
-        El valor de <code>DETECT_MINAREA</code> se quedara en el valor predeterminado de 5, con esto podemos pasar a determinar el valor de <code>DEBLEND_MINCONT</code> para 32 niveles de detección, para ello vamos a probar valores de (0.001, 0.005, 0.01, 0.05, 0.1 y 0.5).
+        Después de sustraer el fondo de la imagen, parece ser que este queda homogeneo a lo largo de la imagen, a pesar de que esta tomando parte de la luz de algunos objetos. Probemos como se ve con un <code>BACK_SIZE</code> más grande. 
+    </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/back.png" alt="Background para un backsize de 64">
+
+        <img src="../IMAGENES/GTC/backsize128.png" alt="Background para un backsize de 128">
+
+        <figcaption>
+            <strong>Figura 65:</strong> Imagen de chequeo <code>BACKGROUND</code> con un <code>BACK_SIZE</code> de 64 (izq) y 128 (der).
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/sinbackground.png" alt="Imagen con el fondo sustraido con back size de 64">
+
+        <img src="../IMAGENES/GTC/sinback128.png" alt="Imagen con el fondo sustraido con back size de 128">
+
+        <figcaption>
+            <strong>Figura 66:</strong> Imagen con <code>BACK_SIZE</code> de 64 (izq) y imagen con el fondo sustraido usando <code>BACK_SIZE</code> de 128 (der).
+        </figcaption>
+    </figure>
+
+    <p>
+        Observando la Figura 66 podemos notar una clara diferencia al momento de la sustracción del fondo, además, <span class="typewriter">SExtractor</span> detecto 23845 objetos y extrajo 20996 a teniendo una disminución respeto a <code>BACK_SIZE=64</code>.
+    </p>
+
+    <p>
+        Ahora, determinaremos los niveles de umbral para la detección con los parámetro <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code>, para ello vamos a tomar los datos de la imagen de manera invertida y correremos <span class="typewriter">SExtractor</span> para saber si hay detecciones falsas y definir si nuestro nivel de umbral es adecuado.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/detecciones_negativa1_5.png" alt="Imagen negativa con las detecciones hechas por sextractor">
+
+        <figcaption>
+            <strong>Figura 67:</strong> Detecciones realizadas por <span class="typewriter">SExtractor</span> en la imagen invertida con <code>DETECT_THRESH</code> y <code>ANALYSIS_THRESH</code> de 1.5. Con 1344 objetos detectados y 906 extraidos.
+        </figcaption>
+    </figure>
+
+    <p>
+        Observando la Figura 67, podemos notar que la mayoria de las detecciones espurias que <span class="typewriter">SExtractor</span> detecto estan en las marcas de las uniones de los mosaicos y en algunos patrones generados por estrellas. Podemos aumentar a 2 los valores de umbral y continuar con las configuraciones iniciales.
+    </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/detecciones_negativa1_5.png" alt="Detecciones en la imagen invertida con umbrales de 1.5">
+
+        <img src="../IMAGENES/GTC/detecciones_negativa2.png" alt="Detecciones en la imagen invertida con umbrales de 2">
+
+        <figcaption>
+            <strong>Figura 68:</strong> Detecciones con 1.5 (izq) y detecciones con 2.0 (der). Usando <code>DETECT_MINAREA=5</code>
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, vamos a empezar con el proceso de <i>deblending</i> modificando los valores de <code>DEBLEND_MINCONT</code> con (0.005,0.001,0.05 y 0.01), usando <code>DEBLEND_NTHRESH=32</code>:
     </p>
 
     <table>
         <thead>
             <tr>
-                <th><code>DEBLEND_MINCONT</code></th>
+                <th>Valor</th>
                 <th>Objetos detectados</th>
                 <th>Objetos extraidos</th>
             </tr>
@@ -147,92 +158,170 @@ SNR</code></pre>
         <tbody>
             <tr>
                 <td>$0.001$</td>
-                <td>$23995$</td>
-                <td>$21155$</td>
+                <td>$19376$</td>
+                <td>$17456$</td>
             </tr>
             <tr>
                 <td>$0.005$</td>
-                <td>$23518$</td>
-                <td>$20833$</td>
+                <td>$18995$</td>
+                <td>$17148$</td>
             </tr>
             <tr>
                 <td>$0.01$</td>
-                <td>$23211$</td>
-                <td>$20641$</td>
+                <td>$18827$</td>
+                <td>$17000$</td>
             </tr>
             <tr>
                 <td>$0.05$</td>
-                <td>$22653$</td>
-                <td>$20158$</td>
-            </tr>
-            <tr>
-                <td>$0.1$</td>
-                <td>$22444$</td>
-                <td>$19929$</td>
-            </tr>
-            <tr>
-                <td>$0.5$</td>
-                <td>$22248$</td>
-                <td>$19719$</td>
+                <td>$18365$</td>
+                <td>$16560$</td>
             </tr>
         </tbody>
     </table>
 
-    <div class="comparacion-grid3">
+    <figure class="comparacion-grid2">
 
-        <figure>
-            <img src="../IMAGENES/GTC/deblend0_001.png" alt="Aperturas fotometricas con deblend mincont 0.001">
+        <img src="../IMAGENES/GTC/seg0_001.jpeg" alt="Imagen de segmentacion para DEBLEND_MINCONT=0.001">
 
-            <figcaption>
-                <strong>a)</strong> 0.001
-            </figcaption>
-        </figure>
+        <img src="../IMAGENES/GTC/seg0_005.jpeg" alt="Imagen de segmentacion para DEBLEND_MINCONT=0.005">
 
-                <figure>
-            <img src="../IMAGENES/GTC/deblend0_005.png" alt="Aperturas fotometricas con deblend mincont 0.005">
-
-            <figcaption>
-                <strong>b)</strong> 0.005
-            </figcaption>
-        </figure>
-
-        <figure>
-            <img src="../IMAGENES/GTC/deblend0_01.png" alt="Aperturas fotometricas con deblend mincont 0.01">
-
-            <figcaption>
-                <strong>c)</strong> 0.01
-            </figcaption>
-        </figure>
-
-        <figure>
-            <img src="../IMAGENES/GTC/deblend0_05.png" alt="Aperturas fotometricas con deblend mincont 0.05">
-
-            <figcaption>
-                <strong>d)</strong> 0.05
-            </figcaption>
-        </figure>
-
-        <figure>
-            <img src="../IMAGENES/GTC/deblend0_1.png" alt="Aperturas fotometricas con deblend mincont 0.1">
-
-            <figcaption>
-                <strong>e)</strong> 0.1
-            </figcaption>
-        </figure>
-
-        <figure>
-            <img src="../IMAGENES/GTC/deblend0_5.png" alt="Aperturas fotometricas con deblend mincont 0.5">
-
-            <figcaption>
-                <strong>f)</strong> 0.5
-            </figcaption>
-        </figure>
-
-        <figcaption class="caption-general">
-            <strong>Figura 65:</strong> Aperturas fotométricas para cada objeto detectado con cada valor de <code>DEBLEND_MINCONT</code>.
+        <figcaption>
+            <strong>Figura 69:</strong> Imagen de chequeo <code>SEGMENTATION</code> con las aperturas fotométricas dibujadas y su valor asignado <code>NUMBER</code> a cada objeto, con un valor de <code>DEBLEND_MINCONT=0.001</code> (izq) y <code>DEBLEND_MINCONT=0.005</code> (der).
         </figcaption>
-    </div>
 
+    </figure>
 
+    <figure class="comparacion-grid2">
 
+        <img src="../IMAGENES/GTC/seg0_01.png" alt="Imagen de segmentacion para DEBLEND_MINCONT=0.01">
+
+        <img src="../IMAGENES/GTC/seg0_05.png" alt="Imagen de segmentacion para DEBLEND_MINCONT=0.05">
+
+        <figcaption>
+            <strong>Figura 69:</strong> Imagen de chequeo <code>SEGMENTATION</code> con las aperturas fotométricas dibujadas y su valor asignado <code>NUMBER</code> a cada objeto, con un valor de <code>DEBLEND_MINCONT=0.01</code> (izq) y <code>DEBLEND_MINCONT=0.05</code> (der).
+        </figcaption>
+
+    </figure>
+
+    <p>
+        En las figuras 68 y 69, podemos notar los cambios que hay en la separación de los objetos al momento de aumentar el valor de <code>DEBLEND_MINCONT</code>, esto puede reafirmarse en la disminución de objetos detectados y extraidos mostrados en la tabla anterior. Para propósitos de este proyecto, tomaremos un valor de <code>DEBLEND_MINCONT=0.005</code>.
+    </p>
+
+    <h3 class="hr-lines">Obtención de la <i>PSF</i></h3>
+
+    <p>
+        Con los parámetros bien definidos obtenemos nuestro catálogo de <span class="typewriter">SExtractor</span>, ahora vamos a verificar posibles outliers y limpiar este catálogo. Este catálogo inicial presenta $18995$ <b>objetos detectados</b> y $17148$ <b>objetos extraidos</b> y, observando las estadísticas, presenta valores de <code>MAG_AUTO=99</code>, <code>FWHM_IMAGE=707</code> y <code>FLAGS=51</code>. Primero obtenemos nuestro modelo <i>PSF</i> sin modificar el catálogo, y lo ingresamos a <span class="typewriter">PSFEx</span> con el parámetro <code>VIGNET(35,35)</code>. Para esto, los filtros que nos da <span class="typewriter">PSFEx</span> fueron 
+    </p>
+
+    <pre><code>
+        PSF_SIZE        35,35
+        PSFVAR_DEGREES  2
+        SAMPLE_FWHMRANGE   2.0,10.0
+        SAMPLE_VARIABILITY 0.2
+        SAMPLE_MINSN       20
+        SAMPLE_MAXELLIP    0.3
+    </code></pre>
+
+    <p>
+        Con lo anterior, este es la selección que <span class="typewriter">PSFEx</span> hizo para modelar la <i>PSF</i>:
+    </p>
+
+    <figure class="figura">
+
+        <img src="../IMAGENES/GTC/selecciondirecto.png" alt="Grafico de SNR en función del FWHM para la selección">
+
+        <figcaption>
+            <strong>Figura 70:</strong> Selección de estrellas tomadas por <span class="typewriter">PSFEx</span> para hacer el modelo de la <i>PSF</i>, parece que la selección no esta dentro del "stellar locus".
+        </figcaption>
+    </figure>
+
+    <p>
+        Asimismo, estos son las métricas obtenidas del archivo XML que devuelve <span class="typewriter">PSFEx</span> con información de la <i>PSF</i>:
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/metricaspsfdirecto.png" alt="Metricas para el model PSF con el catalogo directo">
+
+        <figcaption>
+            <strong>Figura 71:</strong> Métricas para el model PSF con el catalogo directo.
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, vamos a a hacer varias cosas al catálogo antes de meterlo a <span class="typewriter">PSFEx</span> y comparar los resultados de la <i>PSF</i>. 
+
+        <ul>
+            <li>Con un código generado en <i>python</i>, y usando la imagen <code>SEGMENTATION</code> vamos a encontrar un conjunto de objetos que cumplan con <code>CLASS_STAR>= 0.95</code> y con un máximo de <code>FLAGS</code> de 3, estos objetos deberán estar aislados al menos un cierto factor de su <code>FWHM</code>.</li>
+
+            <li>
+                Finalmente, este catálogo de objetos "puntuales", clasificados por <code>CLASS_STAR</code> vamos a verificar posibles outliers o mediciones espurias. Con esto, inyectamos este catálogo a <span class="typewriter">PSFEx</span> en donde filtrará el catálogo para hacer su selección y esperamos obtener un mejor modelo de <i>PSF</i>
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        Aplicando el código de <i>python</i> a nuestro catálogo con 17149 objetos totales obtenemos lo siguiente:
+
+        <ul>
+            <li>
+                Tras <code>CLASS_STAR</code> > 0.95: 2055 objetos
+            </li>
+
+            <li>
+                Tras filtro de <code>FLAGS</code> (permitiendo bits <= 3): 2042 objetos
+            </li>
+
+            <li>
+                Umbral de aislamiento: 22.42 px (5.0 x <code>FWHM_IMAGE</code> mediano = 4.48 px)
+            </li>
+
+            <li>
+                Tras filtro de vecino más cercano: 1198 objetos
+            </li>
+
+            <li>
+                Tras verificación con imagen de segmentación (dilatación=3px): 1085 objetos
+            </li>
+
+            <li>
+                Total final de estrellas aisladas: 1085
+            </li>
+        </ul>
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/visualizacionestrellas_aisladas.png" alt="Visualización de 12 estrellas del catálogo obtenido">
+
+        <figcaption>
+            <strong>Figura 72:</strong> Visualización de 12 estrellas obtenidas al aislarlas con el código hecho en <i>python</i>.
+        </figcaption>
+    </figure>
+
+    <p>
+        Observando las estadísticas de este catálogo, podemos notar ciertos valores máximos que parecen extraños, como lo es <code>FWHM_IMAGE=51.94</code> o <code>SNR_WIN=729</code>, observamos este objeto en la imagen:
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/fwhm51.png" alt="Objeto con un FWHM de 51">
+
+        <figcaption>
+            <strong>Figura 73:</strong> Objeto con un <code>FWHM_IMAGE=51</code>. Podemos notar que esta cubierto por una marca formada por la estrella saturada que esta debajo.
+        </figcaption>
+    </figure>
+
+    <p>
+        Aquí podemos pensar que quizás pueden haber más detecciones de este estilo, por lo que verificamos los objetos que tengan <code>FWHM_IMAGE>10</code>.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/fwhm10.png" alt="Objetos con un FWHM_IMAGE>10">
+
+        <figcaption>
+            <strong>Figura 74:</strong> Objetos detectados con un <code>FWHM_IMAGE>10</code>. En total fueron 14 objetos, de lo que podemos notar pasa lo mismo que en la Figura 73, estos son "objetos" detectados en las marcas generadas por estrellas saturadas.
+        </figcaption>
+    </figure>
+
+    <p>
+        Con lo anterior, podemos limpiar nuestro catálogo dejando solo aquellas detecciones con <code>FWHM_IMAGE< 10 </code>, aunque <span class="typewriter">PSFEx</span> ya emplea una de estos criterios para determinar las muestras que empleará para el modelo de <i>PSF</i>. Ahora inyectamos este catálogo a <span class="typewriter">PSFEx</span> usando los mismos criterios que el caso anterior.
+    </p>
 </section>

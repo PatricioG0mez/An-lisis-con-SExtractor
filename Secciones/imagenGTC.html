@@ -198,13 +198,13 @@
         <img src="../IMAGENES/GTC/seg0_05.png" alt="Imagen de segmentacion para DEBLEND_MINCONT=0.05">
 
         <figcaption>
-            <strong>Figura 69:</strong> Imagen de chequeo <code>SEGMENTATION</code> con las aperturas fotométricas dibujadas y su valor asignado <code>NUMBER</code> a cada objeto, con un valor de <code>DEBLEND_MINCONT=0.01</code> (izq) y <code>DEBLEND_MINCONT=0.05</code> (der).
+            <strong>Figura 70:</strong> Imagen de chequeo <code>SEGMENTATION</code> con las aperturas fotométricas dibujadas y su valor asignado <code>NUMBER</code> a cada objeto, con un valor de <code>DEBLEND_MINCONT=0.01</code> (izq) y <code>DEBLEND_MINCONT=0.05</code> (der).
         </figcaption>
 
     </figure>
 
     <p>
-        En las figuras 68 y 69, podemos notar los cambios que hay en la separación de los objetos al momento de aumentar el valor de <code>DEBLEND_MINCONT</code>, esto puede reafirmarse en la disminución de objetos detectados y extraidos mostrados en la tabla anterior. Para propósitos de este proyecto, tomaremos un valor de <code>DEBLEND_MINCONT=0.005</code>.
+        En las figuras 69 y 70, podemos notar los cambios que hay en la separación de los objetos al momento de aumentar el valor de <code>DEBLEND_MINCONT</code>, esto puede reafirmarse en la disminución de objetos detectados y extraidos mostrados en la tabla anterior. Para propósitos de este proyecto, tomaremos un valor de <code>DEBLEND_MINCONT=0.005</code>.
     </p>
 
     <h3 class="hr-lines">Obtención de la <i>PSF</i></h3>
@@ -231,7 +231,7 @@
         <img src="../IMAGENES/GTC/selecciondirecto.png" alt="Grafico de SNR en función del FWHM para la selección">
 
         <figcaption>
-            <strong>Figura 70:</strong> Selección de estrellas tomadas por <span class="typewriter">PSFEx</span> para hacer el modelo de la <i>PSF</i>, parece que la selección no esta dentro del "stellar locus".
+            <strong>Figura 71:</strong> Selección de estrellas tomadas por <span class="typewriter">PSFEx</span> para hacer el modelo de la <i>PSF</i>, parece que la selección no esta dentro del "stellar locus".
         </figcaption>
     </figure>
 
@@ -243,7 +243,7 @@
         <img src="../IMAGENES/GTC/metricaspsfdirecto.png" alt="Metricas para el model PSF con el catalogo directo">
 
         <figcaption>
-            <strong>Figura 71:</strong> Métricas para el model PSF con el catalogo directo.
+            <strong>Figura 72:</strong> Métricas para el model PSF con el catalogo directo.
         </figcaption>
     </figure>
 
@@ -293,7 +293,7 @@
         <img src="../IMAGENES/GTC/visualizacionestrellas_aisladas.png" alt="Visualización de 12 estrellas del catálogo obtenido">
 
         <figcaption>
-            <strong>Figura 72:</strong> Visualización de 12 estrellas obtenidas al aislarlas con el código hecho en <i>python</i>.
+            <strong>Figura 73:</strong> Visualización de 12 estrellas obtenidas al aislarlas con el código hecho en <i>python</i>.
         </figcaption>
     </figure>
 
@@ -305,7 +305,7 @@
         <img src="../IMAGENES/GTC/fwhm51.png" alt="Objeto con un FWHM de 51">
 
         <figcaption>
-            <strong>Figura 73:</strong> Objeto con un <code>FWHM_IMAGE=51</code>. Podemos notar que esta cubierto por una marca formada por la estrella saturada que esta debajo.
+            <strong>Figura 74:</strong> Objeto con un <code>FWHM_IMAGE=51</code>. Podemos notar que esta cubierto por una marca formada por la estrella saturada que esta debajo.
         </figcaption>
     </figure>
 
@@ -317,11 +317,62 @@
         <img src="../IMAGENES/GTC/fwhm10.png" alt="Objetos con un FWHM_IMAGE>10">
 
         <figcaption>
-            <strong>Figura 74:</strong> Objetos detectados con un <code>FWHM_IMAGE>10</code>. En total fueron 14 objetos, de lo que podemos notar pasa lo mismo que en la Figura 73, estos son "objetos" detectados en las marcas generadas por estrellas saturadas.
+            <strong>Figura 75:</strong> Objetos detectados con un <code>FWHM_IMAGE>10</code>. En total fueron 14 objetos, de lo que podemos notar pasa lo mismo que en la Figura 73, estos son "objetos" detectados en las marcas generadas por estrellas saturadas.
         </figcaption>
     </figure>
 
     <p>
         Con lo anterior, podemos limpiar nuestro catálogo dejando solo aquellas detecciones con <code>FWHM_IMAGE< 10 </code>, aunque <span class="typewriter">PSFEx</span> ya emplea una de estos criterios para determinar las muestras que empleará para el modelo de <i>PSF</i>. Ahora inyectamos este catálogo a <span class="typewriter">PSFEx</span> usando los mismos criterios que el caso anterior.
     </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/selecciondirecto.png" alt="Seleccion de muestras para el modelo psf con el catálogo directo">
+
+        <img src="../IMAGENES/GTC/seleccionmejorado.png" alt="Seleccion de muestras para el modelo psf con el catálogo mejorado">
+
+        <figcaption>
+            <strong>Figura 76:</strong> Grafico de selección de muestras por <span class="typewriter">PSFEx</span> para modelar la <i>PSF</i>, comparando ambos catálogos obtenidos.
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/metricaspsfdirecto.png" alt="Metricas obtenidas para la psf con el catálogo directo">
+
+        <img src="../IMAGENES/GTC/metricaspsfmejorado.jpeg" alt="Metricas obtenidas para la psf con el catálogo mejorado">
+
+        <figcaption>
+            <strong>Figura 77:</strong> Comparación de métricas dadas por <span class="typewriter">PSFEx</span> para el catálogo directo y el catálogo con "estrellas" aisladas y filtradas a <code>FWHM_IMAGE< 10 </code>.
+        </figcaption>
+
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/ellipticitydirecto.png" alt="Mapa de elipticidad del catálogo directo">
+
+        <img src="../IMAGENES/GTC/ellipticity_catalogo_filtrado.png" alt="Mapa de elipticidad del catálogo filtrado">
+
+        <figcaption>
+            <strong>Figura 78:</strong> Comparación de mapas de elipticidad para el catálogo directo (izq) y el catálogo filtrado (der).
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/GTC/fwhmdirecto.png" alt="Mapa de FWHM del catálogo directo">
+
+        <img src="../IMAGENES/GTC/fwhm_catalogo_filtrado.png" alt="Mapa de FWHM del catálogo filtrado">
+
+        <figcaption>
+            <strong>Figura 79:</strong> Comparación de mapas de FWHM para el catálogo directo (izq) y el catálogo filtrado (der).
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, empleando nuestro modelo mejorado de <i>PSF</i>, obtendremos una clasificación de fuente puntual y extendida con <code>SPREAD_MODEL</code>, en donde tomaremos como una <b>candidata robusta</b> a estrella aquellos objetos que cumplan con nuestro <b>criterio de clasificación combinado</b> mencionado en secciones anteriores. 
+    </p>
+
+    
 </section>

@@ -15,7 +15,8 @@ const secciones = [
     { id: "seccion-subaru",                archivo: "Secciones/subaru.html"},
     { id: "seccion-subaru-recortada",      archivo: "Secciones/subaru-recortada.html"},
     { id: "seccion-spread-model",          archivo: "Secciones/spread-model.html"},
-    { id: "seccion-imagenGTC",             archivo: "Secciones/imagenGTC.html"}  
+    { id: "seccion-imagenGTC",             archivo: "Secciones/imagenGTC.html"},
+    { id: "seccion-mosaico-reconstruido",  archivo: "Secciones/mosaicoluis.html"} 
 ];
 
 async function cargarSeccion({ id, archivo }) {

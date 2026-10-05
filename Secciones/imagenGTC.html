@@ -371,7 +371,27 @@
     </figure>
 
     <p>
-        Ahora, empleando nuestro modelo mejorado de <i>PSF</i>, obtendremos una clasificación de fuente puntual y extendida con <code>SPREAD_MODEL</code>, en donde tomaremos como una <b>candidata robusta</b> a estrella aquellos objetos que cumplan con nuestro <b>criterio de clasificación combinado</b> mencionado en secciones anteriores. 
+        Ahora, empleando nuestro modelo mejorado de <i>PSF</i>, obtendremos una clasificación de fuente puntual y extendida con <code>SPREAD_MODEL</code>, en donde tomaremos como una <b>candidata robusta</b> a estrella aquellos objetos que cumplan con nuestro <b>criterio de clasificación combinado</b> mencionado en secciones anteriores. Además, filtramos el catálogo tomando: <code>FWHM_IMAGE</code> $< 10$, <code>FLAGS</code> $\leq3$ y <code>SNR_WIN</code> $>20$, de donde nuestro catálogo pasa de 17148 a 8688 objetos. 
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/spreadmodel.png" alt="Grafico de spread model en función de la magnitud">
+
+        <figcaption>
+            <strong>Figura 80:</strong> Grafico obtenido para la clasificación con <code>SPREAD_MODEL</code> en función de <code>MAG_AUTO</code>, en donde colocamos los objetos que <code>CLASS_STAR</code> clasificó como fuente puntual.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/GTC/spread_y_class_star.png" alt="Grafico para candidatos robustos a fuente puntual">
+
+        <figcaption>
+            <strong>Figura 81:</strong> Grafico obtenido con los objetos que cumplen con el criterio de clasificación combinado. Teniendo 1620
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, vamos a cruzar este catálogo con el de <b>GAIA DR2</b> para obtener el número de estrellas que coinciden. Para ello vamos a usar TOPCAT, el catálogo de GAIA presenta $436$ objetos, nuestro catálogo coincide con $231$, un $52\%$ de coincidencia con GAIA.
     </p>
 
     

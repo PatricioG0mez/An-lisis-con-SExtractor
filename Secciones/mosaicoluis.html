@@ -10,7 +10,7 @@
             </tr>
             <tr>
                 <td><code>SEEING_FWHM</code></td>
-                <td>$0.864$</td>
+                <td>$1.12$</td>
             </tr>
             <tr>
                 <td><code>SATURATE</code></td>
@@ -24,14 +24,161 @@
     </table>
 
     <p>
-        Con estos parámetros empezaremos a hacer el análisis inicial para obtener un catálogo con el cual modelar la <i>PSF</i>. Como siempre, empezaremos por determinar el <code>BACKGROUND</code>
+        Además, el filtro de convolución que usaremos sera de <code>gauss_3.0_7x7.conv</code>, con estos parámetros empezaremos a hacer el análisis inicial para obtener un catálogo con el cual modelar la <i>PSF</i>. Como siempre, empezaremos por determinar el <code>BACKGROUND</code>
     </p>
 
-    <h3 class="hr-lines">BACKGROUND</h3>
+    <h3 class="hr-lines">BACKGROUND.</h3>
 
     <p>
         Usando los parámetros por defecto <code>BACK_SIZE=64</code> y <code>BACK_FILTERSIZE=3</code>, obtenemos lo siguiente:
     </p>
 
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/background.png" alt="Nivel de fondo sustraído en la imagen">
+
+        <figcaption>
+            <strong>Figura 82:</strong> Nivel de fondo determinado para el mosaico.
+        </figcaption>
+    </figure>
+
+    <figure class="comparacion-grid2">
+        <img src="../IMAGENES/mosaicoluis/imagenoriginal.png" alt="Imagen original empleada para el análisis">
+
+        <img src="../IMAGENES/mosaicoluis/imagensinfondo.png" alt="Imagen empleada con el fondo sustraído">
+
+        <figcaption>
+            <strong>Figura 83:</strong> Comparación de la imagen original (izq) y la imagen con el fondo sustraído (der).
+        </figcaption>
+    </figure>
+
+    <h3 class="hr-lines">THRESHOLD.</h3>
+
+    <p>
+        Ahora vamos a determinar el nivel de umbral para la detección de fuentes, para ello emplearemos la imagen con los datos invertidos.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th><code>DETECT_THRESH</code>,<code>ANALYSIS_THRESH</code></th>
+                <th>Objetos detectados</th>
+                <th>Objetos extraidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>$1.5$</td>
+                <td>$6531$</td>
+                <td>$4503$</td>
+            </tr>
+            <tr>
+                <td>$2.0$</td>
+                <td>$1529$</td>
+                <td>$1121$</td>
+            </tr>
+            <tr>
+                <td>$2.5$</td>
+                <td>$645$</td>
+                <td>$532$</td>
+            </tr>
+            <tr>
+                <td>$3.0$</td>
+                <td>$457$</td>
+                <td>$400$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Podemos notar que para un umbral de $2.5$, los objetos detectados disminuyen drasticamente en comparación con los 6531 con un umbral de $1.5$.
+    </p>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/mosaicoluis/negativa15.png" alt="Imagen negativa con los objetos detectados con nivel de umbral de 1.5">
+
+        <img src="../IMAGENES/mosaicoluis/negativa25.png" alt="Imagen negativa con los objetos detectados con nivel de umbral de 2.5">
+
+        <figcaption>
+            <strong>Figura 84:</strong> Comparación de detecciones con un nivel de umbral de $1.5$ (izq) y $2.5$ (der), podemos notar que la mayoria de detecciones falsas estan presentes en las marcas donde se hizo la unión de la imágen, y por supuesto, en las marcas generadas por las estrellas saturadas.
+        </figcaption>
+    </figure>
+
+    <h3 class="hr-lines">DEBLENDING.</h3>
+    <p>
+        Entonces, usando este nivel de umbral con un mínimo de 5 píxeles juntos para detectar objetos, podemos pasar al proceso de <i>deblending</i> con los parámetros <code>DEBLEND_NTHRESH=32</code> y <code>DEBLEND_MINCONT</code> con valores de $0.001, 0.005, 0.01, 0.05$.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Valor</th>
+                <th>Objetos detectados</th>
+                <th>Objetos extraidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>$0.001$</td>
+                <td>$23739$</td>
+                <td>$20989$</td>
+            </tr>
+            <tr>
+                <td>$0.005$</td>
+                <td>$23289$</td>
+                <td>$20631$</td>
+            </tr>
+            <tr>
+                <td>$0.01$</td>
+                <td>$23089$</td>
+                <td>$20489$</td>
+            </tr>
+            <tr>
+                <td>$0.05$</td>
+                <td>$22549$</td>
+                <td>$19976$</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <figure class="comparacion-grid2">
+
+        <img src="../IMAGENES/mosaicoluis/seg_001.png" alt="Imagen de segmentación con 0.001">
+
+        <img src="../IMAGENES/mosaicoluis/seg_005.png" alt="Imagen de segmentación con 0.005">
+
+        <img src="../IMAGENES/mosaicoluis/seg_01.png" alt="Imagen de segmentación con 0.01">
+
+        <img src="../IMAGENES/mosaicoluis/seg_05.png" alt="Imagen de segmentación con 0.05">
+
+        <figcaption>
+            <strong>Figura 85:</strong> Comparación de la segmentación con los valores de $0.001,0.005,0.01,0.05$ (de izquierda a derecha).
+        </figcaption>
+    </figure>
+
+    <p>
+        Para nuestro análisis tomamos el valor de $0.005$ con el objetivo de determinar cuantás estrellas detectamos y compararlo con <b>GAIA</b>. Ahora, vamos a buscar un conjunto de "objetos puntuales" clasificados por <code>CLASS_STAR</code> y que esten los mejor aislados de otros objetos, así tomar esta muestra de estrellas e inyectarla a <span class="typewriter">PSFEx</span> y obtener un buen modelo de <i>PSF</i>.
+    </p>
+
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/estadisticas.png" alt="estadísticas obtenidas para el catálogo.">
+
+        <figcaption>
+            <strong>Figura 86:</strong> estadísticas obtenidas para el catálogo antes de obtener las estrellas aisladas.
+        </figcaption>
+    </figure>
+
+    <p>
+        Encontramos que existe un objeto con un calor de <code>FWHM_IMAGE=443</code>, lo cual es un valor enorme, así que filtraremos el catálogo con un <code>FWHM_IMAGE</code> < 10. Con esto pasamos de 20630 objetos a 19348. Ahora, vamos a aplicar el código para obtener nuestras estrellas aisladas, este código hace 3 filtros; el primero con <code>CLASS_STAR</code>, luego con <code>FLAGS</code> y, por último, un filtro de vecino más cercano. 
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/muestra_seleccionaislada.png" alt="Muestras de algunas estrellas tomadas">
+
+        <figcaption>
+            <strong>Figura 87:</strong> Muestras de 12 "objetos puntuales" seleccionadas como objetos aislados, existen algunas imagenes con fallas en el centreo del objeto, pero esto se corroboró buscando el objeto de forma manual. Al final, obtuvimos un catálogo con 906 objetos.
+        </figcaption>
+    </figure>
     
 </section>

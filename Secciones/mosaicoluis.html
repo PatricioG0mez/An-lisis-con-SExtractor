@@ -1,6 +1,10 @@
-<h2 id="mosaicoluisreconstruido">Mosaico reconstruido.</h2>
+<h2 id="mosaicoluisreconstruido">Determinación de fuente puntual usando SUBARU y GTC.</h2>
 
 <section>
+
+    <p>
+        Realizamos el primer análisis para la imágen reconstruida del telescopio GTC por el Dr. Luis Artemio. Como siempre, empezamos por determinar los parámetros iniciales que esten en el header de la imágen:
+    </p>
 
     <table>
         <tbody>
@@ -157,28 +161,347 @@
     </figure>
 
     <p>
-        Para nuestro análisis tomamos el valor de $0.005$ con el objetivo de determinar cuantás estrellas detectamos y compararlo con <b>GAIA</b>. Ahora, vamos a buscar un conjunto de "objetos puntuales" clasificados por <code>CLASS_STAR</code> y que esten los mejor aislados de otros objetos, así tomar esta muestra de estrellas e inyectarla a <span class="typewriter">PSFEx</span> y obtener un buen modelo de <i>PSF</i>.
+        Para obtener un modelo de <i>PSF</i> bastante bueno, tratamos de obtener una muestra de "estrellas" aplicando distintos filtros, con el objetivo de que <span class="typewriter">PSFEx</span> modele la <i>PSF</i> únicamente en "estrellas". Para esto, empleamos un modelo de <i>RandomForest</i> en donde se encontró que los parámetros más influyentes en la clasificación son <code>MU_MAX,MAG_AUTO,CLASS_STAR</code> y <code>FLAGS</code>. <a href="#ref12">[12]</a> 
     </p>
 
 
+    <h3 class="hr-lines">Implementación de RanfomForest.</h3>
+
+    <b>Metodología general.</b>
+
+    <p>
+        Generamos un catálogo con los siguientes parámetros:
+    </p>
+
+    <pre><code>
+X_IMAGE
+Y_IMAGE
+ALPHA_J2000
+DELTA_J2000
+CLASS_STAR
+ELLIPTICITY
+FWHM_IMAGE
+MAG_AUTO
+MU_MAX
+FLAGS
+FLUX_RADIUS
+    </code></pre>
+
+    <p>
+        Este catálogo se comparó con el DR3 parte 1 de <b>GAIA</b>, todo esto sin aplicar filtros, tomando solo las coincidencias con <b>GAIA</b> se construyo una nueva columna <code>target</code>, el cual toma valores de $1$ para objetos que coincidian con el catálogo de <b>GAIA</b> (en principio, estrellas) y $0$ para aquellos que no coinciden. Se eliminaron outliers, objetos con <code>MAG_AUTO=99</code> y <code>FWHM>100</code>, de donde obtenemos un dataset claramente desbalanceado, por ello se optó por un modelo de <i>RandomForest</i> de SciKit Learn de Python para entrenar una clasificación binaria. Se usó KFolds para disminuir el sesgo que este desbalance introduce, mediante validación cruzada, con 5 folds. Se calcularon las importancias de cada atributo para ver cuál era el que más influenciaba en la clasificación estrella/galaxia y se usó un modelo de DecisionTree, también de Scikit Learn para aproximar un umbral para uno o varios parámetros.
+    </p>
+
+    <b>Resultados para la imágen de SUBARU.</b>
+
+    <p>
+        De 51,172 objetos, 50,574 tenían <code>target</code> 0 y 598 <code>target</code> 1. Como primer vistazo preliminar se analizó la matriz de covarianzas de todas las variables contra todas, pero la más relevante va a ser es la covarianza con el <code>target</code>.
+    </p>
+
     <figure class="figura">
-        <img src="../IMAGENES/mosaicoluis/estadisticas.png" alt="estadísticas obtenidas para el catálogo.">
+        <img src="../IMAGENES/mosaicoluis/matriz_de_covarianza_subaru.jpeg" alt="Matriz de covarianza con los parámetros obtenidos.">
 
         <figcaption>
-            <strong>Figura 86:</strong> estadísticas obtenidas para el catálogo antes de obtener las estrellas aisladas.
+            <strong>Figura 86:</strong> Matriz de covarianza con los parámetros usados en la imágen de SUBARU.
         </figcaption>
     </figure>
 
     <p>
-        Encontramos que existe un objeto con un calor de <code>FWHM_IMAGE=443</code>, lo cual es un valor enorme, así que filtraremos el catálogo con un <code>FWHM_IMAGE</code> < 10. Con esto pasamos de 20630 objetos a 19348. Ahora, vamos a aplicar el código para obtener nuestras estrellas aisladas, este código hace 3 filtros; el primero con <code>CLASS_STAR</code>, luego con <code>FLAGS</code> y, por último, un filtro de vecino más cercano. 
+        Desde un inicio se puede ver que las variables que más correlación tienen con el target son <code>MU MAX, MAG AUTO, CLASS STAR</code> y <code>FLAGS</code>. Esto confirma que algunas variables que ya se habían tomado en cuenta para criterios anteriores son relevantes, mientras que descarta otras como <code>FWHM IMAGE</code>, que tiene la correlación más baja de las variables que se consideraron. Luego, tras entrenar el modelo de Scikit Learn RandomForest y usar validación cruzada con 5 folds se obtienen las siguientes métricas de evaluación:
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th><code>target</code></th>
+                <th>precision</th>
+                <th>recall</th>
+                <th>f1-score</th>
+                <th>support</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>0.9976</td>
+                <td>0.9985</td>
+                <td>0.9981</td>
+                <td>50481</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>0.8226</td>
+                <td>0.7500</td>
+                <td>0.7846</td>
+                <td>476</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <p>
+        Las métricas para la clase estrella son aceptables, dado el gran desbalance que hay. En la matriz de confusión vemos que esta baja en el desempeño se debe a que el modelo suele cometer errores de falsos negativos: objetos clasificados como galaxias que en realidad son estrellas.
     </p>
 
     <figure class="figura">
-        <img src="../IMAGENES/mosaicoluis/muestra_seleccionaislada.png" alt="Muestras de algunas estrellas tomadas">
+        <img src="../IMAGENES/mosaicoluis/matriz_de_confusion_subaru.jpeg" alt="Matriz de confusion con la curva precision-recall">
 
         <figcaption>
-            <strong>Figura 87:</strong> Muestras de 12 "objetos puntuales" seleccionadas como objetos aislados, existen algunas imagenes con fallas en el centreo del objeto, pero esto se corroboró buscando el objeto de forma manual. Al final, obtuvimos un catálogo con 906 objetos.
+            <strong>Figura 87:</strong> Matriz de confusión junto con la curva <i>precision-recall</i> obtenido para la imágen de SUBARU.
         </figcaption>
     </figure>
+
+    <p>
+        Respecto a las importancias, como vimos en la matriz de covariancias, <code>MU_MAX</code> adquiere una importancia muy alta, lo que motiva a incluirla en el criterio preliminar.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/importancias_subaru.jpeg" alt="Importancias de los parámetros en la determinación de fuente puntual">
+
+        <figcaption>
+            <strong>Figura 88:</strong> Importancias de los parámetros en la determinación de fuente puntual.
+        </figcaption>
+    </figure>
+
+    <p>
+        La importancia se calculó al aleatorizar la variable de forma aislada y ver qué tanto caía el F1-score, que toma en cuenta falsos positivos y negativos. Si el F1-score se desploma, la variable es de suma relevancia. Si no, es más prescindible. La barra negra representa cuánto varió la importancia tras hacer este ejercicio 10 veces.
+    </p>
+
+    <p>
+        Ahora, para encontrar su umbral, se entrenó un <i>DecisionTree</i>, admitiendo una pureza con índice gini de hasta $0.3$. Se pensaba encontrar el umbral de más variables, pero para <i>DecisionTree</i> bastaba con <code>MU_MAX</code> para llegar al nivel de pureza requerido. Aumentar o disminuir la pureza, así como permitir más ramificaciones, no brindan más umbrales.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/mu_max_SUBARU.png" alt="Grafica de MU_MAX en función de MAG_AUTO.">
+
+        <figcaption>
+            <strong>Figura 89:</strong> Grafica de <code>MU_MAX</code> en función de <code>MAG_AUTO</code>.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/umbral_mumax_SUBARU.jpeg" alt="Umbral determinado para el parámetro MU_MAX">
+
+        <figcaption>
+            <strong>Figura 90:</strong> Umbral determinado para el parámetro <code>MU_MAX</code>.
+        </figcaption>
+    </figure>
+
+    <p>
+        Al comparar con <b>GAIA</b>, se obtienen $359/620$ coincidencias.
+    </p>
+
+    <b>Resultados mosaico reconstruido GTC.</b>
+
+    <p>
+        Como en el caso de Subaru, tenemos un dataset desbalanceado, $20045$ objetos que no están en <b>GAIA DR3</b>, identificados como galaxias (<code>target</code> 0) y $524$ objetos que sí están en <b>GAIA</b>, identificados como estrellas (<code>target</code> 1). Cabe aclarar que, dado que el límite de magnitudes de <b>GAIA</b> está alrededor de 22, el modelo, así como el criterio, se sesga hacia las magnitudes más brillantes. Hasta el momento, no podemos asegurar que no hay objetos puntuales con magnitudes más tenues en el conjunto de <code>target</code> 0. Por lo que, con esto en cuenta, solo vamos a trabajar con objetos puntuales con magnitudes mayores a $22$.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/distribucionclases.jpeg" alt="Distribución de clases en el dataset">
+
+        <figcaption>
+            <strong>Figura 91:</strong> Distribución de clases para estrellas (<code>target</code>$=1$) y galaxias ( <code>target</code>$=0$).
+        </figcaption>
+    </figure>
+
+    <p>
+        Antes de entrenar, analizamos la matriz de covarianza para ver un anticipo de cuáles son los parámetros de salida más correlacionados con el target.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/matriz_de_covarianza.jpeg" alt="Matriz de covarianza con los parámetros obtenidos.">
+
+        <figcaption>
+            <strong>Figura 92:</strong> Matriz de covarianza obtenido con los parámetros seleccionados anteriormente.
+        </figcaption>
+    </figure>
+
+    <p>
+        Como vemos, los parámetros que más relación tienen son, en orden,<code>MU_MAX, MAG_AUTO, CLASS_STAR</code> y <code>ELLIPTICITY</code>. Ahora, entrenamos de la misma forma y obtenemos las métricas:
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th><code>target</code></th>
+                <th>precision</th>
+                <th>recall</th>
+                <th>f1-score</th>
+                <th>support</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>0.9972</td>
+                <td>0.9987</td>
+                <td>0.9979</td>
+                <td>20045</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>0.9473</td>
+                <td>0.8912</td>
+                <td>0.9184</td>
+                <td>524</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/matriz_de_confusion.jpeg" alt="Matriz de confusion con la curva precision-recall">
+
+        <figcaption>
+            <strong>Figura 93:</strong> Matriz de confusión junto con la curva <i>precision-recall</i> obtenido para la imágen del mosaico reconstruido
+        </figcaption>
+    </figure>
+
+    <p>
+        A comparación de las métricas en la imagen de Subaru, en la clase minoritaria el modelo mejora muchísimo, lo que se aprecia mejor en la matriz de confusión y el la curva Precision-Recall, así como su área.
+    </p>
+
+    <p>
+        En el caso de subaru, se tenían $119$ falsos negativos (cuadrante inferior izquierdo) y $77$ falsos positivos (superior derecho). En el caso del mosaico, esto mejora notablemente. Además, el área bajo la curva, una métrica que evalúa el desempeño únicamente en la clase minoritaria, de $0.82$ en el caso de Subaru, pasa a $0.96$. Respecto a las importancias, el ranking se mantiene casi igual pero a <code>MU_MAX</code> se le asigna una importancia más marcada y un umbral distinto
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/importancias_gtc.jpeg" alt="Importancias de los parámetros en la determinación de fuente puntual">
+
+        <figcaption>
+            <strong>Figura 94:</strong> Importancias de los parámetros en la determinación de fuente puntual.
+        </figcaption>
+    </figure>
+
+    <p>
+        Ahora, para determinar el umbral, se realiza un entrenamiento con árbol de decisión y este toma a <code>MU_MAX</code> como su principal factor de distinción, considerando una pureza de índice gini mínimo $0.3$. La hoja más pura de este árbol toma un umbral de $22.421$.
+    </p>
+
+    <p>
+        REGLA: Si MU_MAX <= 22.421 <br>
+            └─ Predicción: ESTRELLA <br>
+            └─ Pureza (Gini): 0.056 | Precisión en este grupo: 97.1% <br>
+            └─ Objetos agrupados aquí: 1106 (Falsos vs Verdaderos (aprox.): [  32 1074])
+    </p>
+
+    <p>
+        Con ello, vemos que el criterio preliminar de objeto puntual se mantiene, con ligeras variaciones en sus umbrales. Esto sugiere que los umbrales no serán absolutos, sino que tendrán ligeras dependencias en la imagen: cómo se haya sustraido el fondo, los parámetros de extracción, de deblending, el filtro, etc. Además, a diferencia de la imagen de Subaru, mantener <code>CLASS_STAR</code> en $0.85$ no aporta demasiados objetos más que coincidan con <code>GAIA</code>, así que se propone el criterio preliminar
+    </p>
+    
+    <pre><code> 
+17< MAG_AUTO< 22 && ELLIPTICITY< 0.3 && CLASS_STAR>0.9 && FLAGS< 5 && MU_MAX< 22.4 
+    
+    </code></pre>
+
+    <p>
+        Aunado a lo anterior, después de aplicar este filtro obtenido usando <i>RandomForest</i> con un umbral a <code>MU_MAX</code>, vamos a aplicar el código mencionado antes para obtener fuentes puntuales aisladas, recordando que el objetivo de esta parte es obtener un catálogo para que <span class="typewriter">PSFEx</span> obtenga un modelo de <i>PSF</i> basado lo mejor posible en puras "estrellas". 
+    </p>
+
+    <p>
+        El catálogo obtenido con los umbrales definidos anteriormente para la imágen del mosaico GTC nos dió 528 objetos de 20631, a continuación se presentan las variaciones aplicando los filtros para aislar los objetos: 
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/muestra_seleccionaisladaGTC.png" alt="Objetos obtenidos después de cada filtro para aislar los objetos.">
+
+        <figcaption>
+            <strong>Figura 95:</strong> Objetos obtenidos después de cada filtro para aislar los objetos.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/muestras_aisladasGTC.png" alt="Imagen con 8 muestras del total de objetos seleccionados.">
+
+        <figcaption>
+            <strong>Figura 96:</strong> Imagen con 8 muestras del total de objetos seleccionados.
+        </figcaption>
+    </figure>
+
+    <p>
+        Con este catálogo de $387$ estrellas aisladas, obtenemos nuestro modelo <i>PSF</i>, del cual obtenemos las siguientes métricas:
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/metricas_psf_GTC.png" alt="Metricas obtenidas para el modelo PSF dadas el archivo XML.">
+
+        <figcaption>
+            <strong>Figura 97:</strong> Metricas obtenidas para el modelo PSF dadas el archivo XML.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/selfwhm_catalogo_FINALpsfex.png" alt="Muestra de selección de estrellas en función del FWHM.">
+
+        <figcaption>
+            <strong>Figura 98:</strong> Muestra de selección de estrellas en función del FWHM.
+        </figcaption>
+    </figure>
+
+    <p>
+        Finalmente, inyectamos este modelo <i>PSF</i> a <span class="typewriter">SExtractor</span> y pedimos los parámetros de <code>SPREAD_MODEL, SPREADERR_MODEL</code> y <code>CLASS_STAR</code>, con esto, comparamos la cantidad de estrellas, que cumplan un definido umbral, con las dadas en un catálogo distinto.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Umbral</th>
+                <th>Coincidencias</th>
+                <th>Total de objetos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.005, CLASS_STAR> 0.9, MAG_PSF< 23</td>
+                <td>84/123</td>
+                <td>564</td>
+            </tr>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.002, CLASS_STAR> 0.95, MAG_PSF< 23</td>
+                <td>67/123</td>
+                <td>436</td>
+            </tr>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.005, CLASS_STAR> 0.9, MAG_PSF< 23, MU_MAX< 22.5</td>
+                <td>77/123</td>
+                <td>485</td>
+            </tr>
+            <tr>
+                <td>MU_MAX< 22.4, MAG_PSF< 23</td>
+                <td>82/123</td>
+                <td>1109</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        Para la imágen de SUBARU al aplicar el filtro de <code>MU_MAX</code> obtenemos un catálogo de $459$ objetos, para luego obtener un catálogo con los objetos aislados con un total de $353$ objetos.
+    </p>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/muestras_aisladasSUBARU.png" alt="Imagen con 8 muestras del catálogo puramente de objetos puntuales y aislados." >
+
+        <figcaption>
+            <strong>Figura 99:</strong> Imagen con 8 muestras del catálogo puramente de objetos puntuales y aislados.
+        </figcaption>
+    </figure>
+
+    <figure class="figura">
+
+        <img src="../IMAGENES/mosaicoluis/metricas_psf_SUBARU.png" alt="Metricas obtenidas para el modelo PSF.">
+
+        <figcaption>
+            <strong>Figura 100:</strong> Metricas obtenidas para el modelo <i>PSF</i>.
+        </figcaption>
+
+    </figure>
+
+    <figure class="figura">
+        <img src="../IMAGENES/mosaicoluis/selfwhm_catalogo_FINALSUBARUpsfex.png" alt="Grafica de las cuentas tomadas para el modelado de la PSF.">
+
+        <figcaption>
+            <strong>Figura 101:</strong> Grafica de las cuentas tomadas para el modelado de la PSF.
+        </figcaption>
+    </figure>
+
+
     
 </section>

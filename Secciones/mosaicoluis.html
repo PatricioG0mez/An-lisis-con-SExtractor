@@ -502,6 +502,42 @@ FLUX_RADIUS
         </figcaption>
     </figure>
 
+    <p>
+        Al igual que con la imagen del GTC, inyectamos este modelo <i>PSF</i> a <span class="typewriter">SExtractor</span> para obtener el clasificador <code>SPREAD_MODEL</code> y comparamos con el catálogo proporcionado.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Umbral</th>
+                <th>Coincidencias</th>
+                <th>Total de objetos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.005, CLASS_STAR> 0.9, MAG_AUTO< 23</td>
+                <td>35/123</td>
+                <td>2,318</td>
+            </tr>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.002, CLASS_STAR> 0.95, MAG_AUTO< 23</td>
+                <td>28/123</td>
+                <td>1,796</td>
+            </tr>
+            <tr>
+                <td>SPREAD_MODEL+SPREADERR_MODEL< 0.005, CLASS_STAR> 0.9, MAG_AUTO< 23, MU_MAX< 21</td>
+                <td>28/123</td>
+                <td>707</td>
+            </tr>
+            <tr>
+                <td>MU_MAX< 21, MAG_AUTO< 23</td>
+                <td>42/123</td>
+                <td>1,809</td>
+            </tr>
+        </tbody>
+    </table>
+
 
     
 </section>
